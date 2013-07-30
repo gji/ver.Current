@@ -148,5 +148,4 @@ def Lock(con, cur):
 con = mdb.connect('192.168.9.2', 'python', 'dTh6xh', 'wavemeter')
 cur = con.cursor()
 cur.execute("TRUNCATE TABLE `error`")
-Lock(con, cur) 
-#Problem?
+Lock(con, cur)
