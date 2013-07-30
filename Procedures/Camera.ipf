@@ -173,6 +173,7 @@ Function StartExposureThread()
 	Display/K=1/W=(1000,300,1400,450)/N=camHist temp_Hist
 	ModifyGraph mode=6 // sets the graph to cityscape. better way to represent histogram
 	ModifyGraph log(left)=1
+	HoldUpdate(0)
 	
 	// this is the displayed lineplot. like with the histogram, we need two separate ones, because of threading.
 	
@@ -269,7 +270,20 @@ Function EventRangeSet(ba) : ButtonControl
 
 	switch( ba.eventCode )
 		case 2: // mouse up
-			if(RANGE[0] == 1)
+			HoldUpdate(1)
+			break
+		case -1: // control being killed
+			break
+	endswitch
+
+	return 0
+End
+
+Function HoldUpdate(switching)
+Variable switching
+Wave temp,RANGE
+
+if((RANGE[0] == 1 && switching ==1 )|| (RANGE[0] ==0 && switching ==0))
 				Button rangeCont title="Auto Range"
 				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],Grays,0}
 				RANGE[0] = 0
@@ -278,13 +292,6 @@ Function EventRangeSet(ba) : ButtonControl
 				ModifyImage/W=camView temp ctab= {*,*,Grays,0}
 				RANGE[0] = 1
 			endif
-			//CamUpdate()
-			break
-		case -1: // control being killed
-			break
-	endswitch
-
-	return 0
 End
 
 // these methods round the bins to an an allowed power of two. since the XOP uses memcpy, and does this
@@ -467,15 +474,18 @@ Function/S SetROIText(itemNumber)
 End
 
 Function CamUpdate() //just quickly stops and restarts the camera with new settings
-SetDataFolder root:Camera
+	SetDataFolder root:Camera
 
-NVAR COC_RUNNING = root:Camera:COC_RUNNING
+	NVAR COC_RUNNING = root:Camera:COC_RUNNING
 
-if (COC_RUNNING ==1)
-SetDataFolder root:Camera
-NVAR mt = root:Camera:mt
-Variable foo = ThreadGroupRelease(mt)
-PCOCamStop
-StartExposureThread()
-endif
+	if (COC_RUNNING ==1)
+		SetDataFolder root:Camera
+		NVAR mt = root:Camera:mt
+		Variable foo = ThreadGroupRelease(mt)
+		PCOCamStop
+		
+		StartExposureThread()
+		
+	endif
 End
+
