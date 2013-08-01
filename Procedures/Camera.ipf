@@ -81,11 +81,7 @@ End
 
 ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, LineFFT, RANGE)
 	Wave temp, temp_Hist, FPS, Lineplot, LineFFT, RANGE
-	Variable lineplotPointer = 0
-	Variable lineplotLowerPointer = 0
 	
-	// make internal wave for lineplot, histogram
-	Make/N=1000/O Lineplot_local
 	Make/N=51/O FFT_local
 	Make/N=4096/O temp_Hist_thread
 
@@ -108,33 +104,16 @@ ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, LineFFT, RANGE)
 		variable i
 		for( i = 0;i<4096;i+= 1)	// count the total number of photons from the histogram. bit faster.
 			totalPhotons += temp_Hist_thread[i] * i									
-		endfor												
- 		Lineplot_local[lineplotPointer] = totalPhotons
- 		
- 		lineplotPointer += 1
- 		if (lineplotPointer == 1000) // if you need to, shift the data
- 			for( i = 0;i<100;i+= 1)	
-				Lineplot_local[i] = Lineplot_local[i+99]							
-			endfor	
-			lineplotpointer = 100	
- 		endif
- 		if (lineplotPointer < 99)
- 			lineplotLowerPointer = 0
- 		else
- 			lineplotLowerPointer = lineplotPointer - 99
- 		endif
- 		
- 		// move internal data into displayed wave.
- 		
- 		Lineplot = Lineplot_local[p+lineplotLowerPointer-1]
+		endfor	
+		
+		Lineplot = Lineplot[p+1]
+		Lineplot[99] = totalPhotons
+													
+ 
  		FFT/OUT=3/DEST=FFT_local Lineplot
  		LineFFT = FFT_local[p]
  		
- 		// makes the graph a bit prettier when it just starts up, basically sets 0 elements to the most recent one
  		
- 		if(lineplotPointer - lineplotLowerPointer < 99)
- 			Lineplot[lineplotPointer - lineplotLowerPointer,99] = totalPhotons
- 		endif
  		
 		FPS[0] = round((FPS[0] + 10 * 60/(ticks-timeEl))/11) // weighted average
 	while (1)
@@ -187,7 +166,7 @@ Function StartExposureThread()
 	Make/O/N=51 LineFFT
 	DoWindow/K totalPhotonFFT
 	Display/K=1/W=(1000,600,1400,750)/N=totalPhotonFFT LineFFT[1,51] //[lineplotLowerPointer,lineplotPointer]
-
+	ModifyGraph mode=6
 	
 	Variable/G mt = ThreadGroupCreate(1)
 	ThreadStart mt, 0, GetCamData(temp, temp_Hist, FPS,Lineplot, LineFFT, RANGE) // Start thread
