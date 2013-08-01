@@ -79,13 +79,14 @@ End
 
 // this thread must be threadsafe!! it runs concurrently with the GUI.
 
-ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, RANGE)
-	Wave temp, temp_Hist, FPS, Lineplot, RANGE
+ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, LineFFT, RANGE)
+	Wave temp, temp_Hist, FPS, Lineplot, LineFFT, RANGE
 	Variable lineplotPointer = 0
 	Variable lineplotLowerPointer = 0
 	
 	// make internal wave for lineplot, histogram
 	Make/N=1000/O Lineplot_local
+	Make/N=51/O FFT_local
 	Make/N=4096/O temp_Hist_thread
 
 	do
@@ -126,6 +127,8 @@ ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, RANGE)
  		// move internal data into displayed wave.
  		
  		Lineplot = Lineplot_local[p+lineplotLowerPointer-1]
+ 		FFT/OUT=3/DEST=FFT_local Lineplot
+ 		LineFFT = FFT_local[p]
  		
  		// makes the graph a bit prettier when it just starts up, basically sets 0 elements to the most recent one
  		
@@ -181,9 +184,13 @@ Function StartExposureThread()
 	DoWindow/K totalPhotons
 	Make/O/N=2 coords
 	Display/K=1/W=(1000,450,1400,600)/N=totalPhotons Lineplot //[lineplotLowerPointer,lineplotPointer]
+	Make/O/N=51 LineFFT
+	DoWindow/K totalPhotonFFT
+	Display/K=1/W=(1000,600,1400,750)/N=totalPhotonFFT LineFFT[1,51] //[lineplotLowerPointer,lineplotPointer]
+
 	
 	Variable/G mt = ThreadGroupCreate(1)
-	ThreadStart mt, 0, GetCamData(temp, temp_Hist, FPS,Lineplot, RANGE) // Start thread
+	ThreadStart mt, 0, GetCamData(temp, temp_Hist, FPS,Lineplot, LineFFT, RANGE) // Start thread
 End
 
 
