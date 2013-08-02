@@ -165,7 +165,7 @@ Function StartExposureThread()
 	Display/K=1/W=(1000,450,1400,600)/N=totalPhotons Lineplot //[lineplotLowerPointer,lineplotPointer]
 	Make/O/N=51 LineFFT
 	DoWindow/K totalPhotonFFT
-	Display/K=1/W=(1000,600,1400,750)/N=totalPhotonFFT LineFFT[1,51] //[lineplotLowerPointer,lineplotPointer]
+	Display/K=1/W=(1000,600,1400,750)/N=totalPhotonFFT LineFFT[10,51] //[lineplotLowerPointer,lineplotPointer]
 	ModifyGraph mode=6
 	
 	Variable/G mt = ThreadGroupCreate(1)
