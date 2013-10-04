@@ -1,0 +1,168 @@
+RF Volt .920 V Pk-Pk, Ey = -2.8, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 0
+
+RF Volt .920 V Pk-Pk, Ey = -3, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 0
+RF Volt .920 V Pk-Pk, Ey = -3, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 10
+RF Volt .920 V Pk-Pk, Ey = -3, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 40
+RF Volt .920 V Pk-Pk, Ey = -3, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= -10
+RF Volt .920 V Pk-Pk, Ey = -3, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= -40
+
+RF Volt .920 V Pk-Pk, Ey = -4, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 0
+RF Volt .920 V Pk-Pk, Ey = -4, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 10
+RF Volt .920 V Pk-Pk, Ey = -4, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 40
+RF Volt .920 V Pk-Pk, Ey = -4, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= -10
+RF Volt .920 V Pk-Pk, Ey = -4, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= -40
+
+RF Volt .920 V Pk-Pk, Ey = -5, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 0
+RF Volt .920 V Pk-Pk, Ey = -5, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 10
+RF Volt .920 V Pk-Pk, Ey = -5, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 40
+RF Volt .920 V Pk-Pk, Ey = -5, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= -10
+RF Volt .920 V Pk-Pk, Ey = -5, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= -40
+
+RF Volt .750 V Pk-Pk, Ey = -5, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 0
+RF Volt .750 V Pk-Pk, Ey = -5, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 10
+RF Volt .750 V Pk-Pk, Ey = -5, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= 40
+RF Volt .750 V Pk-Pk, Ey = -5, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= -10
+RF Volt .750 V Pk-Pk, Ey = -5, Ex = 1, Ez= -0.2, Harm=1.5, Time=3 min, Oven=2.5A, Pos= -40
+
+All of the above was done using incorrect waveforms!!!!
+
+RF Volt 0.750V Pk-Pk, Ey = -2.8, Ex = 1, Ez= -0.2, Harm=2, Time=3 min, Oven=2.5A, Pos= 0
+RF Volt 0.750V Pk-Pk, Ey = -4, Ex = 1, Ez= -0.2, Harm=2, Time=3 min, Oven=2.5A, Pos= 0
+RF Volt 0.750V Pk-Pk, Ey = 2, Ex = 1, Ez= -0.2, Harm=2, Time=3 min, Oven=2.5A, Pos= 0
+
+RF Volt 0.750V Pk-Pk, Ey = 2, Ex = 1, Ez= -0.2, Harm=2, Time=3 min, Oven=3A, Pos= 0
+
+Capacitance checked before finding neutral transition
+Saw neutrals at 3.5A oven
+
+RF Volt 0.750V Pk-Pk, Ey = -2.8, Ex = 1, Ez= -0.2, Harm=2, Time=3 min, Oven=3.5A, Pos= 0
+
+The RF started to drift, so the above voltage might be wrong.
+
+RF Volt 0.850V Pk-Pk, Ey = -4, Ex = 1, Ez= -0.2, Harm=2, Time=3 min, Oven=3.5A, Pos= 0
+
+This is a q of 0.2, the x field has been correected to the manual spec.
+RF Volt 1V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 1V Pk-Pk, Ey = 2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 1V Pk-Pk, Ey = -4, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 1V Pk-Pk, Ey = -2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+
+Note that instead of 2 minutes, we've been waiting for the pressure to reach 10^-7 torr.
+Cooldown to 1.5*10^-10 torr between runs.
+RF Volt 1V Pk-Pk, Ey = -2.4, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 1V Pk-Pk, Ey = -3.2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 1V Pk-Pk, Ey = -3.6, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+
+RF Volt 0.750V Pk-Pk, Ey = -2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.750V Pk-Pk, Ey = -2.4, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.750V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.750V Pk-Pk, Ey = -3.2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.750V Pk-Pk, Ey = -3.6, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.750V Pk-Pk, Ey = -4.0, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+
+RF Volt 0.750V Pk-Pk, Ey = 2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.750V Pk-Pk, Ey = 4, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+
+RF Volt 0.600V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.600V Pk-Pk, Ey = -2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.600V Pk-Pk, Ey = -3.2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+
+RF Volt 0.600V Pk-Pk, Ey = -2.4, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.600V Pk-Pk, Ey = -1.2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.600V Pk-Pk, Ey = -1.6, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.600V Pk-Pk, Ey = -3.6, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.600V Pk-Pk, Ey = -3.2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+RF Volt 0.600V Pk-Pk, Ey = 2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+
+
+RF Volt 0.500V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+
+6/3/13
+RF Volt 0.500V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+
+6/4/13
+RF Volt 0.500V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0 
+369 Detuning: 200 Mhz Power: 250 mW
+
+RF Volt 0.500V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0 
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 1 GHz red of transition
+
+RF Volt 0.500V Pk-Pk, Ey = -2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0 
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 1 GHz red of transition
+
+RF Volt 0.500V Pk-Pk, Ey = -3.6, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0 
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 700 MHz red of transition
+
+RF Volt 0.500V Pk-Pk, Ey = -4.4, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0 
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 700 MHz red of transition
+
+RF Volt 0.500V Pk-Pk, Ey = 2, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0 
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 700 MHz red of transition
+
+RF Volt 0.500V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 10
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 700 MHz red of transition
+
+RF Volt 0.500V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 40
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 700 MHz red of transition
+
+RF Volt 0.500V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= -10
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 700 MHz red of transition
+
+RF Volt 0.500V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= -40
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 700 MHz red of transition
+
+RF Volt 0.400V Pk-Pk, Ey = -2.8, Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 700 MHz red of transition
+
+RF Volt 0.400V Pk-Pk, Ey = -2 Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 700 MHz red of transition
+
+RF Volt 0.400V Pk-Pk, Ey = -3.6 Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 700 MHz red of transition
+
+RF Volt 0.400V Pk-Pk, Ey = -4.4 Ex = -2, Ez= -0.2, Harm=2, Time=2 min, Oven=3.5A, Pos= 0
+369 Detuning: 200 Mhz Power: 250 mW
+Scanned 369 700 MHz red of transition
+
+
+June 9th 2013
+RF Volt 1.00V Pk-Pk, Ey = (-1,-4) Ex = -1.1, Ez= -0.8, Harm=2, Time=2 min, Oven=2..4A, Pos= 110
+Scanned 369 150 MHz red of transition
+
+
+June 12 2013:
+RF Volt 1.50V Pk-Pk, Ey = (-0.5,-1.5) Ex = (-0.5,0.5), Ez= (-0.5,0.5) ,Harm=(0.5,1.5),  Oven=2..4A, Pos= 110
+
+RF Volt 2.00V Pk-Pk, Ey = (-0.5,-1.5) Ex = (-0.5,0.5), Ez= (-0.5,0.5) ,Harm=(0.5,1.5),  Oven=2..4A, Pos= 110
+
+June 18 2013
+RF Volt 0.50V Pk-Pk, Ey = (-2.8,0) Ex = -2, Ez=.3) ,Harm=2,  Oven=2..4A, Pos=0
+
+8/1/2013
+RF Volt .35-.6 Pk-Pk, Ey = (-4,0) Ex = 0, Ez=0) ,Harm=2,  Oven=2.2A, Pos=300,-300 ????
+
+TRAPPING LIST
+1. Trapping potential, making sure the q,a params are reaonsable (consider RF powers).
+2. Detunings, and powers, of the cooling beam.
+3. Different trap location
+4. Check polarization, check 935 369 wavemeter readings
+5. DC bias the RF rail. Check capactive divider.
+6. Install, pinhole, align doublet. 
+7. Replacing blue fiber, work harder at focusing 369/399 light.
+8. PMT
+9. Aligning AOMs for 369 to control 
+
+OTHER CRAP
+1. Enclousures, 

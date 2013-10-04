@@ -334,17 +334,18 @@ EndMacro
 
 Window Pulse() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(0	,0,333,100) as "Pulse Program"
+	DoWindow/K pulseProgram
+	NewPanel /K=1/N=pulseProgram/W=(0,0,333,100) as "Pulse Program"
 	ModifyPanel cbRGB=(0,26112,39168)
 	PopupMenu Sequence popvalue=" ",proc=PopMenuProc, pos={100,16},size={100,20},title="Sequence",value=" ; Loaded Sequence 1; Loaded Sequence 2; Loaded Sequence 3;..."
 EndMacro
 
 Window PulseCreator() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(0,0,333,100) as "Pulse Creator"
+	DoWindow/K pulseCreator
+	NewPanel /K=1/N=pulseCreator/W=(0,0,333,100) as "Pulse Creator"
 	ModifyPanel cbRGB=(0,26112,39168)
 	Button NewItem,pos={15,16},size={80,20},proc=ButtonProc_1,title="New Item"
 	Button DeleteItem,pos={115,16},size={80,20},proc=ButtonProc_2,title="Delete Item"
 	Button SetLoops,pos={215,16},size={80,20},proc=ButtonProc_3,title="Set Loops"
 EndMacro
-
