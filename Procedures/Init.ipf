@@ -18,6 +18,7 @@ Function Param_Init()
 	Variable/G LIVE_UP					= 	0
 	Variable/G CUR_POS					= 	LOAD_POS		
 	
+	Variable/G Delay						=	TTL_00
 	Variable/G COOL						=	TTL_01
 	Variable/G STATE_DET				=	TTL_02
 	Variable/G FLR_DET					=	TTL_04|TTL_01
@@ -51,6 +52,27 @@ Function Param_Init()
 	Make/O/T/N=4 							WAVE_INFO		 = {WAVE_Ez, WAVE_Ex, WAVE_Ey, WAVE_Harm}
 	
 	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_Hardware				
+	
+					//Variables for Pulse Program
+	Variable/G SequenceCurrent				=	0
+	Variable/G VerticalButtonPosition			=	16
+	Variable/G VerticalLoopPosition			=	16
+	Variable/G StepNum					=	0
+	Variable/G GroupNumber					=	0
+	Variable/G GroupError						= 	0
+	Make/O/N=10 NameWave					=	{DELAY,COOL,STATE_DET,FLR_DET,PUMP,COOL_SHTR,LOAD_SHTR,RAMAN1,RAMAN2,PMT}
+	Make/O/T/N=10 TTLNames				=	{"Delay","Cool","State Detection","Flourescence Detection","Pump","Cool Shutter","LoadShutter","Raman 1", "Raman 2","PMT"}			
+	Make/O/N=(1024,3)	PulseCreatorWave
+	Variable/G TooLong						=	0
+	NewPath/O SavePath, "E:\\Experiment\\ver.Daniel\\Sequences\\"
+	Make/O/N=(1024,3)	LoadedWave1		//= LoadWave/D/H/J/M/P=SavePath/T/W/A "WATH.dat"
+	Variable/G TotalScan						=	0
+	Variable/G FixScanOrder					=	0
+	Variable/G GroupMultiplier					=	1
+	Make/O/N=(1024,2) PulseSequence
+	Make/O/N=1024 TimeSequence
+	
+	
 	
 	Variable j,i
 	for(i=0;i!=(DDS_Channels); i+=1)
