@@ -8,8 +8,10 @@ Macro Exp_Init()
 	Seq_init()
 	
 // Creates Windows	
-	DCCtrl()	
-	DDS_Control()
+	PulseCreator()
+	Pulse()
+//	DCCtrl()
+//	DDS_Control()
 EndMacro
 
 Function Param_Init()
@@ -18,7 +20,7 @@ Function Param_Init()
 	Variable/G LIVE_UP					= 	0
 	Variable/G CUR_POS					= 	LOAD_POS		
 	
-	Variable/G Delay						=	TTL_00
+	Variable/G DELAY						=	TTL_00	
 	Variable/G COOL						=	TTL_01
 	Variable/G STATE_DET				=	TTL_02
 	Variable/G FLR_DET					=	TTL_04|TTL_01
@@ -28,52 +30,59 @@ Function Param_Init()
 	Variable/G RAMAN1					=	TTL_07
 	Variable/G RAMAN2					=	TTL_08
 	Variable/G PMT						=	DI_01	// PMT might be gated, might need to add a TTL pulse here
+
 	
 	Variable/G COOL_FREQ				= 	200 // MHz
-	Variable/G COOL_AMP				=	1023 // Max Amp
+	Variable/G COOL_AMP					=	100 // Max Amp
 	Variable/G COOL_PHASE				=	0 	
 	
 	Variable/G STATE_DET_FREQ			=	220 // MHz
-	Variable/G STATE_DET_AMP			=	1023 // Max Amp
+	Variable/G STATE_DET_AMP			=	100 // Max Amp
 	Variable/G STATE_DET_PHASE		=	0	
 	
 	Variable/G FLR_DET_FREQ			=	220 // MHz
-	Variable/G FLR_DET_AMP			=	1023 // Max Amp
+	Variable/G FLR_DET_AMP				=	100 // Max Amp
 	Variable/G FLR_DET_PHASE			=	0
 	
 	String/G	WAVE_Ez					=	":waveforms:Symmetric_Ez.csv"
 	String/G	WAVE_Ex					=	":waveforms:Symmetric_Ex.csv"
 	String/G	WAVE_Ey					=	":waveforms:Symmetric_Ey.csv"
-	String/G	WAVE_Harm				=	":waveforms:Symmetric_Harmonic.csv"		
-	String/G	WAVE_Hardware				=	":waveforms:Symmetric_Hardware.csv"
+	String/G	WAVE_Harm					=	":waveforms:Symmetric_Harmonic.csv"		
+	String/G	WAVE_Hardware			=	":waveforms:Symmetric_Hardware.csv"
 	
 	Make/O/N=(DDS_Channels,DDS_Params) 	DDS_INFO
 	Make/O/N=4 							COMP_INFO		 = {0,0,0,1,1}
-	Make/O/T/N=4 							WAVE_INFO		 = {WAVE_Ez, WAVE_Ex, WAVE_Ey, WAVE_Harm}
+	Make/O/T/N=4 						WAVE_INFO		 = {WAVE_Ez, WAVE_Ex, WAVE_Ey, WAVE_Harm}
 	
-	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_Hardware				
-	
+	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_Hardware	
+				
 					//Variables for Pulse Program
-	Variable/G SequenceCurrent				=	0
-	Variable/G VerticalButtonPosition			=	16
-	Variable/G VerticalLoopPosition			=	16
-	Variable/G StepNum					=	0
-	Variable/G GroupNumber					=	0
-	Variable/G GroupError						= 	0
-	Make/O/N=10 NameWave					=	{DELAY,COOL,STATE_DET,FLR_DET,PUMP,COOL_SHTR,LOAD_SHTR,RAMAN1,RAMAN2,PMT}
-	Make/O/T/N=10 TTLNames				=	{"Delay","Cool","State Detection","Flourescence Detection","Pump","Cool Shutter","LoadShutter","Raman 1", "Raman 2","PMT"}			
+	Variable/G SequenceCurrent							=	0
+	Variable/G VerticalButtonPosition					=	16
+	Variable/G VerticalButtonPos							=	16
+	Variable/G VerticalLoopPosition						=	16
+	Variable/G StepNum										=	0
+	Variable/G GroupNumber									=	0
+	Variable/G GroupError									= 	0
+	Make/O/N=10 NameWave									=	{DELAY,COOL,STATE_DET,FLR_DET,PUMP,COOL_SHTR,LOAD_SHTR,RAMAN1,RAMAN2,PMT}
+	Make/O/T/N=10 TTLNames									=	{"Delay","Cool","State Detection","Flourescence Detection","Pump","Cool Shutter","LoadShutter","Raman 1", "Raman 2","PMT"}			
 	Make/O/N=(1024,3)	PulseCreatorWave
-	Variable/G TooLong						=	0
-	NewPath/O SavePath, "E:\\Experiment\\ver.Daniel\\Sequences\\"
-	Make/O/N=(1024,3)	LoadedWave1		//= LoadWave/D/H/J/M/P=SavePath/T/W/A "WATH.dat"
-	Variable/G TotalScan						=	0
-	Variable/G FixScanOrder					=	0
-	Variable/G GroupMultiplier					=	1
+	Variable/G TooLong										=	0
+	NewPath/O SavePath, 										"Z:\\Experiment\\ver.Daniel\\Sequences\\"
+
+	Variable/G TotalScan									=	0
+	Variable/G FixScanOrder								=	0
+	Variable/G GroupMultiplier							=	1
 	Make/O/N=(1024,2) PulseSequence
 	Make/O/N=1024 TimeSequence
-	
-	
-	
+	Variable/G StepN											=	0
+	Variable/G DDS1Counter,DDS2Counter,DDS3Counter,DDSCounted 	=	0
+	Variable/G filler										=	0
+	Make/O/N=(5120,6) Settings							=	0
+	Variable/G SettingsCheckOut							=	0
+	Make/O/N=(3,4) DDSsetPoints							=	{{COOL_FREQ,COOL_PHASE,COOL_AMP},{STATE_DET_FREQ,STATE_DET_PHASE,STATE_DET_AMP},{FLR_DET_FREQ,FLR_DET_PHASE,FLR_DET_AMP}}
+	Variable/G SendCounter									=	0
+
 	Variable j,i
 	for(i=0;i!=(DDS_Channels); i+=1)
 		switch(i)
@@ -319,3 +328,20 @@ Window DDS_Control() : Panel
 	SetVariable DDS2_AMPL_BOX,font="Arial"
 	SetVariable DDS2_AMPL_BOX,limits={0,1023,1},value= root:ExpParams:DDS_INFO[1][2]
 EndMacro
+
+Window Pulse() : Panel
+	PauseUpdate; Silent 1		// building window...
+	NewPanel /K=1 /W=(0	,0,333,100) as "Pulse Program"
+	ModifyPanel cbRGB=(0,26112,39168)
+	PopupMenu Sequence popvalue=" ",proc=PopMenuProc, pos={100,16},size={100,20},title="Sequence",value=" ; Loaded Sequence 1; Loaded Sequence 2; Loaded Sequence 3;..."
+EndMacro
+
+Window PulseCreator() : Panel
+	PauseUpdate; Silent 1		// building window...
+	NewPanel /K=1 /W=(0,0,333,100) as "Pulse Creator"
+	ModifyPanel cbRGB=(0,26112,39168)
+	Button NewItem,pos={15,16},size={80,20},proc=ButtonProc_1,title="New Item"
+	Button DeleteItem,pos={115,16},size={80,20},proc=ButtonProc_2,title="Delete Item"
+	Button SetLoops,pos={215,16},size={80,20},proc=ButtonProc_3,title="Set Loops"
+EndMacro
+

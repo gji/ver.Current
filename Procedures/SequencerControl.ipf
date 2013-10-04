@@ -84,8 +84,6 @@ end
 function/WAVE runSequence(reps)
 	Variable reps
 	
-	SetDataFolder root:Sequencer:Data
-	
 	Make/B/U/O writeWave = {0x06e, gb_seq(reps,1), gb_seq(reps,0), 0xFF, 0x0d, 0x0a}
 	VDTOperationsPort2 COM4
 	VDTWriteBinaryWave2 writeWave
