@@ -895,7 +895,7 @@ Function/WAVE LoadScanSettings()
 	ControlInfo Sequence
 	SequenceNum=V_Value-1
 	
-	
+		
 		String Loadwavestring="LoadWave/O/D/H/J/M/N/G/P=SettingsSavePath"+Num2str(SequenceNum)
 		Execute Loadwavestring
 	Return wave0

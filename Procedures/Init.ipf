@@ -56,7 +56,7 @@ Function Param_Init()
 	
 	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_Hardware	
 				
-					//Variables for Pulse Program
+	//Variables for Pulse Program
 	Variable/G SequenceCurrent							=	0
 	Variable/G VerticalButtonPosition					=	16
 	Variable/G VerticalButtonPos							=	16
@@ -68,7 +68,8 @@ Function Param_Init()
 	Make/O/T/N=10 TTLNames									=	{"Delay","Cool","State Detection","Flourescence Detection","Pump","Cool Shutter","LoadShutter","Raman 1", "Raman 2","PMT"}			
 	Make/O/N=(1024,3)	PulseCreatorWave
 	Variable/G TooLong										=	0
-	NewPath/O SavePath, 										"Z:\\Experiment\\ver.Daniel\\Sequences\\"
+	NewPath/O SavePath, 										"Z:\\Experiment\\ver.Current\\Sequences\\"
+	NewPath/O SettingsSavePath1,								"Z:\\Experiment\\ver.Current\\Settings\\"
 
 	Variable/G TotalScan									=	0
 	Variable/G FixScanOrder								=	0
@@ -82,6 +83,8 @@ Function Param_Init()
 	Variable/G SettingsCheckOut							=	0
 	Make/O/N=(3,4) DDSsetPoints							=	{{COOL_FREQ,COOL_PHASE,COOL_AMP},{STATE_DET_FREQ,STATE_DET_PHASE,STATE_DET_AMP},{FLR_DET_FREQ,FLR_DET_PHASE,FLR_DET_AMP}}
 	Variable/G SendCounter									=	0
+	
+	Make/O/N=(5120,6) ScanParams=0
 
 	Variable j,i
 	for(i=0;i!=(DDS_Channels); i+=1)
