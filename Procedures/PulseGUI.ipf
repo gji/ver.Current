@@ -828,7 +828,6 @@ Function CreateButtons()
 	Button SaveSettings win=Pulse, pos={155,VerticalButtonPosition}, title="Save Settings", proc=SaveSettingsProc, size={100,20}
 	Button SetScan win=Pulse,pos={435,VerticalButtonPosition}, title="Set Scan", proc=SetScanProc,size={100,20}
 	Button ClearScan win=Pulse,pos={295,VerticalButtonPosition}, title="Clear Scan", proc=ClearScanProc,size={100,20}
-	Button Run win=Pulse,pos={575,VerticalButtonPosition}, title="Run", proc=RunProc,size={100,20}
 End
 
 //Procedures for Set Scan button - generates scan bounds based on checked boxes
@@ -841,6 +840,9 @@ Function SetScanProc(ba) : ButtonControl
 			
 			ClearScanBounds()
 			GenerateBounds(LoadedWave,DefaultSettings())
+			KillControl/W=Pulse Run
+			ControlInfo SaveSettings
+			Button Run win=Pulse,pos={575,V_top}, title="Run", proc=RunProc,size={100,20}
 			break
 		case -1:
 			break
