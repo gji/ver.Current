@@ -2,16 +2,19 @@
 
 Macro Exp_Init()
 
+	DefaultGUIFont all={"Segoe UI", 12, 0}, panel={"Segoe UI",12,3}
+
 // Fills appropriate waves and variables	
 	Param_Init()
 	DC_Init()
 	Seq_init()
 	
 // Creates Windows	
-	PulseCreator()
-	Pulse()
-//	DCCtrl()
-//	DDS_Control()
+//	PulseCreator()	//For Creating Pulse Sequences
+//	Pulse()			//For Running Pulse Sequence
+//	DCCtrl() 			//For Setting DC Bias on Trap
+//	DDS_Control()	//For Setting DDS Values
+	OverrideVariables()
 EndMacro
 
 Function Param_Init()
@@ -49,13 +52,7 @@ Function Param_Init()
 	String/G	WAVE_Ey					=	":waveforms:Symmetric_Ey.csv"
 	String/G	WAVE_Harm					=	":waveforms:Symmetric_Harmonic.csv"		
 	String/G	WAVE_Hardware			=	":waveforms:Symmetric_Hardware.csv"
-	
-	Make/O/N=(DDS_Channels,DDS_Params) 	DDS_INFO
-	Make/O/N=4 							COMP_INFO		 = {0,0,0,1,1}
-	Make/O/T/N=4 						WAVE_INFO		 = {WAVE_Ez, WAVE_Ex, WAVE_Ey, WAVE_Harm}
-	
-	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_Hardware	
-				
+
 	//Variables for Pulse Program
 	Variable/G SequenceCurrent							=	0
 	Variable/G VerticalButtonPosition					=	16
@@ -83,8 +80,20 @@ Function Param_Init()
 	Variable/G SettingsCheckOut							=	0
 	Make/O/N=(3,4) DDSsetPoints							=	{{COOL_FREQ,COOL_PHASE,COOL_AMP},{STATE_DET_FREQ,STATE_DET_PHASE,STATE_DET_AMP},{FLR_DET_FREQ,FLR_DET_PHASE,FLR_DET_AMP}}
 	Variable/G SendCounter									=	0
-	
 	Make/O/N=(5120,6) ScanParams=0
+
+	Make/O/N=(8,2) OverrideWave							=	0
+	Variable/G Mask											=	0
+
+
+
+	Make/O/N=(DDS_Channels,DDS_Params) 	DDS_INFO
+	Make/O/N=4 							COMP_INFO		 = {0,0,0,1,1}
+	Make/O/T/N=4 						WAVE_INFO		 = {WAVE_Ez, WAVE_Ex, WAVE_Ey, WAVE_Harm}
+	
+	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_Hardware	
+				
+
 
 	Variable j,i
 	for(i=0;i!=(DDS_Channels); i+=1)
@@ -334,18 +343,80 @@ EndMacro
 
 Window Pulse() : Panel
 	PauseUpdate; Silent 1		// building window...
-	DoWindow/K pulseProgram
-	NewPanel /K=1/N=pulseProgram/W=(0,0,333,100) as "Pulse Program"
-	ModifyPanel cbRGB=(0,26112,39168)
-	PopupMenu Sequence popvalue=" ",proc=PopMenuProc, pos={100,16},size={100,20},title="Sequence",value=" ; Loaded Sequence 1; Loaded Sequence 2; Loaded Sequence 3;..."
+	DoWindow /K Pulse
+	NewPanel /N=Pulse /K=1 /W=(75,247,409,302) as "Pulse Program"
+	ModifyPanel cbRGB=(65534,65534,65534)
+	PopupMenu Sequence,pos={68,18},size={202,21},bodyWidth=150,proc=PopMenuProc,title="Sequence"
+	PopupMenu Sequence,mode=1,popvalue=" ",value= #"\" ; Loaded Sequence 1; Loaded Sequence 2; Loaded Sequence 3;...\""
 EndMacro
 
-Window PulseCreator() : Panel
+Window pulseCreator() : Panel
 	PauseUpdate; Silent 1		// building window...
-	DoWindow/K pulseCreator
-	NewPanel /K=1/N=pulseCreator/W=(0,0,333,100) as "Pulse Creator"
-	ModifyPanel cbRGB=(0,26112,39168)
+	DoWindow /K PulseCreator
+	NewPanel /N=PulseCreator /K=1 /W=(75,110,408,210) as "Pulse Creator"
+	ModifyPanel cbRGB=(65534,65534,65534)
+	//ModifyPanel cbRGB=(0,26112,39168)
 	Button NewItem,pos={15,16},size={80,20},proc=ButtonProc_1,title="New Item"
 	Button DeleteItem,pos={115,16},size={80,20},proc=ButtonProc_2,title="Delete Item"
 	Button SetLoops,pos={215,16},size={80,20},proc=ButtonProc_3,title="Set Loops"
+EndMacro
+
+
+Window OverrideVariables() : Panel
+	SetDataFolder root:DDS
+	PauseUpdate; Silent 1		// building window...
+	NewPanel /K=1 /W=(30+0,75+298,30+260,75+298+170) as "Override Variables"
+	ModifyPanel cbRGB=(65534,65534,65534)
+	Variable i=1
+	Variable position=15
+	String ddsTitle
+	String ddsFreqBox
+	String ddsPhaseBox
+	String ddsAmpBox	
+	String ddsOverride
+	String TTLLabel
+	String TTLSwitch
+	String TTLOverride
+
+	
+	Do 
+		
+		ddstitle= "TitleBox DDS"+num2str(i)+"Namebox frame=4,fixedSize=1,font=\"Arial\",labelBack=(0,0,0),fColor=(65535,65535,65535),anchor=MC,pos={50,"+num2str(position)+"},size={150,20}, title=\"DDS #"+num2str(i)+"\""
+		position+=25
+		
+		ddsFreqBox="SetVariable DDS"+num2str(i)+"_FREQ_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Frequency\",font=\"Arial\",limits={0,400,0.01},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][0]"
+		position+=20
+		
+		ddsPhaseBox="SetVariable DDS"+num2str(i)+"_PHASE_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Amplitude\",font=\"Arial\",limits={0,180,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][1]"
+		position+=20
+		
+		ddsAmpBox="SetVariable DDS"+num2str(i)+"_AMPL_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Phase\",font=\"Arial\",limits={0,1023,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][2]"
+		position+=20
+		
+		ddsOverride="Checkbox DDS"+num2str(i)+"_Override,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS "+num2str(i)+" Override\",font=\"Arial\",value=0"
+
+		position+=40
+		Execute ddstitle
+		Execute ddsFreqBox
+		Execute ddsPhaseBox
+		Execute ddsAmpBox
+		Execute ddsOverride
+		i+=1
+	While (i<=3)
+	
+	i=1
+	TitleBox TTLtitle frame=4,fixedSize=1,labelBack=(0,0,0),fColor=(65535,65535,65535),font="Arial",anchor=MC,pos={50,position},size={150,20}, title="TTL Controls"
+	position+=25
+	Do
+		TTLLabel="TitleBox TTLtitle"+num2str(i)+", frame=0,fixedSize=1,labelBack=(65535,65535,65535),fColor=(0,0,0),font=\"Arial\",anchor=MC,pos={25,"+num2str(position)+"},size={50,20}, title=\"TTL"+num2str(i)+"\""
+		TTLSwitch="CheckBox TTL"+num2str(i)+"_Switch pos={75,"+num2str(position+4)+"},size={100,20},bodyWidth=130,proc=TTL_wrapper,title=\"On/Off\",font=\"Arial\",value=root:ExpParams:OverrideWave["+num2str(i-1)+"][0]"
+		TTLOverride="Checkbox TTL"+num2str(i)+"_Override pos={135,"+num2str(position+4)+"},size={100,20},bodyWidth=130,proc=TTL_wrapper,title=\"Override\",font=\"Arial\",value=root:ExpParams:OverrideWave["+num2str(i-1)+"][1]"
+		position+=20
+		Execute TTLLabel
+		Execute TTLSwitch
+		Execute TTLOverride
+		i+=1
+	While (i<=8)
+	MoveWindow/W=OverrideVariables 30,75,250,position-50
+	
 EndMacro

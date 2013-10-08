@@ -1,53 +1,53 @@
 #pragma rtGlobals=1		// Use modern global access method.
 
-function DDS_wrapper(ctrlName,varNum,varStr,varName) : SetVariableControl
-	String ctrlName,varStr,varName
-	variable varNum
-
-	SetDataFolder root:DDS
-	Variable Frequency,Phase,Ampl
-	WAVE DDS_INFO = root:ExpParams:DDS_INFO
-	
-	strswitch(ctrlName)
-		case "DDS1_FREQ_BOX":
-			Frequency	=	DDS_INFO[0][0]*10^6
-			Ampl		=	DDS_INFO[0][1]
-			Phase		=	DDS_INFO[0][2]
-			setDDS(1,Frequency,Phase,Ampl)
-			break
-		case "DDS1_PHASE_BOX":
-			Frequency	=	DDS_INFO[0][0]*10^6
-			Ampl		=	DDS_INFO[0][1]
-			Phase		=	DDS_INFO[0][2]
-			setDDS(1,Frequency,Phase,Ampl)
-			break
-		case "DDS1_AMPL_BOX":
-			Frequency	=	DDS_INFO[0][0]*10^6
-			Ampl		=	DDS_INFO[0][1]
-			Phase		=	DDS_INFO[0][2]
-			setDDS(1,Frequency,Phase,Ampl)
-			break
-		case "DDS2_FREQ_BOX":
-			Frequency	=	DDS_INFO[1][0]*10^6
-			Ampl		=	DDS_INFO[1][1]
-			Phase		=	DDS_INFO[1][2]		
-			setDDS(2,Frequency,Phase,Ampl)
-			break
-		case "DDS2_PHASE_BOX":
-			Frequency	=	DDS_INFO[1][0]*10^6
-			Ampl		=	DDS_INFO[1][1]
-			Phase		=	DDS_INFO[1][2]		
-			setDDS(2,Frequency,Phase,Ampl)
-			break
-		case "DDS2_AMPL_BOX":
-			Frequency	=	DDS_INFO[1][0]*10^6
-			Ampl		=	DDS_INFO[1][1]
-			Phase		=	DDS_INFO[1][2]		
-			setDDS(2,Frequency,Phase,Ampl)
-			break										
-	endswitch
-
-end
+//function DDS_wrapper(ctrlName,varNum,varStr,varName) : SetVariableControl
+//	String ctrlName,varStr,varName
+//	variable varNum
+//
+//	SetDataFolder root:DDS
+//	Variable Frequency,Phase,Ampl
+//	WAVE DDS_INFO = root:ExpParams:DDS_INFO
+//	
+//	strswitch(ctrlName)
+//		case "DDS1_FREQ_BOX":
+//			Frequency	=	DDS_INFO[0][0]*10^6
+//			Ampl		=	DDS_INFO[0][1]
+//			Phase		=	DDS_INFO[0][2]
+//			setDDS(1,Frequency,Phase,Ampl)
+//			break
+//		case "DDS1_PHASE_BOX":
+//			Frequency	=	DDS_INFO[0][0]*10^6
+//			Ampl		=	DDS_INFO[0][1]
+//			Phase		=	DDS_INFO[0][2]
+//			setDDS(1,Frequency,Phase,Ampl)
+//			break
+//		case "DDS1_AMPL_BOX":
+//			Frequency	=	DDS_INFO[0][0]*10^6
+//			Ampl		=	DDS_INFO[0][1]
+//			Phase		=	DDS_INFO[0][2]
+//			setDDS(1,Frequency,Phase,Ampl)
+//			break
+//		case "DDS2_FREQ_BOX":
+//			Frequency	=	DDS_INFO[1][0]*10^6
+//			Ampl		=	DDS_INFO[1][1]
+//			Phase		=	DDS_INFO[1][2]		
+//			setDDS(2,Frequency,Phase,Ampl)
+//			break
+//		case "DDS2_PHASE_BOX":
+//			Frequency	=	DDS_INFO[1][0]*10^6
+//			Ampl		=	DDS_INFO[1][1]
+//			Phase		=	DDS_INFO[1][2]		
+//			setDDS(2,Frequency,Phase,Ampl)
+//			break
+//		case "DDS2_AMPL_BOX":
+//			Frequency	=	DDS_INFO[1][0]*10^6
+//			Ampl		=	DDS_INFO[1][1]
+//			Phase		=	DDS_INFO[1][2]		
+//			setDDS(2,Frequency,Phase,Ampl)
+//			break										
+//	endswitch
+//
+//end
 
 function setDDS(dds, frequency, phase, amplitude)
 	Variable dds, frequency, phase, amplitude

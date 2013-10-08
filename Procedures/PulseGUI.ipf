@@ -16,7 +16,7 @@ Function ButtonProc_1(ba) : ButtonControl
 		case 2: // mouse up
 				VerticalButtonPos+=30
 				StepNum+=1
-				ModifyControl NewItem pos={15,VerticalButtonPos}
+				Button NewItem pos={15,VerticalButtonPos}
 				ModifyControl DeleteItem pos={115,VerticalButtonPos}
 				ModifyControl SetLoops pos={215,VerticalButtonPos}
 				String NextPopName = "Popup"+num2str(StepNum)
@@ -27,7 +27,8 @@ Function ButtonProc_1(ba) : ButtonControl
 				Execute CommandPop
 				Execute CommandVar
 				KillControl/W=PulseCreator ExportSeq
-				MoveWindow/W=PulseCreator 0,0,250,50+floor(VerticalButtonPos*0.7)
+				GetWindow PulseCreator wsize
+				MoveWindow/W=PulseCreator V_left,V_top,V_left+250,(60+V_top+VerticalButtonPos)*72/ScreenResolution
 				ClearLoops()
 				doupdate	
 		case -1: // control being killed
@@ -61,7 +62,8 @@ Function ButtonProc_2(ba) : ButtonControl
 				StepNum-=1
 				KillControl/W=PulseCreator ExportSeq
 				ClearLoops()
-				MoveWindow/W=PulseCreator 0,0,250,50+floor(VerticalButtonPos*0.7)
+				GetWindow PulseCreator wsize
+				MoveWindow/W=PulseCreator V_left,V_top,V_left+250,V_top+50+floor(VerticalButtonPos*0.7)
 				doupdate
 			Endif
 			break
@@ -92,7 +94,8 @@ Function ButtonProc_3(ba) : ButtonControl
 					GenerateLoops()
 				Endif
 			Endif
-			MoveWindow/W=PulseCreator 0,0,350,50+floor(VerticalButtonPos*0.7)
+			GetWindow PulseCreator wsize
+			MoveWindow/W=PulseCreator V_left,V_top,V_left+350,V_top+50+floor(VerticalButtonPos*0.7)
 			break
 		case -1: // control being killed
 			break
