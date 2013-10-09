@@ -11,7 +11,7 @@ Macro Exp_Init()
 	
 // Creates Windows	
 //	PulseCreator()	//For Creating Pulse Sequences
-//	Pulse()			//For Running Pulse Sequence
+	Pulse()			//For Running Pulse Sequence
 //	DCCtrl() 			//For Setting DC Bias on Trap
 //	DDS_Control()	//For Setting DDS Values
 	OverrideVariables()
@@ -22,6 +22,15 @@ Function Param_Init()
 
 	Variable/G LIVE_UP					= 	0
 	Variable/G CUR_POS					= 	LOAD_POS		
+	
+	Variable/G VAR_TTL_01					= TTL_01
+	Variable/G VAR_TTL_02					= TTL_02
+	Variable/G VAR_TTL_03					= TTL_03
+	Variable/G VAR_TTL_04					= TTL_04
+	Variable/G VAR_TTL_05					= TTL_05
+	Variable/G VAR_TTL_06					= TTL_06
+	Variable/G VAR_TTL_07					= TTL_07
+	Variable/G VAR_TTL_08					= TTL_08
 	
 	Variable/G DELAY						=	TTL_00	
 	Variable/G COOL						=	TTL_01
@@ -74,13 +83,15 @@ Function Param_Init()
 	Make/O/N=(1024,2) PulseSequence
 	Make/O/N=1024 TimeSequence
 	Variable/G StepN											=	0
-	Variable/G DDS1Counter,DDS2Counter,DDS3Counter,DDSCounted 	=	0
+	Variable/G DDS1Counter,DDS2Counter,DDS3Counter	=	0
+	Variable/G DDS7Counter,DDS8Counter,DDSCounted 	=	0
 	Variable/G filler										=	0
 	Make/O/N=(5120,6) Settings							=	0
 	Variable/G SettingsCheckOut							=	0
 	Make/O/N=(3,4) DDSsetPoints							=	{{COOL_FREQ,COOL_PHASE,COOL_AMP},{STATE_DET_FREQ,STATE_DET_PHASE,STATE_DET_AMP},{FLR_DET_FREQ,FLR_DET_PHASE,FLR_DET_AMP}}
 	Variable/G SendCounter									=	0
-	Make/O/N=(5120,6) ScanParams=0
+	Make/O/N=(7*1024,6) ScanParams=0
+	String/G LoadingScreen
 
 	Make/O/N=(8,2) OverrideWave							=	0
 	Variable/G Mask											=	0
@@ -404,6 +415,7 @@ Window OverrideVariables() : Panel
 		i+=1
 	While (i<=3)
 	
+
 	i=1
 	TitleBox TTLtitle frame=4,fixedSize=1,labelBack=(0,0,0),fColor=(65535,65535,65535),font="Arial",anchor=MC,pos={50,position},size={150,20}, title="TTL Controls"
 	position+=25

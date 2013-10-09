@@ -81,14 +81,21 @@ Function gb_seq(num, byte)
 	return floor(num / (256^(byte))) - 256*floor(num / (256^(byte+1)))
 end
 
-function/WAVE runSequence(reps)
+function/WAVE runSequence(reps, [recmask])
 	Variable reps
+	Variable recmask
+	recmask = paramIsDefault(recmask) ? 0x00 : recmask
 	
-	Make/B/U/O writeWave = {0x06e, gb_seq(reps,1), gb_seq(reps,0), 0xFF, 0x0d, 0x0a}
+	Make/B/U/O writeWave = {0x06e, gb_seq(reps,1), gb_seq(recmask,0), 0xFF, 0x0d, 0x0a}
 	VDTOperationsPort2 COM4
 	VDTWriteBinaryWave2 writeWave
 	
-	Make/B/U/O/n=(8,reps) data
+	Variable numChannels = 0
+	variable i
+	for(i=0; i<8; i+=1)
+		numChannels += (recmask / 2^i) & 0x01
+	EndFor
+	Make/B/U/O/n=(numChannels,reps) data
 	VDTReadBinaryWave2/B/TYPE=16 data
 	
 	return data
