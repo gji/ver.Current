@@ -8,6 +8,7 @@ Macro Exp_Init()
 	Param_Init()
 	DC_Init()
 	Seq_init()
+	MMCINIT
 	
 // Creates Windows	
 //	PulseCreator()	//For Creating Pulse Sequences
@@ -71,7 +72,7 @@ Function Param_Init()
 	Variable/G GroupNumber									=	0
 	Variable/G GroupError									= 	0
 	Make/O/N=10 NameWave									=	{DELAY,COOL,STATE_DET,FLR_DET,PUMP,COOL_SHTR,LOAD_SHTR,RAMAN1,RAMAN2,PMT}
-	Make/O/T/N=10 TTLNames									=	{"Delay","Cool","State Detection","Flourescence Detection","Pump","Cool Shutter","LoadShutter","Raman 1", "Raman 2","PMT"}			
+	Make/O/T/N=10 TTLNames									=	{"Delay","Cool","State Detection","Flourescence Detection","Pump","Cool Shutter","LoadShutter","Raman 1", "Raman 2","PMT","935 EO"}			
 	Make/O/N=(1024,3)	PulseCreatorWave
 	Variable/G TooLong										=	0
 	NewPath/O SavePath, 										"Z:\\Experiment\\ver.Current\\Sequences\\"
@@ -84,21 +85,24 @@ Function Param_Init()
 	Make/O/N=1024 TimeSequence
 	Variable/G StepN											=	0
 	Variable/G DDS1Counter,DDS2Counter,DDS3Counter	=	0
-	Variable/G DDS7Counter,DDS8Counter,DDSCounted 	=	0
+	Variable/G DDS7Counter,DDS8Counter,DDSCounted		=	0
+	Variable/G DDS10Counter							 	=	0
 	Variable/G filler										=	0
 	Make/O/N=(5120,6) Settings							=	0
 	Variable/G SettingsCheckOut							=	0
 	Make/O/N=(3,4) DDSsetPoints							=	{{COOL_FREQ,COOL_PHASE,COOL_AMP},{STATE_DET_FREQ,STATE_DET_PHASE,STATE_DET_AMP},{FLR_DET_FREQ,FLR_DET_PHASE,FLR_DET_AMP}}
+	Make/O/N=(2,3) EOSetPoints							=	{{1,2105,100},{2,7374,100}}
 	Variable/G SendCounter									=	0
 	Make/O/N=(7*1024,6) ScanParams=0
 	String/G LoadingScreen
 
 	Make/O/N=(8,2) OverrideWave							=	0
+	Make/O/N=(3,4) EO_INFO							=	{{0,1,2},{2105,7374,3060},{100,100,100},{0,0,0}}	
 	Variable/G Mask											=	0
 
 
 
-	Make/O/N=(DDS_Channels,DDS_Params) 	DDS_INFO
+	Make/O/N=(DDS_Channels,DDS_Params+1) 	DDS_INFO
 	Make/O/N=4 							COMP_INFO		 = {0,0,0,1,1}
 	Make/O/T/N=4 						WAVE_INFO		 = {WAVE_Ez, WAVE_Ex, WAVE_Ey, WAVE_Harm}
 	
@@ -110,7 +114,7 @@ Function Param_Init()
 	for(i=0;i!=(DDS_Channels); i+=1)
 		switch(i)
 			case COOL_CNL:
-				For(j=0; j!=(DDS_Params); j+=1)	
+				For(j=0; j!=(DDS_Params+1); j+=1)	
 					switch(j)
 						case 0:		
 							DDS_INFO[i][j]	=	COOL_FREQ
@@ -127,7 +131,7 @@ Function Param_Init()
 				EndFor
 				break
 			case STATE_DET_CNL:
-				For(j=0; j!=(DDS_Params); j+=1)	
+				For(j=0; j!=(DDS_Params+1); j+=1)	
 					switch(j)
 						case 0:	
 							DDS_INFO[i][j]	=	STATE_DET_FREQ	
@@ -144,7 +148,7 @@ Function Param_Init()
 				EndFor
 				break
 			case FLR_DET_CNL:
-				For(j=0; j!=(DDS_Params); j+=1)	
+				For(j=0; j!=(DDS_Params+1); j+=1)	
 					switch(j)
 						case 0:	
 							DDS_INFO[i][j]	=	FLR_DET_FREQ
@@ -161,7 +165,7 @@ Function Param_Init()
 				EndFor
 				break			
 			default:
-				For(j=0; j!=(DDS_Params); j+=1)	
+				For(j=0; j!=(DDS_Params+1); j+=1)	
 					switch(j)
 						default:
 							DDS_INFO[i][j]	=	0
@@ -380,11 +384,11 @@ Window OverrideVariables() : Panel
 	ModifyPanel cbRGB=(65534,65534,65534)
 	Variable i=1
 	Variable position=15
-	String ddsTitle
-	String ddsFreqBox
+	String ddsTitle,eoTitle
+	String ddsFreqBox,eoFreqBox
 	String ddsPhaseBox
-	String ddsAmpBox	
-	String ddsOverride
+	String ddsAmpBox	,eoAmpBox
+	String ddsOverride,eoOverride
 	String TTLLabel
 	String TTLSwitch
 	String TTLOverride
@@ -398,13 +402,13 @@ Window OverrideVariables() : Panel
 		ddsFreqBox="SetVariable DDS"+num2str(i)+"_FREQ_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Frequency\",font=\"Arial\",limits={0,400,0.01},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][0]"
 		position+=20
 		
-		ddsPhaseBox="SetVariable DDS"+num2str(i)+"_PHASE_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Amplitude\",font=\"Arial\",limits={0,180,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][1]"
+		ddsPhaseBox="SetVariable DDS"+num2str(i)+"_PHASE_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Phase\",font=\"Arial\",limits={0,1023,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][2]"
 		position+=20
 		
-		ddsAmpBox="SetVariable DDS"+num2str(i)+"_AMPL_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Phase\",font=\"Arial\",limits={0,1023,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][2]"
+		ddsAmpBox="SetVariable DDS"+num2str(i)+"_AMPL_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Amplitude\",font=\"Arial\",limits={0,180,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][1]"
 		position+=20
 		
-		ddsOverride="Checkbox DDS"+num2str(i)+"_Override,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS "+num2str(i)+" Override\",font=\"Arial\",value=0"
+		ddsOverride="Checkbox DDS"+num2str(i)+"_Override,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_Overridewrapper,title=\"DDS "+num2str(i)+" Override\",font=\"Arial\",value=0"
 
 		position+=40
 		Execute ddstitle
@@ -412,6 +416,27 @@ Window OverrideVariables() : Panel
 		Execute ddsPhaseBox
 		Execute ddsAmpBox
 		Execute ddsOverride
+		i+=1
+	While (i<=3)
+	i=1
+		Do 
+		
+		eotitle= "TitleBox EO"+num2str(i)+"Namebox frame=4,fixedSize=1,font=\"Arial\",labelBack=(0,0,0),fColor=(65535,65535,65535),anchor=MC,pos={50,"+num2str(position)+"},size={150,20}, title=\"EO #"+num2str(i)+"\""
+		position+=25
+		
+		eoFreqBox="SetVariable EO"+num2str(i)+"_FREQ_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=EO_wrapper,title=\"EO"+num2str(i)+" Frequency\",font=\"Arial\",limits={2000,7500,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][0]"
+		position+=20
+		
+		eoAmpBox="SetVariable EO"+num2str(i)+"_AMPL_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=EO_wrapper,title=\"EO"+num2str(i)+" Amplitude\",font=\"Arial\",limits={0,1023,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][2]"
+		position+=20
+		
+		eoOverride="Checkbox EO"+num2str(i)+"_Override,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=EO_Overridewrapper,title=\"EO "+num2str(i)+" Override\",font=\"Arial\",value=0"
+
+		position+=40
+		Execute eotitle
+		Execute eoFreqBox
+		Execute eoAmpBox
+		Execute eoOverride
 		i+=1
 	While (i<=3)
 	
@@ -429,6 +454,7 @@ Window OverrideVariables() : Panel
 		Execute TTLOverride
 		i+=1
 	While (i<=8)
-	MoveWindow/W=OverrideVariables 30,75,250,position-50
-	
+
+	MoveWindow/W=OverrideVariables 30,75,235,(position+130)*72/ScreenResolution
 EndMacro
+

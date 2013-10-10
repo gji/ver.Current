@@ -379,13 +379,14 @@ Function PopMenuProc(pa) : PopupMenuControl
 	SetDataFolder root:ExpParams
 	Make/O/N=(1024,3) LoadedWave 
 	WAVE wave0
-	Variable i
+	Variable i,position
 	
 
 	switch( pa.popNum )
 		case 1: // mouse up
 			ClearScanControls()
-			MoveWindow/W=Pulse 0,0,333,100
+			GetWindow Pulse wsize
+			MoveWindow/W=Pulse V_left,V_top,V_left+250,(100+V_top)*72/ScreenResolution
 			break
 		case 2: // control being killed
 			ClearScanControls()
@@ -397,8 +398,9 @@ Function PopMenuProc(pa) : PopupMenuControl
 			GenerateScanControls(LoadedWave,DefaultSettings())
 			CreateButtons()
 			ControlInfo SetScan
+			position=V_top
 			GetWindow Pulse wsize
-			MoveWindow/W=Pulse V_left,V_top,V_left+250,(60+V_top+VerticalButtonPos)*72/ScreenResolution
+			MoveWindow/W=Pulse V_left,V_top,V_left+950,(80+V_top+position)*72/ScreenResolution
 						
 //			PopupMenu SelectSettings value=" ; Settings 1 ; Settings 2 ; Settings 3 ;...", popvalue=" "
 			break
@@ -411,7 +413,10 @@ Function PopMenuProc(pa) : PopupMenuControl
 			
 			GenerateScanControls(LoadedWave,DefaultSettings())
 			CreateButtons()
-			MoveWindow/W=Pulse 0,0,900,550
+			ControlInfo SetScan
+			position=v_top
+			GetWindow Pulse wsize
+			MoveWindow/W=Pulse V_left,V_top,V_left+950,(80+V_top+position)*72/ScreenResolution
 			
 			break
 		case 4:
@@ -423,7 +428,10 @@ Function PopMenuProc(pa) : PopupMenuControl
 			
 			GenerateScanControls(LoadedWave,DefaultSettings())
 			CreateButtons()
-			MoveWindow/W=Pulse 0,0,900,550
+			ControlInfo SetScan
+			position=v_top
+			GetWindow Pulse wsize
+			MoveWindow/W=Pulse V_left,V_top,V_left+950,(80+V_top+position)*72/ScreenResolution
 			break
 		case 5:
 			break
@@ -461,16 +469,16 @@ Function GenerateScanControls(load,settingwave)
 	Variable/G TotalStep	
 	StepN=1
 	TotalStep=FindtotalStep()
-	VerticalButtonPosition=76
+	VerticalButtonPosition=60
 	
-	TitleBox Group1Title,frame=4,fixedSize=1,labelBack=(0,0,0),fColor=(65535,65535,65535),anchor=MC,pos={75,VerticalButtonPosition-30},size={150,20}, title="Group: "+num2str(load[0][1])+" Loops: "+num2str(load[load[0][1]-1][2])
+	TitleBox Group1Title,frame=4,fixedSize=1,labelBack=(0,0,0),fColor=(65535,65535,65535),anchor=MC,pos={75,VerticalButtonPosition-20},size={150,20}, title="Group: "+num2str(load[0][1])+" Loops: "+num2str(load[load[0][1]-1][2])
 	
 	For (j=0; j<TotalStep; j+=1)
 		If (j>0)
 			If (load[j][1]!=load[j-1][1])
 			Makegrouptitle= "TitleBox Group"+num2str(load[j][1])+"Title, fixedSize=1,frame=4,labelBack=(0,0,0),fColor=(65535,65535,65535),anchor=MC,pos={75,VerticalButtonPosition},size={150,20}, title=\"Group: "+num2str(load[j][1])+" Loops: "+num2str(load[load[j][1]-1][2])+"\""
 			Execute Makegrouptitle
-			VerticalButtonPosition+=30
+			VerticalButtonPosition+=25
 			Endif
 		Endif
 		StepN=j+1
@@ -505,10 +513,10 @@ Function GenerateScan(name,step,settingwave)
 	String TitleBoxCommand = "TitleBox Step"+num2str(StepN)+"Title,labelBack=(65535,65535,65535),frame=5, fixedSize=1,anchor=MC,pos={15,VerticalButtonPosition},size={150,20}, title=\""+TTLNames[name]+"\",win=Pulse"
 	Execute TitleBoxCommand
 	If (name==1||name==7||name==8)
-		Scan0Command = "CheckBox Step"+num2str(StepN)+"Scan0, pos={170,VerticalButtonPosition+4}, title=\"Duration\", win=Pulse,value="+num2str(settingwave[5*step+1][0])
-		Scan1Command = "CheckBox Step"+num2str(StepN)+"Scan1, pos={170,VerticalButtonPosition+34}, title=\"Scan Fequency\", win=Pulse,value="+num2str(settingwave[5*step+2][0])
-		Scan2Command = "CheckBox Step"+num2str(StepN)+"Scan2, pos={170,VerticalButtonPosition+64}, title=\"Scan Amplitude\", win=Pulse,value="+num2str(settingwave[5*step+3][0])
-		Scan3Command = "CheckBox Step"+num2str(StepN)+"Scan3, pos={170,VerticalButtonPosition+94}, title=\"Scan Phase\", win=Pulse,value="+num2str(settingwave[5*step+4][0])
+		Scan0Command = "CheckBox Step"+num2str(StepN)+"Scan0, pos={170,VerticalButtonPosition}, title=\"Duration\", win=Pulse,value="+num2str(settingwave[7*step+1][0])
+		Scan1Command = "CheckBox Step"+num2str(StepN)+"Scan1, pos={170,VerticalButtonPosition+20}, title=\"Scan Fequency\", win=Pulse,value="+num2str(settingwave[7*step+2][0])
+		Scan2Command = "CheckBox Step"+num2str(StepN)+"Scan2, pos={170,VerticalButtonPosition+40}, title=\"Scan Amplitude\", win=Pulse,value="+num2str(settingwave[7*step+3][0])
+		Scan3Command = "CheckBox Step"+num2str(StepN)+"Scan3, pos={170,VerticalButtonPosition+60}, title=\"Scan Phase\", win=Pulse,value="+num2str(settingwave[7*step+4][0])
 		count = "filler=DDS"+num2str(name)+"Counter"
 		Execute count
 		If (filler==0)
@@ -519,18 +527,24 @@ Function GenerateScan(name,step,settingwave)
 			Execute Scan1Command
 			Execute Scan2Command
 			Execute Scan3Command
-			VerticalButtonPosition+=120
+			VerticalButtonPosition+=80
 		Else
 			Execute Scan0Command
-			VerticalButtonPosition+=30
+			VerticalButtonPosition+=20
 		Endif
+	Elseif(name==10)
+		Scan4Command = "CheckBox Step"+num2str(StepN)+"Scan4, pos={170,VerticalButtonPosition}, title=\"Scan Frequency\", win=Pulse,value="+num2str(settingwave[7*step+5][0])
+		Scan5Command = "CheckBox Step"+num2str(StepN)+"Scan5, pos={170,VerticalButtonPosition+20}, title=\"Scan Power\", win=Pulse,value="+num2str(settingwave[7*step+6][0])
+		Execute Scan4Command
+		Execute Scan5Command
+		VerticalButtonPosition+=40
 	Elseif(name==2||name==3)
-		Scan0Command = "CheckBox Step"+num2str(StepN)+"Scan0, pos={170,VerticalButtonPosition+4}, title=\"Duration\", win=Pulse,value="+num2str(settingwave[5*step+1][0])
-		Scan1Command = "CheckBox Step"+num2str(StepN)+"Scan1, pos={170,VerticalButtonPosition+34}, title=\"Scan AO Fequency\", win=Pulse,value="+num2str(settingwave[5*step+2][0])
-		Scan2Command = "CheckBox Step"+num2str(StepN)+"Scan2, pos={170,VerticalButtonPosition+64}, title=\"Scan AO Amplitude\", win=Pulse,value="+num2str(settingwave[5*step+3][0])
-		Scan3Command = "CheckBox Step"+num2str(StepN)+"Scan3, pos={170,VerticalButtonPosition+94}, title=\"Scan AO Phase\", win=Pulse,value="+num2str(settingwave[5*step+4][0])
-		Scan4Command = "CheckBox Step"+num2str(StepN)+"Scan4, pos={170,VerticalButtonPosition+124}, title=\"Scan EO Fequency\", win=Pulse,value="+num2str(settingwave[5*step+2][0])
-		Scan5Command = "CheckBox Step"+num2str(StepN)+"Scan5, pos={170,VerticalButtonPosition+154}, title=\"Scan EO Amplitude\", win=Pulse,value="+num2str(settingwave[5*step+3][0])
+		Scan0Command = "CheckBox Step"+num2str(StepN)+"Scan0, pos={170,VerticalButtonPosition}, title=\"Duration\", win=Pulse,value="+num2str(settingwave[7*step+1][0])
+		Scan1Command = "CheckBox Step"+num2str(StepN)+"Scan1, pos={170,VerticalButtonPosition+20}, title=\"Scan AO Fequency\", win=Pulse,value="+num2str(settingwave[7*step+2][0])
+		Scan2Command = "CheckBox Step"+num2str(StepN)+"Scan2, pos={170,VerticalButtonPosition+40}, title=\"Scan AO Amplitude\", win=Pulse,value="+num2str(settingwave[7*step+3][0])
+		Scan3Command = "CheckBox Step"+num2str(StepN)+"Scan3, pos={170,VerticalButtonPosition+60}, title=\"Scan AO Phase\", win=Pulse,value="+num2str(settingwave[7*step+4][0])
+		Scan4Command = "CheckBox Step"+num2str(StepN)+"Scan4, pos={170,VerticalButtonPosition+80}, title=\"Scan EO Fequency\", win=Pulse,value="+num2str(settingwave[7*step+5][0])
+		Scan5Command = "CheckBox Step"+num2str(StepN)+"Scan5, pos={170,VerticalButtonPosition+100}, title=\"Scan EO Amplitude\", win=Pulse,value="+num2str(settingwave[7*step+6][0])
 		count = "filler=DDS"+num2str(name)+"Counter"
 		Execute count
 		If (filler==0)
@@ -543,15 +557,15 @@ Function GenerateScan(name,step,settingwave)
 			Execute Scan3Command
 			Execute Scan4Command
 			Execute Scan5Command
-			VerticalButtonPosition+=180
+			VerticalButtonPosition+=120
 		Else
 			Execute Scan0Command
-			VerticalButtonPosition+=30
+			VerticalButtonPosition+=20
 		Endif
 	Else
-		String ScanCommand = "CheckBox Step"+num2str(StepN)+"Scan, pos={170,VerticalButtonPosition+4}, title=\"Scan Duration\", win=Pulse,value="+num2str(settingwave[5*step][0])
+		String ScanCommand = "CheckBox Step"+num2str(StepN)+"Scan, pos={170,VerticalButtonPosition}, title=\"Scan Duration\", win=Pulse,value="+num2str(settingwave[7*step][0])
 		Execute ScanCommand
-		VerticalButtonPosition+=30
+		VerticalButtonPosition+=20
 	Endif
 End
 
@@ -571,35 +585,47 @@ Variable i
 		String killlower1 = "KillControl/W=Pulse Step"+num2str(i)+"lowerlim1"
 		String killlower2= "KillControl/W=Pulse Step"+num2str(i)+"lowerlim2"
 		String killlower3= "KillControl/W=Pulse Step"+num2str(i)+"lowerlim3"
+		String killlower4= "KillControl/W=Pulse Step"+num2str(i)+"lowerlim4"
+		String killlower5= "KillControl/W=Pulse Step"+num2str(i)+"lowerlim5"
 		String killlower = "KillControl/W=Pulse Step"+num2str(i)+"lowerlim"
 		String killupper = "KillControl/W=Pulse Step"+num2str(i)+"upperlim"
 		String killupper0= "KillControl/W=Pulse Step"+num2str(i)+"upperlim0"
 		String killupper1= "KillControl/W=Pulse Step"+num2str(i)+"upperlim1"
 		String killupper2= "KillControl/W=Pulse Step"+num2str(i)+"upperlim2"
 		String killupper3 = "KillControl/W=Pulse Step"+num2str(i)+"upperlim3"
+		String killupper4 = "KillControl/W=Pulse Step"+num2str(i)+"upperlim4"
+		String killupper5 = "KillControl/W=Pulse Step"+num2str(i)+"upperlim5"
 		String killinc = "KillControl/W=Pulse Step"+num2str(i)+"Inc"
 		String killinc0 = "KillControl/W=Pulse Step"+num2str(i)+"Inc0"
 		String killinc1 = "KillControl/W=Pulse Step"+num2str(i)+"Inc1"
 		String killinc2 = "KillControl/W=Pulse Step"+num2str(i)+"Inc2"
 		String killinc3 = "KillControl/W=Pulse Step"+num2str(i)+"Inc3"
+		String killinc4 = "KillControl/W=Pulse Step"+num2str(i)+"Inc4"
+		String killinc5 = "KillControl/W=Pulse Step"+num2str(i)+"Inc5"
 		String killset = "KillControl/W=Pulse Step"+num2str(i)+"setpoint"
 		String killset0 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint0"
 		String killset1 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint1"
 		String killset2 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint2"
 		String killset3 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint3"
+		String killset4 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint4"
+		String killset5 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint5"
 		String killSO = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder"
 		String killSO0 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder0"
 		String killSO1 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder1"
 		String killSO2 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder2"
 		String killSO3 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder3"
-		Execute killSO1+";"+killSO2+";"+killSO3+";"+killSO+";"+killSO0
-		Execute killtitle+";"+killlower+";"+killlower1+";"+killlower2+";"+killlower3+";"+killlower0
-		Execute killupper+";"+killupper1+";"+killupper2+";"+killupper3+";"+killinc+";"+killinc1+";"+killinc0+";"+killupper0
-		Execute killinc2+";"+killinc3+";"+killset+";"+killset1+";"+killset2+";"+killset3+";"+killset0+";"+kill0
+		String killSO4 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder4"
+		String killSO5 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder5"
+		Execute killSO1+";"+killSO2+";"+killSO3+";"+killSO+";"+killSO0+";"+killSO4+";"+killSO5
+		Execute killtitle+";"+killlower+";"+killlower1+";"+killlower2+";"+killlower3+";"+killlower0+";"+killlower5+";"+killlower4
+		Execute killupper+";"+killupper1+";"+killupper2+";"+killupper3+";"+killinc+";"+killinc1
+		Execute killinc0+";"+killupper0+";"+killupper4+";"+killupper5
+		Execute killinc2+";"+killinc3+";"+killset+";"+killset1+";"+killset2+";"+killset3
+		Execute killset0+";"+kill0+";"+killinc5+";"+killinc4+";"+killset4+";"+killset5
 		Execute kill
 		Execute kill1
 		Execute kill2
-		Execute kill3
+		Execute kill3+";"+kill4+";"+kill5
 		KillControl/W=Pulse Loops
 		KillControl/W=Pulse SetScan
 		KillControl/W=Pulse ClearScan
@@ -677,7 +703,7 @@ Function GenerateBounds(load,settingwave)
 	Variable/G value
 	Variable ScanOrder=1
 	Make/O/N=(5120,6) ScanParams=0
-	NVAR DDS1Counter,DDS2Counter,DDS3Counter,DDSCounted
+	NVAR DDS1Counter,DDS2Counter,DDS3Counter,DDSCounted,DDS7Counter,DDS8Counter,DDS10Counter
 	NVAR filler
 	String getscan0, count, counting
 	String getscan1
@@ -714,22 +740,28 @@ Function GenerateBounds(load,settingwave)
 	String generatesetpoint2
 	String generatesetpoint3
 	String generatesetpoint4
-	String generatesetpoint5
+	String generatesetpoint5,setposition
 				
 	
 	DDS1Counter=0
 	DDS2Counter=0
 	DDS3Counter=0
 	DDSCounted=0
+	DDS7Counter=0
+	DDS8Counter=0
+	DDS10Counter=0
 	
-	VerticalButtonPosition=76
+
 	TotalScan=0
 	For (i=0;i<TotalStep;i+=1)
-		If (i>0)
-			If (load[i][1]!=load[i-1][1])
-			VerticalButtonPosition+=30
-			Endif
-		Endif
+		setposition="ControlInfo Step"+num2str(i+1)+"Title; verticalButtonposition=V_top"
+		Execute setposition
+		value0=0
+		value1=0
+		value2=0
+		value3=0
+		value4=0
+		value5=0
 			If (load[i][0]==1||load[i][0]==7||load[i][0]==8)
 				
 				
@@ -743,27 +775,27 @@ Function GenerateBounds(load,settingwave)
 				Execute getscan3
 				
 
-				 generatelowlim0 = "SetVariable Step"+num2str(i+1)+"lowerlim0, pos={500, VerticalButtonPosition}, title=\"Start Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][2])
-				 generatelowlim1 = "SetVariable Step"+num2str(i+1)+"lowerlim1, pos={500, VerticalButtonPosition+30}, title=\"Start Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][2])
-				 generatelowlim2 = "SetVariable Step"+num2str(i+1)+"lowerlim2, pos={500, VerticalButtonPosition+60}, title=\"Start Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][2])+",limits={0,1023,1}"
-				 generatelowlim3 = "SetVariable Step"+num2str(i+1)+"lowerlim3, pos={500, VerticalButtonPosition+90}, title=\"Start Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][2])
-				 generateupperlim0 = "SetVariable Step"+num2str(i+1)+"upperlim0, pos={680, VerticalButtonPosition}, title=\"End Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][3])
-				 generateupperlim1 = "SetVariable Step"+num2str(i+1)+"upperlim1, pos={680, VerticalButtonPosition+30}, title=\"End Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][3])
-				 generateupperlim2 = "SetVariable Step"+num2str(i+1)+"upperlim2, pos={680, VerticalButtonPosition+60}, title=\"End Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][3])+",limits={0,1023,1}"
-				 generateupperlim3 = "SetVariable Step"+num2str(i+1)+"upperlim3, pos={680, VerticalButtonPosition+90}, title=\"End Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][3])
-				 generateInc0 = "SetVariable Step"+num2str(i+1)+"Inc0, pos={860, VerticalButtonPosition}, title=\"Increment (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][4])
-				 generateInc1 = "SetVariable Step"+num2str(i+1)+"Inc1, pos={860, VerticalButtonPosition+30}, title=\"Increment (MHZ)\", win=Pulse,size={130,20},bodywidth=50,limits={0.001,400,.001},value=_NUM:"+num2str(SettingWave[7*i+2][4])
-				 generateInc2 = "SetVariable Step"+num2str(i+1)+"Inc2, pos={860, VerticalButtonPosition+60}, title=\"Increment\", win=Pulse,size={130,20},bodywidth=50,limits={1,1023,1},value=_NUM:"+num2str(SettingWave[7*i+3][4])
-				 generateInc3 = "SetVariable Step"+num2str(i+1)+"Inc3, pos={860, VerticalButtonPosition+90}, title=\"Increment (Degrees)\", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=_NUM:"+num2str(SettingWave[7*i+4][4])
-				 generateScanOrder0 = "SetVariable Step"+num2str(i+1)+"ScanOrder0, pos={1040, VerticalButtonPosition}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
-				 generateScanOrder1 = "SetVariable Step"+num2str(i+1)+"ScanOrder1, pos={1040, VerticalButtonPosition+30}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
-				 generateScanOrder2 = "SetVariable Step"+num2str(i+1)+"ScanOrder2, pos={1040, VerticalButtonPosition+60}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
-				 generateScanOrder3 = "SetVariable Step"+num2str(i+1)+"ScanOrder3, pos={1040, VerticalButtonPosition+90}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				 generatelowlim0 = "SetVariable Step"+num2str(i+1)+"lowerlim0, pos={540, VerticalButtonPosition}, title=\"Start Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][2])
+				 generatelowlim1 = "SetVariable Step"+num2str(i+1)+"lowerlim1, pos={540, VerticalButtonPosition+20}, title=\"Start Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][2])
+				 generatelowlim2 = "SetVariable Step"+num2str(i+1)+"lowerlim2, pos={540, VerticalButtonPosition+40}, title=\"Start Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][2])+",limits={0,1023,1}"
+				 generatelowlim3 = "SetVariable Step"+num2str(i+1)+"lowerlim3, pos={540, VerticalButtonPosition+60}, title=\"Start Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][2])
+				 generateupperlim0 = "SetVariable Step"+num2str(i+1)+"upperlim0, pos={740, VerticalButtonPosition}, title=\"End Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][3])
+				 generateupperlim1 = "SetVariable Step"+num2str(i+1)+"upperlim1, pos={740, VerticalButtonPosition+20}, title=\"End Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][3])
+				 generateupperlim2 = "SetVariable Step"+num2str(i+1)+"upperlim2, pos={740, VerticalButtonPosition+40}, title=\"End Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][3])+",limits={0,1023,1}"
+				 generateupperlim3 = "SetVariable Step"+num2str(i+1)+"upperlim3, pos={740, VerticalButtonPosition+60}, title=\"End Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][3])
+				 generateInc0 = "SetVariable Step"+num2str(i+1)+"Inc0, pos={940, VerticalButtonPosition}, title=\"Increment (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][4])
+				 generateInc1 = "SetVariable Step"+num2str(i+1)+"Inc1, pos={940, VerticalButtonPosition+20}, title=\"Increment (MHZ)\", win=Pulse,size={130,20},bodywidth=50,limits={0.001,400,.001},value=_NUM:"+num2str(SettingWave[7*i+2][4])
+				 generateInc2 = "SetVariable Step"+num2str(i+1)+"Inc2, pos={940, VerticalButtonPosition+40}, title=\"Increment\", win=Pulse,size={130,20},bodywidth=50,limits={1,1023,1},value=_NUM:"+num2str(SettingWave[7*i+3][4])
+				 generateInc3 = "SetVariable Step"+num2str(i+1)+"Inc3, pos={940, VerticalButtonPosition+60}, title=\"Increment (Degrees)\", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=_NUM:"+num2str(SettingWave[7*i+4][4])
+				 generateScanOrder0 = "SetVariable Step"+num2str(i+1)+"ScanOrder0, pos={1080, VerticalButtonPosition}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				 generateScanOrder1 = "SetVariable Step"+num2str(i+1)+"ScanOrder1, pos={1080, VerticalButtonPosition+20}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				 generateScanOrder2 = "SetVariable Step"+num2str(i+1)+"ScanOrder2, pos={1080, VerticalButtonPosition+40}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				 generateScanOrder3 = "SetVariable Step"+num2str(i+1)+"ScanOrder3, pos={1080, VerticalButtonPosition+60}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
 				
-				 generatesetpoint0 = "SetVariable Step"+num2str(i+1)+"setpoint0, pos={320, VerticalButtonPosition}, title=\"Time Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][1])
-				 generatesetpoint1 = "SetVariable Step"+num2str(i+1)+"setpoint1, pos={320, VerticalButtonPosition+30}, title=\"Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][1])
-				 generatesetpoint2 = "SetVariable Step"+num2str(i+1)+"setpoint2, pos={320, VerticalButtonPosition+60}, title=\"Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][1])
-				 generatesetpoint3 = "SetVariable Step"+num2str(i+1)+"setpoint3, pos={320, VerticalButtonPosition+90}, title=\"Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][1])
+				 generatesetpoint0 = "SetVariable Step"+num2str(i+1)+"setpoint0, pos={340, VerticalButtonPosition}, title=\"Time Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][1])
+				 generatesetpoint1 = "SetVariable Step"+num2str(i+1)+"setpoint1, pos={340, VerticalButtonPosition+20}, title=\"Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][1])
+				 generatesetpoint2 = "SetVariable Step"+num2str(i+1)+"setpoint2, pos={340, VerticalButtonPosition+40}, title=\"Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][1])
+				 generatesetpoint3 = "SetVariable Step"+num2str(i+1)+"setpoint3, pos={340, VerticalButtonPosition+60}, title=\"Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][1])
 				
 				
 
@@ -856,7 +888,65 @@ Function GenerateBounds(load,settingwave)
 					
 					VerticalButtonPosition+=30
 				Endif
-			Elseif(Load[i][0]==1||Load[i][0]==2)	
+			Elseif(Load[i][0]==10)
+				getscan4 = "ControlInfo Step"+num2str(i+1)+"Scan4;value4=V_Value"
+				getscan5 = "ControlInfo Step"+num2str(i+1)+"Scan5;value5=V_Value"
+				Execute getscan4
+				Execute getscan5
+				 
+				generatelowlim4 = "SetVariable Step"+num2str(i+1)+"lowerlim4, pos={540, VerticalButtonPosition+80}, title=\"Start EO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+5][2])
+				generatelowlim5 = "SetVariable Step"+num2str(i+1)+"lowerlim5, pos={540, VerticalButtonPosition+100}, title=\"Start EO Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+6][2])
+				generateupperlim4 = "SetVariable Step"+num2str(i+1)+"upperlim4, pos={740, VerticalButtonPosition+80}, title=\"End EO Frequency\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+5][3])
+				generateupperlim5 = "SetVariable Step"+num2str(i+1)+"upperlim5, pos={740, VerticalButtonPosition+100}, title=\"End EO Amplitude (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+6][3])
+				generateInc4 = "SetVariable Step"+num2str(i+1)+"Inc4, pos={940, VerticalButtonPosition+80}, title=\"Increment (MHZ)\", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=_NUM:"+num2str(SettingWave[7*i+5][4])
+				generateInc5 = "SetVariable Step"+num2str(i+1)+"Inc5, pos={940, VerticalButtonPosition+100}, title=\"Increment\", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=_NUM:"+num2str(SettingWave[7*i+6][4])
+				generateScanOrder4 = "SetVariable Step"+num2str(i+1)+"ScanOrder4, pos={1080, VerticalButtonPosition+80}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				generateScanOrder5 = "SetVariable Step"+num2str(i+1)+"ScanOrder5, pos={1080, VerticalButtonPosition+100}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				generatesetpoint4 = "SetVariable Step"+num2str(i+1)+"setpoint4, pos={340, VerticalButtonPosition+80}, title=\"EO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+5][1])
+				generatesetpoint5 = "SetVariable Step"+num2str(i+1)+"setpoint5, pos={340, VerticalButtonPosition+100}, title=\"EO Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+6][1])
+
+
+				 count = "DDSCounted=DDS"+num2str(load[i][0])+"Counter"
+				Execute count
+				If (DDSCounted==0)
+					Execute generatesetpoint4
+					Execute generatesetpoint5
+					 counting = "DDS"+num2str(load[i][0])+"Counter+=1"
+					Execute counting
+									
+					If (value4==1)
+						Execute generatelowlim4
+						Execute generateupperlim4
+						Execute generateInc4
+						If (SettingWave[7*i+5][5]==0)
+							Execute generateScanOrder4+num2str(ScanOrder)
+						ScanOrder+=1
+						Else
+							Execute generateScanOrder4+num2str(SettingWave[7*i+5][5])
+						Endif
+						TotalScan+=1
+						ScanParams[7*i+5][0]=1
+			
+					Endif
+					If (value5==1)
+						Execute generatelowlim5
+						Execute generateupperlim5
+						Execute generateInc5
+						If (SettingWave[7*i+6][5]==0)
+							Execute generateScanOrder5+num2str(ScanOrder)
+						ScanOrder+=1
+						Else
+							Execute generateScanOrder5+num2str(SettingWave[7*i+6][5])
+						Endif
+						TotalScan+=1
+						ScanParams[7*i+6][0]=1
+			
+					Endif
+					VerticalButtonPosition+=60
+				Endif
+				
+				
+			Elseif(Load[i][0]==2||Load[i][0]==3)	
 				
 				 getscan0 = "ControlInfo Step"+num2str(i+1)+"Scan0;value0=V_Value"
 				 getscan1 = "ControlInfo Step"+num2str(i+1)+"Scan1;value1=V_Value"
@@ -872,37 +962,37 @@ Function GenerateBounds(load,settingwave)
 				Execute getscan5
 				
 
-				 generatelowlim0 = "SetVariable Step"+num2str(i+1)+"lowerlim0, pos={500, VerticalButtonPosition}, title=\"Start Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][2])
-				 generatelowlim1 = "SetVariable Step"+num2str(i+1)+"lowerlim1, pos={500, VerticalButtonPosition+30}, title=\"Start AO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][2])
-				 generatelowlim2 = "SetVariable Step"+num2str(i+1)+"lowerlim2, pos={500, VerticalButtonPosition+60}, title=\"Start AO Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][2])+",limits={0,1023,1}"
-				 generatelowlim3 = "SetVariable Step"+num2str(i+1)+"lowerlim3, pos={500, VerticalButtonPosition+90}, title=\"Start AO Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][2])
-				 generatelowlim4 = "SetVariable Step"+num2str(i+1)+"lowerlim4, pos={500, VerticalButtonPosition+120}, title=\"Start EO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+5][2])
-				 generatelowlim5 = "SetVariable Step"+num2str(i+1)+"lowerlim5, pos={500, VerticalButtonPosition+150}, title=\"Start EO Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+6][2])
-				 generateupperlim0 = "SetVariable Step"+num2str(i+1)+"upperlim0, pos={680, VerticalButtonPosition}, title=\"End Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][3])
-				 generateupperlim1 = "SetVariable Step"+num2str(i+1)+"upperlim1, pos={680, VerticalButtonPosition+30}, title=\"End AO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][3])
-				 generateupperlim2 = "SetVariable Step"+num2str(i+1)+"upperlim2, pos={680, VerticalButtonPosition+60}, title=\"End AO Amplitude (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][3])+",limits={0,1023,1}"
-				 generateupperlim3 = "SetVariable Step"+num2str(i+1)+"upperlim3, pos={680, VerticalButtonPosition+90}, title=\"End AO Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][3])
-				 generateupperlim4 = "SetVariable Step"+num2str(i+1)+"upperlim4, pos={680, VerticalButtonPosition+120}, title=\"End EO Frequency\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+5][3])
-				 generateupperlim5 = "SetVariable Step"+num2str(i+1)+"upperlim5, pos={680, VerticalButtonPosition+150}, title=\"End EO Amplitude (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+6][3])
-				 generateInc0 = "SetVariable Step"+num2str(i+1)+"Inc0, pos={860, VerticalButtonPosition}, title=\"Increment (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][4])
-				 generateInc1 = "SetVariable Step"+num2str(i+1)+"Inc1, pos={860, VerticalButtonPosition+30}, title=\"Increment (MHZ)\", win=Pulse,size={130,20},bodywidth=50,limits={0.001,400,.001},value=_NUM:"+num2str(SettingWave[7*i+2][4])
-				 generateInc2 = "SetVariable Step"+num2str(i+1)+"Inc2, pos={860, VerticalButtonPosition+60}, title=\"Increment\", win=Pulse,size={130,20},bodywidth=50,limits={1,1023,1},value=_NUM:"+num2str(SettingWave[7*i+3][4])
-				 generateInc3 = "SetVariable Step"+num2str(i+1)+"Inc3, pos={860, VerticalButtonPosition+90}, title=\"Increment (Degrees)\", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=_NUM:"+num2str(SettingWave[7*i+4][4])
-				 generateInc4 = "SetVariable Step"+num2str(i+1)+"Inc4, pos={860, VerticalButtonPosition+120}, title=\"Increment (MHZ)\", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=_NUM:"+num2str(SettingWave[7*i+5][4])
-				 generateInc5 = "SetVariable Step"+num2str(i+1)+"Inc5, pos={860, VerticalButtonPosition+150}, title=\"Increment\", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=_NUM:"+num2str(SettingWave[7*i+6][4])
-				 generateScanOrder0 = "SetVariable Step"+num2str(i+1)+"ScanOrder0, pos={1040, VerticalButtonPosition}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
-				 generateScanOrder1 = "SetVariable Step"+num2str(i+1)+"ScanOrder1, pos={1040, VerticalButtonPosition+30}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
-				 generateScanOrder2 = "SetVariable Step"+num2str(i+1)+"ScanOrder2, pos={1040, VerticalButtonPosition+60}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
-				 generateScanOrder3 = "SetVariable Step"+num2str(i+1)+"ScanOrder3, pos={1040, VerticalButtonPosition+90}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
-				 generateScanOrder4 = "SetVariable Step"+num2str(i+1)+"ScanOrder4, pos={1040, VerticalButtonPosition+120}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
-				 generateScanOrder5 = "SetVariable Step"+num2str(i+1)+"ScanOrder5, pos={1040, VerticalButtonPosition+150}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				 generatelowlim0 = "SetVariable Step"+num2str(i+1)+"lowerlim0, pos={540, VerticalButtonPosition}, title=\"Start Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][2])
+				 generatelowlim1 = "SetVariable Step"+num2str(i+1)+"lowerlim1, pos={540, VerticalButtonPosition+20}, title=\"Start AO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][2])
+				 generatelowlim2 = "SetVariable Step"+num2str(i+1)+"lowerlim2, pos={540, VerticalButtonPosition+40}, title=\"Start AO Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][2])+",limits={0,1023,1}"
+				 generatelowlim3 = "SetVariable Step"+num2str(i+1)+"lowerlim3, pos={540, VerticalButtonPosition+60}, title=\"Start AO Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][2])
+				 generatelowlim4 = "SetVariable Step"+num2str(i+1)+"lowerlim4, pos={540, VerticalButtonPosition+80}, title=\"Start EO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+5][2])
+				 generatelowlim5 = "SetVariable Step"+num2str(i+1)+"lowerlim5, pos={540, VerticalButtonPosition+100}, title=\"Start EO Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+6][2])
+				 generateupperlim0 = "SetVariable Step"+num2str(i+1)+"upperlim0, pos={740, VerticalButtonPosition}, title=\"End Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][3])
+				 generateupperlim1 = "SetVariable Step"+num2str(i+1)+"upperlim1, pos={740, VerticalButtonPosition+20}, title=\"End AO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][3])
+				 generateupperlim2 = "SetVariable Step"+num2str(i+1)+"upperlim2, pos={740, VerticalButtonPosition+40}, title=\"End AO Amplitude (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][3])+",limits={0,1023,1}"
+				 generateupperlim3 = "SetVariable Step"+num2str(i+1)+"upperlim3, pos={740, VerticalButtonPosition+60}, title=\"End AO Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][3])
+				 generateupperlim4 = "SetVariable Step"+num2str(i+1)+"upperlim4, pos={740, VerticalButtonPosition+80}, title=\"End EO Frequency\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+5][3])
+				 generateupperlim5 = "SetVariable Step"+num2str(i+1)+"upperlim5, pos={740, VerticalButtonPosition+100}, title=\"End EO Amplitude (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+6][3])
+				 generateInc0 = "SetVariable Step"+num2str(i+1)+"Inc0, pos={940, VerticalButtonPosition}, title=\"Increment (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][4])
+				 generateInc1 = "SetVariable Step"+num2str(i+1)+"Inc1, pos={940, VerticalButtonPosition+20}, title=\"Increment (MHZ)\", win=Pulse,size={130,20},bodywidth=50,limits={0.001,400,.001},value=_NUM:"+num2str(SettingWave[7*i+2][4])
+				 generateInc2 = "SetVariable Step"+num2str(i+1)+"Inc2, pos={940, VerticalButtonPosition+40}, title=\"Increment\", win=Pulse,size={130,20},bodywidth=50,limits={1,1023,1},value=_NUM:"+num2str(SettingWave[7*i+3][4])
+				 generateInc3 = "SetVariable Step"+num2str(i+1)+"Inc3, pos={940, VerticalButtonPosition+60}, title=\"Increment (Degrees)\", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=_NUM:"+num2str(SettingWave[7*i+4][4])
+				 generateInc4 = "SetVariable Step"+num2str(i+1)+"Inc4, pos={940, VerticalButtonPosition+80}, title=\"Increment (MHZ)\", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=_NUM:"+num2str(SettingWave[7*i+5][4])
+				 generateInc5 = "SetVariable Step"+num2str(i+1)+"Inc5, pos={940, VerticalButtonPosition+100}, title=\"Increment\", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=_NUM:"+num2str(SettingWave[7*i+6][4])
+				 generateScanOrder0 = "SetVariable Step"+num2str(i+1)+"ScanOrder0, pos={1080, VerticalButtonPosition}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				 generateScanOrder1 = "SetVariable Step"+num2str(i+1)+"ScanOrder1, pos={1080, VerticalButtonPosition+20}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				 generateScanOrder2 = "SetVariable Step"+num2str(i+1)+"ScanOrder2, pos={1080, VerticalButtonPosition+40}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				 generateScanOrder3 = "SetVariable Step"+num2str(i+1)+"ScanOrder3, pos={1080, VerticalButtonPosition+60}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				 generateScanOrder4 = "SetVariable Step"+num2str(i+1)+"ScanOrder4, pos={1080, VerticalButtonPosition+80}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				 generateScanOrder5 = "SetVariable Step"+num2str(i+1)+"ScanOrder5, pos={1080, VerticalButtonPosition+100}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
 								
-				 generatesetpoint0 = "SetVariable Step"+num2str(i+1)+"setpoint0, pos={320, VerticalButtonPosition}, title=\"Time Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][1])
-				 generatesetpoint1 = "SetVariable Step"+num2str(i+1)+"setpoint1, pos={320, VerticalButtonPosition+30}, title=\"AO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][1])
-				 generatesetpoint2 = "SetVariable Step"+num2str(i+1)+"setpoint2, pos={320, VerticalButtonPosition+60}, title=\"AO Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][1])
-				 generatesetpoint3 = "SetVariable Step"+num2str(i+1)+"setpoint3, pos={320, VerticalButtonPosition+90}, title=\"AO Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][1])
-				 generatesetpoint4 = "SetVariable Step"+num2str(i+1)+"setpoint4, pos={320, VerticalButtonPosition+120}, title=\"EO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+5][1])
-				 generatesetpoint5 = "SetVariable Step"+num2str(i+1)+"setpoint5, pos={320, VerticalButtonPosition+150}, title=\"EO Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+6][1])
+				 generatesetpoint0 = "SetVariable Step"+num2str(i+1)+"setpoint0, pos={340, VerticalButtonPosition}, title=\"Time Duration (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=_NUM:"+num2str(SettingWave[7*i+1][1])
+				 generatesetpoint1 = "SetVariable Step"+num2str(i+1)+"setpoint1, pos={340, VerticalButtonPosition+20}, title=\"AO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][1])
+				 generatesetpoint2 = "SetVariable Step"+num2str(i+1)+"setpoint2, pos={340, VerticalButtonPosition+40}, title=\"AO Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][1])
+				 generatesetpoint3 = "SetVariable Step"+num2str(i+1)+"setpoint3, pos={340, VerticalButtonPosition+60}, title=\"AO Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][1])
+				 generatesetpoint4 = "SetVariable Step"+num2str(i+1)+"setpoint4, pos={340, VerticalButtonPosition+80}, title=\"EO Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+5][1])
+				 generatesetpoint5 = "SetVariable Step"+num2str(i+1)+"setpoint5, pos={340, VerticalButtonPosition+100}, title=\"EO Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+6][1])
 				
 				
 
@@ -1029,11 +1119,11 @@ Function GenerateBounds(load,settingwave)
 				String getscan = "ControlInfo Step"+num2str(i+1)+"Scan;value=V_Value"
 				Execute getscan
 
-				String generatelowlim = "SetVariable Step"+num2str(i+1)+"lowerlim, pos={500, VerticalButtonPosition}, title=\"Start Duration (us)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i][2])+",limits={.02,2000000,0.02}"
-				String generateupperlim = "SetVariable Step"+num2str(i+1)+"upperlim, pos={680, VerticalButtonPosition}, title=\"End Duration(us)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i][3])+",limits={.02,2000000,0.02}"
-				String generateInc = "SetVariable Step"+num2str(i+1)+"Inc, pos={860, VerticalButtonPosition}, title=\"Increment (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,20000,.02},value=_NUM:"+num2str(SettingWave[7*i][4])				
-				String generatesetpoint = "SetVariable Step"+num2str(i+1)+"setpoint, pos={320, VerticalButtonPosition}, title=\"Time Duration (us)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i][1])+",limits={.02,2000000,0.002}"
-				String generateScanOrder = "SetVariable Step"+num2str(i+1)+"ScanOrder, pos={1040, VerticalButtonPosition}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
+				String generatelowlim = "SetVariable Step"+num2str(i+1)+"lowerlim, pos={540, VerticalButtonPosition}, title=\"Start Duration (us)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i][2])+",limits={.02,2000000,0.02}"
+				String generateupperlim = "SetVariable Step"+num2str(i+1)+"upperlim, pos={740, VerticalButtonPosition}, title=\"End Duration(us)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i][3])+",limits={.02,2000000,0.02}"
+				String generateInc = "SetVariable Step"+num2str(i+1)+"Inc, pos={940, VerticalButtonPosition}, title=\"Increment (us)\", win=Pulse,size={130,20},bodywidth=50,limits={.02,20000,.02},value=_NUM:"+num2str(SettingWave[7*i][4])				
+				String generatesetpoint = "SetVariable Step"+num2str(i+1)+"setpoint, pos={340, VerticalButtonPosition}, title=\"Time Duration (us)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i][1])+",limits={.02,2000000,0.002}"
+				String generateScanOrder = "SetVariable Step"+num2str(i+1)+"ScanOrder, pos={1080, VerticalButtonPosition}, title=\"Scan Order\", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=_NUM:"
 				
 				Execute generatesetpoint
 				
@@ -1062,7 +1152,7 @@ Function CreateButtons()
 	SetDataFolder root:ExpParams
 	NVAR VerticalButtonPosition
 	
-	SetVariable Loops pos={542,VerticalButtonPosition},win=Pulse,title="Number of Cycles", limits={0,2^16,1}, size={130,20},value=_NUM:1
+	SetVariable Loops pos={542,VerticalButtonPosition},win=Pulse,title="Number of Cycles", limits={0,2^16,1}, size={150,20},value=_NUM:1
 	
 	VerticalButtonPosition+=30
 	
@@ -1104,7 +1194,8 @@ Function ClearScanProc(ba) : ButtonControl
 			KillControl/W=Pulse SetScan
 			KillControl/W=Pulse ClearScan
 			KillControl/W=Pulse Run
-			MoveWindow/W=Pulse 0,0,333,100
+			GetWindow Pulse wsize
+			MoveWindow/W=Pulse V_left,V_top,V_left+250,(100+V_top)*72/ScreenResolution
 			break
 		case -1:
 			break
@@ -1210,14 +1301,19 @@ Function SaveButtonProc(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
 	WAVE ScanParams
 	Variable SequenceNum
+	String SequenceName
 	ControlInfo/W=Pulse Sequence
 	 SequenceNum=V_Value
-	String SettingName
+	String SettingName,MakePath
 	switch(ba.eventCode)
 		case 2: //mouse up
 			ControlInfo/W=SaveSettingsWindow SequenceNamefield
 			SettingName=S_Value
-			String SaveSettingsstring="Save/P=SettingsSavePath"+num2str(SequenceNum-1)+"/O/G/W ScanParams as \""+SettingName+".dat\""
+			ControlInfo/W=Pulse Sequence
+			SequenceName=S_Value
+			MakePath = "NewPath/C/O/Q TempPath, \"Z:\\Experiment\\ver.Current\\Settings\\"+SequenceName+"\""
+			Execute Makepath
+			String SaveSettingsstring="Save/P=TempPath/O/G/W ScanParams as \""+SettingName+".dat\""
 			Execute SaveSettingsString
 			DoAlert/T="Save Message" 0, "Settings Saved"
 			DoWindow/K SaveSettingsWindow
@@ -1239,12 +1335,16 @@ Function RunProc(ba) : ButtonControl
 			
 			If (SettingsCheck()==0)
 				DefineValuesLooper()
+				StopTTL()
+				UpdateTTL()
 			Endif
 			break
 		case -1:
 			break
 	endswitch	
 End
+
+
 
 //Grabs the data from Scan Order for scanned parameters 
 //Function GetScanOrder()
@@ -1465,6 +1565,66 @@ Function GetScanParams()
 				
 			
 			Endif
+		Elseif(LoadedWave[i][0]==10)
+		DDScounter="DDS"+num2str(LoadedWave[i][0])+"Counter+=1;DDSCounted=DDS"+num2str(LoadedWave[i][0])+"Counter"
+			Execute DDSCounter
+			If(DDSCounted<2)
+				For(ii=5;ii<7;ii+=1)
+					Getcheck="ControlInfo Step"+num2str(i+1)+"Scan"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][0]=V_Value"
+					Execute Getcheck
+					If(ScanParams[7*i+ii][0]==1)
+						 GetSetPoint = "ControlInfo Step"+num2str(i+1)+"SetPoint"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][1]=V_Value"
+						 GetLowerLim = "ControlInfo Step"+num2str(i+1)+"LowerLim"+num2str(ii-1)+" ;  ScanParams["+num2str(7*i+ii)+"][2]=V_Value"
+						 GetUpperLim = "ControlInfo Step"+num2str(i+1)+"UpperLim"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][3]=V_Value"
+						 GetInc = "ControlInfo Step"+num2str(i+1)+"Inc"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][4]=V_Value"
+						 GetScan = "ControlInfo Step"+num2str(i+1)+"ScanOrder"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][5]=V_Value"
+						
+						Execute GetSetPoint
+						Execute GetLowerLim
+						Execute GetUpperLim
+						Execute GetInc
+						Execute GetScan
+						
+					Else
+						 GetSetPoint = "ControlInfo Step"+num2str(i+1)+"SetPoint"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][1]=V_Value"
+						Execute GetSetPoint
+						
+						For (iii=2;iii<5;iii+=1)
+							ScanParams[7*i+ii][iii]=Settings[7*i+ii][iii]
+						EndFor
+						
+					Endif
+				EndFor
+			Else
+				ii=1
+				Getcheck="ControlInfo Step"+num2str(i+1)+"Scan"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][0]=V_Value"
+				Execute Getcheck
+				If(ScanParams[7*i+ii][0]==1)
+					 GetSetPoint = "ControlInfo Step"+num2str(i+1)+"SetPoint"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][1]=V_Value"
+					 GetLowerLim = "ControlInfo Step"+num2str(i+1)+"LowerLim"+num2str(ii-1)+" ;  ScanParams["+num2str(7*i+ii)+"][2]=V_Value"
+					 GetUpperLim = "ControlInfo Step"+num2str(i+1)+"UpperLim"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][3]=V_Value"
+					 GetInc = "ControlInfo Step"+num2str(i+1)+"Inc"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][4]=V_Value"
+					 GetScan = "ControlInfo Step"+num2str(i+1)+"ScanOrder"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][5]=V_Value"
+					
+					Execute GetSetPoint
+					Execute GetLowerLim
+					Execute GetUpperLim
+					Execute GetInc
+					Execute GetScan
+					
+				Else
+					 GetSetPoint = "ControlInfo Step"+num2str(i+1)+"SetPoint"+num2str(ii-1)+" ; ScanParams["+num2str(7*i+ii)+"][1]=V_Value"
+					Execute GetSetPoint
+					
+					For (iii=2;iii<5;iii+=1)
+						ScanParams[7*i+ii][iii]=Settings[7*i+ii][iii]
+					EndFor
+					
+				Endif
+				
+			
+			Endif
+		
 		Elseif(LoadedWave[i][0]==2||LoadedWave[i][0]==3)
 			DDScounter="DDS"+num2str(LoadedWave[i][0])+"Counter+=1;DDSCounted=DDS"+num2str(LoadedWave[i][0])+"Counter"
 			Execute DDSCounter
@@ -1677,7 +1837,7 @@ End
 
 
 Function/WAVE DefaultSettings()
-	Make/O/N=(5*1024,6) settin
+	Make/O/N=(7*1024,6) settin
 	WAVE LoadedWave
 	NVAR TotalStep
 	Variable i
@@ -1724,7 +1884,16 @@ Function/WAVE DefaultSettings()
 			settin[7*i+6][1]=100
 			settin[7*i+6][2]=100
 			settin[7*i+6][3]=500
-			settin[7*i+6][4]=100	
+			settin[7*i+6][4]=100
+		Elseif (LoadedWave[i][0]==10)
+			settin[7*i+5][1]=3060
+			settin[7*i+5][2]=3000
+			settin[7*i+5][3]=3200
+			settin[7*i+5][4]=100
+			settin[7*i+6][1]=100
+			settin[7*i+6][2]=100
+			settin[7*i+6][3]=500
+			settin[7*i+6][4]=100
 		Else
 			settin[7*i][1]=1
 			settin[7*i][2]=1
@@ -1744,7 +1913,7 @@ Function FindTotalStep()
 	Variable TotalStep=0
 	Variable i=0
 	Do
-		If(LoadedWave[i][1]!=0)
+		If(LoadedWave[i][1]!=0&&LoadedWave[i][1]!=10)
 			TotalStep+=1
 		Else
 			Break
@@ -1883,14 +2052,26 @@ Function DefineValuesLooper()
 						While (ii<5)
 						Do
 							If (ii==1)
-								SendtoFPGA(DefineValues(i,ii,incrementer),GrabDDSValues(-1,-1,-1))//step number, substep, increment number//tells function to grab the setpoints for the DDS//sends to FPGA
+								SendtoFPGA(DefineValues(i,ii,incrementer),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1))//step number, substep, increment number//tells function to grab the setpoints for the DDS//sends to FPGA
 							//	Print("Sent to SendtoFPGA: ")
 							//	TestPrintVALS(DefineValues(i,ii,incrementer))
 							//TestPrintDDS(GrabDDSValues(-1,-1,-1))						
 							Else
 						
-								SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(i,ii,incrementer))//Tells function to grab setpoints//step number, substep, imcrement number
+								SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(i,ii,incrementer),GrabMagiQValues(-1,-1,-1))//Tells function to grab setpoints//step number, substep, imcrement number
 							Endif
+							incrementer+=1
+						While (ScanParams[7*i+ii][4]*incrementer<=ScanParams[7*i+ii][3]-ScanParams[7*i+ii][2])
+					Elseif(LoadedWave[i][0]==10)
+						ii=5
+						Do 
+							If (ScanParams[7*i+ii][5]==ScanCount+1)
+								Break
+							Endif
+							ii+=1
+						While (ii<7)
+						Do						
+							SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(-1,-1,-1),GrabMagiQValues(i,ii,incrementer))//Tells function to grab setpoints//step number, substep, imcrement number
 							incrementer+=1
 						While (ScanParams[7*i+ii][4]*incrementer<=ScanParams[7*i+ii][3]-ScanParams[7*i+ii][2])
 					Elseif(LoadedWave[i][0]==2||LoadedWave[i][0]==3)
@@ -1903,29 +2084,32 @@ Function DefineValuesLooper()
 						While (ii<7)
 						Do
 							If (ii==1)
-								SendtoFPGA(DefineValues(i,ii,incrementer),GrabDDSValues(-1,-1,-1))//step number, substep, increment number//tells function to grab the setpoints for the DDS//sends to FPGA
+								SendtoFPGA(DefineValues(i,ii,incrementer),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1))//step number, substep, increment number//tells function to grab the setpoints for the DDS//sends to FPGA
 							//	Print("Sent to SendtoFPGA: ")
 							//	TestPrintVALS(DefineValues(i,ii,incrementer))
 							//TestPrintDDS(GrabDDSValues(-1,-1,-1))						
-							Else
+							Elseif(ii<5)
 						
-								SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(i,ii,incrementer))//Tells function to grab setpoints//step number, substep, imcrement number
+								SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(i,ii,incrementer),GrabMagiQValues(-1,-1,-1))//Tells function to grab setpoints//step number, substep, imcrement number
+							Else
+								SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(-1,-1,-1),GrabMagiQValues(i,ii,incrementer))//Tells function to grab setpoints//step number, substep, imcrement number
 							Endif
 							incrementer+=1
 						While (ScanParams[7*i+ii][4]*incrementer<=ScanParams[7*i+ii][3]-ScanParams[7*i+ii][2])
 					Else
 						Do
 						
-							SendtoFPGA(DefineValues(i,0,incrementer),GrabDDSValues(-1,-1,-1))
+							SendtoFPGA(DefineValues(i,0,incrementer),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1))
 							incrementer+=1
 						While (ScanParams[7*i][4]*incrementer<ScanParams[7*i][3]-ScanParams[7*i][2])
 					Endif
+					Break
 				Endif
 			Endfor
 			ScanCount+=1
 		While (ScanCount<FindTotalScan())
 	Else
-		SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(-1,-1,-1))
+		SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1))
 	Endif
 	
 End
@@ -2052,6 +2236,97 @@ Function/WAVE GrabDDSValues(step,substep,increment)
 	Return ReturnWave
 End
 
+//Returns (EO num, Freq, Amp)
+Function/WAVE GrabMagiQValues(step,substep,increment)
+	Variable step,substep,increment
+	SetDataFolder root:ExpParams
+	WAVE LoadedWave
+	WAVE ScanParams
+	WAVE EOSetPoints
+	MAKE/O/N=(2,3) EOReturnWave
+	NVAR STATE_DET_FREQ,STATE_DET_AMP,STATE_DET_PHASE
+	NVAR FLR_DET_FREQ,FLR_DET_AMP,FLR_DET_PHASE
+	NVAR COOL_FREQ,COOL_AMP,COOL_PHASE
+	Variable i=2
+	Variable ii=5
+	Variable/G EO1Count=0
+	Variable/G EO2Count=0
+	Variable/G hold
+	String DDSCounter,DDSCountwriter
+	
+	If (step>-1)
+		Do
+			EOReturnWave[i-2][0]=i-1
+			If (step==FindEOLocation(i-1))
+				DDSCounter= "EO"+num2str(i-1)+"Count+=1"
+				Execute DDSCounter
+					If (substep==5)
+						EOReturnWave[i-2][1]=ScanParams[7*FindEOLocation(i-1)+5][4]*increment+ScanParams[7*FindEOLocation(i-1)+5][2]
+						EOReturnWave[i-2][2]=ScanParams[7*FindEOLocation(i-1)+6][1]
+					Elseif (substep==6)
+						EOReturnWave[i-2][1]=ScanParams[7*FindEOLocation(i-1)+5][1]
+						EOReturnWave[i-2][2]=ScanParams[7*FindEOLocation(i-1)+6][4]*increment+ScanParams[7*FindEOLocation(i-1)+6][2]
+					Endif
+				Break
+			Endif
+			i+=1
+		While(i<=3)
+		i=2
+		Do
+			DDSCountwriter= "hold=EO"+num2str(i-1)+"Count"
+			Execute DDSCountwriter
+			If (hold==0&&FindEOLocation(i-1)>-1)
+				EOReturnWave[i-2][1]=ScanParams[7*FindEOLocation(i-1)+5][1]
+				EOReturnWave[i-2][2]=ScanParams[7*FindEOLocation(i-1)+6][1]
+
+			Elseif (hold==0&&FindEOLocation(i-1)<0)
+				For (ii=0;ii<3;ii+=1)
+					EOReturnWave[i-1][ii+1]=EOSetPoints[i-1][ii]
+				Endfor
+			Endif
+			i+=1
+		While (i<=3)
+				
+	Else
+		i=2
+		Do
+			EOReturnWave[i-2][0]=i-1
+			If (FindEOLocation(i-1)>-1)
+				EOReturnWave[i-2][1]=ScanParams[7*FindEOLocation(i-1)+5][1]
+				EOReturnWave[i-2][2]=ScanParams[7*FindEOLocation(i-1)+6][1]
+			Elseif (FindEOLocation(i)<0)
+				For (ii=0;ii<2;ii+=1)
+					EOReturnWave[i-2][ii+1]=EOSetPoints[ii][i-2]
+				Endfor
+			Endif
+			i+=1
+		While (i<=3)
+	Endif
+	Return EOReturnWave
+End
+
+//EO1 is State Detection , EO2 is Flourescence Detection
+Function FindEOLocation(EOnum)
+	Variable EOnum
+	SetDataFolder root:ExpParams
+	WAVE LoadedWave
+	Variable i=0
+	
+	Do
+		If(LoadedWave[i][0]==EOnum+1)
+			Break
+		Endif
+		i+=1
+	While (i<=FindTotalStep())
+	
+	If (i>=FindTotalStep())
+		i=-1
+	Endif
+	
+	Return i
+
+End
+
 Function FindDDSLocation(DDSnum)
 	Variable DDSnum
 	SetDataFolder root:ExpParams
@@ -2073,9 +2348,10 @@ Function FindDDSLocation(DDSnum)
 
 End
 
-Function SendtoFPGA(valuewave,ddsvaluewave)
+Function SendtoFPGA(valuewave,ddsvaluewave,eovaluewave)
 	WAVE valuewave
 	WAVE ddsvaluewave
+	WAVE eovaluewave
 	SetDataFolder root:ExpParams
 	WAVE LoadedWave
 	WAVE NameWave
@@ -2090,6 +2366,11 @@ Function SendtoFPGA(valuewave,ddsvaluewave)
 	NVAR SendCounter
 	NVAR Mask
 	SVAR loadingscreen
+	WAVE EO_INFO
+	WAVE DDS_INFO
+	String MagiQSet
+	
+	Print("Send to FPGA?")
 	Do
 		multipliercount=0
 		Do
@@ -2110,38 +2391,45 @@ Function SendtoFPGA(valuewave,ddsvaluewave)
 		PreviousElementNumberscaled+=FindGroupSize(groupcount)*LoadedWave[groupcount-1][2]
 		groupcount+=1
 	While	(groupcount<=TotalGroupNumber())
-//
+//	i=0
 //	Do
+//		Print(DDS_Info[i][3])
+//		If(DDS_INFO[i][3]==0)
+
 //		SetDDS(i+1,ddsvaluewave[i][0],ddsvaluewave[i][1],ddsvaluewave[i][2])
+//		Endif
+
+		//If(EO_INFO[i][3]==0)
+
+//		MagiQset="MMCSet/O=1/F="+num2str(eovaluewave[i][1])+"/P="+num2str(eovaluewave[i][2])+" "+num2str(eovaluewave[i][0])
+		//Execute MagiQset
+		//Print MagiQset
+		//Endif
 //		i+=1
 //	While(i<3)
 
-//	Print("****************")
-//	TestPrintFinal(WavetoFPGA)
-//	PRint("%%%%%%%%")
-//	TestPrintVALS(valuewave)
-	//TestPrintDDS(ddsvaluewave)
-	If(SendCounter==0)
-		Print("Sending to FPGA....")
-	Else
-		For(i=0;i<SendCounter;i+=1)
-		LoadingScreen+="..."
-		Print(LoadingScreen)
-		EndFor
-	Endif
-	
-	If(SendCounter<10)
-		SendCounter+=1
-	Else
-		SendCounter=0
-	Endif
+
+//	
+//	If(SendCounter==0)
+//		Print("Sending to FPGA....")
+//		LoadingScreen="..."
+//	Else
+//		For(i=0;i<SendCounter;i+=1)
+//		LoadingScreen+="..."
+//		Print(LoadingScreen)
+//		EndFor
+//	Endif
+//	
+//	SendCounter=mod(SendCounter+1,5)
+//	Print("*****************")
+//	TestPrintEO(eovaluewave)
 	
 	SendSequence(WavetoFPGA)
 	
 	ControlInfo Loops
 	loopmultiplier=V_Value
 
-	runSequence(loopmultiplier, recmask = 0xFF)
+	runSequence(loopmultiplier)
 
 	//Alternatively, can use a do function to take data after each run:
 //	i=0
@@ -2152,10 +2440,23 @@ Function SendtoFPGA(valuewave,ddsvaluewave)
 //	While (i<loopmultiplier)
 	
 	
+	//40 us between scans
 	
 	
 End
 
+Function TestPrintEO(EOwave)
+	WAVE EOwave
+	Variable i=0
+	
+	Do
+		Print("EO# : "+num2str(EOwave[i][0]))
+		Print("Freq: "+num2str(EOwave[i][1]))
+		Print("Amp: "+num2str(EOwave[i][2]))
+		i+=1
+	While (i<2)
+	
+End
 
 Function TestPrintFinal(goodbyewave)
 	WAVE goodbyewave
@@ -2220,3 +2521,9 @@ Function StopTTL()
 	runSequence(1)
 	
 End
+
+
+
+//Test 935 EO Thing
+//Write into grabMagiQ values
+//Add TTL

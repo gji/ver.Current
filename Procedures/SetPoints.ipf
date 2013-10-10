@@ -1,8 +1,8 @@
 #pragma rtGlobals=3		// Use modern global access method and strict wave access.
 
-function DDS_wrapper(ctrlName,varNum,varStr,varName) : SetVariableControl
+function DDS_wrapper(ctrlName,varNum,varStr,varName,checked) : SetVariableControl
 	String ctrlName,varStr,varName
-	variable varNum
+	variable varNum,checked
 
 	SetDataFolder root:DDS
 	Variable Frequency,Phase,Ampl
@@ -10,61 +10,215 @@ function DDS_wrapper(ctrlName,varNum,varStr,varName) : SetVariableControl
 	
 	strswitch(ctrlName)
 		case "DDS1_FREQ_BOX":
-			Frequency	=	DDS_INFO[0][0]*10^6
-			Ampl		=	DDS_INFO[0][1]
-			Phase		=	DDS_INFO[0][2]
-			setDDS(1,Frequency,Phase,Ampl)
+			If(DDS_INFO[0][3])
+				Frequency	=	DDS_INFO[0][0]*10^6
+				Ampl		=	DDS_INFO[0][1]
+				Phase		=	DDS_INFO[0][2]
+				setDDS(1,Frequency,Phase,Ampl)
+			Endif
 			break
 		case "DDS1_PHASE_BOX":
-			Frequency	=	DDS_INFO[0][0]*10^6
-			Ampl		=	DDS_INFO[0][1]
-			Phase		=	DDS_INFO[0][2]
-			setDDS(1,Frequency,Phase,Ampl)
+			If(DDS_INFO[0][3])
+				Frequency	=	DDS_INFO[0][0]*10^6
+				Ampl		=	DDS_INFO[0][1]
+				Phase		=	DDS_INFO[0][2]
+				setDDS(1,Frequency,Phase,Ampl)
+			Endif
 			break
 		case "DDS1_AMPL_BOX":
-			Frequency	=	DDS_INFO[0][0]*10^6
-			Ampl		=	DDS_INFO[0][1]
-			Phase		=	DDS_INFO[0][2]
-			setDDS(1,Frequency,Phase,Ampl)
+			If(DDS_INFO[0][3])
+				Frequency	=	DDS_INFO[0][0]*10^6
+				Ampl		=	DDS_INFO[0][1]
+				Phase		=	DDS_INFO[0][2]
+				setDDS(1,Frequency,Phase,Ampl)
+			Endif
 			break
 		case "DDS2_FREQ_BOX":
-			Frequency	=	DDS_INFO[1][0]*10^6
-			Ampl		=	DDS_INFO[1][1]
-			Phase		=	DDS_INFO[1][2]		
-			setDDS(2,Frequency,Phase,Ampl)
+			If(DDS_INFO[1][3])
+				Frequency	=	DDS_INFO[1][0]*10^6
+				Ampl		=	DDS_INFO[1][1]
+				Phase		=	DDS_INFO[1][2]		
+				setDDS(2,Frequency,Phase,Ampl)
+			Endif
 			break
 		case "DDS2_PHASE_BOX":
-			Frequency	=	DDS_INFO[1][0]*10^6
-			Ampl		=	DDS_INFO[1][1]
-			Phase		=	DDS_INFO[1][2]		
-			setDDS(2,Frequency,Phase,Ampl)
+			If(DDS_INFO[1][3])
+				Frequency	=	DDS_INFO[1][0]*10^6
+				Ampl		=	DDS_INFO[1][1]
+				Phase		=	DDS_INFO[1][2]		
+				setDDS(2,Frequency,Phase,Ampl)
+			Endif
 			break
 		case "DDS2_AMPL_BOX":
-			Frequency	=	DDS_INFO[1][0]*10^6
-			Ampl		=	DDS_INFO[1][1]
-			Phase		=	DDS_INFO[1][2]		
-			setDDS(2,Frequency,Phase,Ampl)
+			If(DDS_INFO[1][3])
+				Frequency	=	DDS_INFO[1][0]*10^6
+				Ampl		=	DDS_INFO[1][1]
+				Phase		=	DDS_INFO[1][2]		
+				setDDS(2,Frequency,Phase,Ampl)
+			Endif
 			break
 		case "DDS3_FREQ_BOX":
-			Frequency	=	DDS_INFO[1][0]*10^6
-			Ampl		=	DDS_INFO[1][1]
-			Phase		=	DDS_INFO[1][2]		
-			setDDS(3,Frequency,Phase,Ampl)
+			If(DDS_INFO[2][3])
+				Frequency	=	DDS_INFO[1][0]*10^6
+				Ampl		=	DDS_INFO[1][1]
+				Phase		=	DDS_INFO[1][2]		
+				setDDS(3,Frequency,Phase,Ampl)
+			Endif
 			break
 		case "DDS3_PHASE_BOX":
-			Frequency	=	DDS_INFO[1][0]*10^6
-			Ampl		=	DDS_INFO[1][1]
-			Phase		=	DDS_INFO[1][2]		
-			setDDS(3,Frequency,Phase,Ampl)
+			If(DDS_INFO[2][3])
+				Frequency	=	DDS_INFO[1][0]*10^6
+				Ampl		=	DDS_INFO[1][1]
+				Phase		=	DDS_INFO[1][2]		
+				setDDS(3,Frequency,Phase,Ampl)
+			Endif
 			break
 		case "DDS3_AMPL_BOX":
-			Frequency	=	DDS_INFO[1][0]*10^6
-			Ampl		=	DDS_INFO[1][1]
-			Phase		=	DDS_INFO[1][2]		
-			setDDS(3,Frequency,Phase,Ampl)
-			break									
+			If(DDS_INFO[2][3])
+				Frequency	=	DDS_INFO[1][0]*10^6
+				Ampl		=	DDS_INFO[1][1]
+				Phase		=	DDS_INFO[1][2]		
+				setDDS(3,Frequency,Phase,Ampl)
+			Endif
+			break		
 	endswitch
 
+end
+
+function DDS_Overridewrapper(ctrlName,checked) : CheckBoxControl
+	String ctrlName
+	variable checked
+
+	SetDataFolder root:DDS
+	Variable Frequency,Phase,Ampl
+	WAVE DDS_INFO = root:ExpParams:DDS_INFO
+	
+	strswitch(ctrlName)
+		case "DDS1_Override":
+			DDS_INFO[0][3]	= checked
+			If(DDS_INFO[0][3])
+				Frequency	=	DDS_INFO[0][0]*10^6
+				Ampl		=	DDS_INFO[0][1]
+				Phase		=	DDS_INFO[0][2]
+				setDDS(1,Frequency,Phase,Ampl)
+			Endif
+			break
+		case "DDS2_Override":
+			DDS_INFO[1][3]	= checked
+			If(DDS_INFO[1][3])
+				Frequency	=	DDS_INFO[1][0]*10^6
+				Ampl		=	DDS_INFO[1][1]
+				Phase		=	DDS_INFO[1][2]		
+				setDDS(2,Frequency,Phase,Ampl)
+			Endif
+			break
+		case "DDS3_Override":
+			DDS_INFO[2][3]	= checked
+			If(DDS_INFO[2][3])
+				Frequency	=	DDS_INFO[1][0]*10^6
+				Ampl		=	DDS_INFO[1][1]
+				Phase		=	DDS_INFO[1][2]		
+				setDDS(3,Frequency,Phase,Ampl)
+			Endif							
+	endswitch
+End
+
+Function EO_OverrideWrapper(ctrlName,Checked) :CheckBoxControl
+	String ctrlName
+	variable checked
+
+	SetDataFolder root:ExpParams
+	Variable Frequency,Amplitude
+	WAVE EO_INFO 
+	
+	strswitch(ctrlName)
+		case "EO1_Override":
+			EO_INFO[0][3]	= checked
+			If(EO_INFO[0][3])
+				Frequency=EO_INFO[0][1]
+				Amplitude=EO_INFO[0][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[0][0]
+			Endif
+			break
+		case "EO2_Override":
+			EO_INFO[1][3]	= checked
+			If(EO_INFO[1][3])
+				Frequency=EO_INFO[1][1]
+				Amplitude=EO_INFO[1][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[1][0]
+			Endif
+			break
+		case "EO3_Override":
+			EO_INFO[2][3]	= checked
+			If(EO_INFO[2][3])
+				Frequency=EO_INFO[2][1]
+				Amplitude=EO_INFO[2][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[2][0]
+			Endif
+			break			
+	endswitch
+	
+	
+End
+
+function EO_wrapper(ctrlName,varNum,varStr,varName) : SetVariableControl
+	String ctrlName,varStr,varName
+	variable varNum
+
+	SetDataFolder root:ExpParams
+	Variable Frequency,Amplitude
+	WAVE EO_INFO 
+	
+	strswitch(ctrlName)
+		case "EO1_FREQ_BOX":
+			EO_INFO[0][1]=varNum*10^6
+			If(EO_INFO[0][3])
+				Frequency=EO_INFO[0][1]
+				Amplitude=EO_INFO[0][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[0][0]
+			Endif
+			break
+		case "EO1_AMPL_BOX":
+			EO_INFO[0][2]=varNum
+			If(EO_INFO[0][3])
+				Frequency=EO_INFO[0][1]
+				Amplitude=EO_INFO[0][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[0][0]
+			Endif
+			break
+		case "EO2_FREQ_BOX":
+			EO_INFO[1][1]=varNum*10^6	
+			If(EO_INFO[1][3])
+				Frequency=EO_INFO[1][1]
+				Amplitude=EO_INFO[1][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[1][0]
+			Endif
+			break
+		case "EO2_AMPL_BOX":
+			EO_INFO[1][2]=varNum	
+			If(EO_INFO[1][3])
+				Frequency=EO_INFO[1][1]
+				Amplitude=EO_INFO[1][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[1][0]
+			Endif
+			break
+		case "EO3_FREQ_BOX":
+			EO_INFO[2][1]=varNum*10^6	
+			If(EO_INFO[2][3])
+				Frequency=EO_INFO[2][1]
+				Amplitude=EO_INFO[2][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[2][0]
+			Endif
+			break
+		case "EO3_AMPL_BOX":
+			EO_INFO[2][2]=varNum	
+			If(EO_INFO[2][3])
+				Frequency=EO_INFO[2][1]
+				Amplitude=EO_INFO[2][2] 
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[2][0]
+			Endif
+			break						
+	endswitch
 end
 
 function TTL_wrapper(ctrlName,checked)
