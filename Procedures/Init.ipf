@@ -11,7 +11,7 @@ Macro Exp_Init()
 	MMCINIT
 	
 // Creates Windows	
-//	PulseCreator()	//For Creating Pulse Sequences
+	PulseCreator()	//For Creating Pulse Sequences
 	Pulse()			//For Running Pulse Sequence
 //	DCCtrl() 			//For Setting DC Bias on Trap
 //	DDS_Control()	//For Setting DDS Values
