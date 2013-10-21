@@ -98,5 +98,6 @@ function/WAVE runSequence(reps, [recmask])
 	Make/B/U/O/n=(numChannels,reps) data
 	VDTReadBinaryWave2/B/TYPE=16 data
 	
+	TestPrintDI(data)
 	return data
 end

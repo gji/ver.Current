@@ -2598,4 +2598,13 @@ Function StopTTL()
 	
 End
 
+Function TestprintDI(datum)
+	Wave datum
+	SetDatafolder root:Sequencer:Data
+	
+	Variable i=0
+	For (i=0;i<128;i+=1)
+		Print(datum[i])
+	Endfor
+End
 

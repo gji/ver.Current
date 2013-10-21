@@ -13,44 +13,65 @@ Window CamControl() : Panel
 	PauseUpdate; Silent 1		// building window...
 	NewPanel /K=1 /W=(1457,78,1827,376) as "Camera Control"
 	ModifyPanel cbRGB=(65534,65534,65534)
+	
 	Button startCap,pos={28,55},size={116,26},disable=2,proc=EventStartCapture,title="Start Capture"
 	Button stopCap,pos={27,90},size={117,27},disable=2,proc=EventStopCapture,title="Stop Capture"
+	
 	SetVariable setExpLarge,pos={172,27},size={170,16},bodyWidth=100,proc = VarCamUpdate,title="Exposure (ms)"
 	SetVariable setExpLarge,limits={0,999999,1},value= root:Camera:EXPOSURE_LARGE
+	
 	SetVariable exposurelow,pos={174,45},size={168,16},bodyWidth=100,proc = VarCamUpdate,title="Exposure (ns)"
 	SetVariable exposurelow,limits={3,999980,20},value= root:Camera:EXPOSURE_SMALL
+	
 	SetVariable delayhigh,pos={189,81},size={153,16},bodyWidth=100,proc = VarCamUpdate,title="Delay (ms)"
 	SetVariable delayhigh,limits={0,999999,1},value= root:Camera:DELAY_LARGE
+	
 	SetVariable delaylow,pos={191,99},size={151,16},bodyWidth=100,proc = VarCamUpdate,title="Delay (ns)"
 	SetVariable delaylow,limits={0,999999,20},value= root:Camera:DELAY_SMALL
+	
 	Button openCam,pos={27,18},size={117,27},proc=EventOpenCamera,title="Open Camera"
+	
 	SetVariable roiymax,pos={79,137},size={47,16},bodyWidth=30,proc = VarCamUpdate,title="Y+"
 	SetVariable roiymax,limits={1,32,1},value= root:Camera:ROI[1][1]
+	
 	SetVariable roixmin,pos={55,162},size={44,16},bodyWidth=30,proc = VarCamUpdate,title="X-"
 	SetVariable roixmin,limits={1,40,1},value= root:Camera:ROI[0],noedit= 1
+	
 	SetVariable roixmax,pos={106,162},size={47,16},bodyWidth=30,proc = VarCamUpdate,title="X+"
 	SetVariable roixmax,limits={1,40,1},value= root:Camera:ROI[1]
+	
 	SetVariable roiymin,pos={81,189},size={44,16},bodyWidth=30,proc = VarCamUpdate,title="Y-"
 	SetVariable roiymin,limits={1,32,1},value= root:Camera:ROI[0][1]
+	
 	SetVariable xbins,pos={175,146},size={59,16},bodyWidth=30,proc=EventXBins,title="X Bin"
 	SetVariable xbins,limits={0,999999,1},value= root:Camera:BINS[0]
+	
 	SetVariable ybins,pos={175,180},size={59,16},bodyWidth=30,proc=EventYBins,title="Y Bin"
 	SetVariable ybins,limits={0,999999,1},value= root:Camera:BINS[1]
+	
 	SetVariable gainCont,pos={268,135},size={56,16},bodyWidth=30,proc = VarCamUpdate,title="Gain"
 	SetVariable gainCont,limits={0,999999,1},value= root:Camera:GAIN
+	
 	SetVariable decayCont,pos={259,153},size={65,16},bodyWidth=30,proc = VarCamUpdate,title="Decay"
 	SetVariable decayCont,limits={0,999999,1},value= root:Camera:DECAY
+	
 	SetVariable trigCont,pos={257,171},size={67,16},bodyWidth=30,proc = VarCamUpdate,title="Trigger"
 	SetVariable trigCont,limits={0,999999,1},value= root:Camera:TRIGGER
+	
 	SetVariable loopCont,pos={261,189},size={63,16},bodyWidth=30,proc = VarCamUpdate,title="Loops"
 	SetVariable loopCont,limits={0,999999,1},value= root:Camera:LOOPS
+	
 	SetVariable FPSDisplay,pos={296,270},size={64,16},bodyWidth=40,title="FPS"
 	SetVariable FPSDisplay,limits={-inf,inf,0},value= root:Camera:FPS[0],noedit= 1
+	
 	Button rangeCont,pos={126,252},size={117,27},proc=EventRangeSet,title="Hold Range"
+	
 	SetVariable rangeMax,pos={198,225},size={72,16},bodyWidth=48,proc=EventNewRange,title="Max"
 	SetVariable rangeMax,limits={1,4096,1},value= root:Camera:RANGE[2]
+	
 	SetVariable rangeMin,pos={100,225},size={71,16},bodyWidth=50,proc=EventNewRange,title="Min"
 	SetVariable rangeMin,limits={1,4096,1},value= root:Camera:RANGE[1]
+	
 	ToolsGrid snap=1,visible=1
 EndMacro
 
