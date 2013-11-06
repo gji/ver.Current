@@ -8,9 +8,30 @@ Macro Exp_Init()
 	Param_Init()
 	DC_Init()
 	Seq_init()
-	MMCINIT
+//	MMCINIT
 	
+	doWindow/HIDE=? OverrideVariables
+	If(V_FLag)
+		KillWindow OverrideVariables
+	Endif
+	doWindow/HIDE=? PulseCreator
+	If(V_FLag)
+		KillWindow PulseCreator
+	Endif
+	doWindow/HIDE=? Pulse
+	If(V_FLag)
+		KillWindow Pulse
+	Endif
+	doWindow/HIDE=? DCCtrl
+	If(V_FLag)
+		KillWindow DCCtrl
+	Endif
+		doWindow/HIDE=? DataLoader
+	If(V_FLag)
+		KillWindow DataLoader
+	Endif
 // Creates Windows	
+	DataLoader()
 	PulseCreator()	//For Creating Pulse Sequences
 	Pulse()			//For Running Pulse Sequence
 //	DCCtrl() 			//For Setting DC Bias on Trap
@@ -64,6 +85,7 @@ Function Param_Init()
 	String/G	WAVE_Hardware			=	":waveforms:Symmetric_Hardware.csv"
 
 	//Variables for Pulse Program
+	NewDataFolder root:DataAnalysis
 	Variable/G SequenceCurrent							=	0
 	Variable/G VerticalButtonPosition					=	16
 	Variable/G VerticalButtonPos							=	16
@@ -73,10 +95,22 @@ Function Param_Init()
 	Variable/G GroupError									= 	0
 	Make/O/N=10 NameWave									=	{DELAY,COOL,STATE_DET,FLR_DET,PUMP,COOL_SHTR,LOAD_SHTR,RAMAN1,RAMAN2,PMT}
 	Make/O/T/N=10 TTLNames									=	{"Delay","Cool","State Detection","Flourescence Detection","Pump","Cool Shutter","LoadShutter","Raman 1", "Raman 2","PMT","935 EO"}			
-	Make/O/N=(1024,3)	PulseCreatorWave
+	Make/O/T/N=3 DDSNames									=	{"Raman 1", "Raman 2","Cool"}
+	Make/O/T/N=4 DDSScans									=	{"Duration","Frequency","Amplitude","Phase"}
+	Make/O/T/N=3 EONames									=	{"State Detection", "Flourescence Detection"}
+	Make/O/T/N=1 EONotDDSNames							=	{"935 EO"}
+	Make/O/T/N=3 EONOTDDSSCans							=	{"Duration","EO Frequency","EOAmplitude"}
+	Make/O/T/N=6 EOScans									=	{"Duration","AO Frequency","AO Amplitude","AO Phase","EO Frequency","EO Amplitude"}
+	Make/O/N=(1024,3)	PulseCreatorWave					=	0
+	Make/O/N=(1024,3) dataloaderwave						=	0
 	Variable/G TooLong										=	0
-	NewPath/O SavePath, 										"Z:\\Experiment\\ver.Current\\Sequences\\"
-	NewPath/O SettingsSavePath1,								"Z:\\Experiment\\ver.Current\\Settings\\"
+	NewPath/O/C/Q/Z SavePath, 								"Z:\\Experiment\\ver.Current\\Sequences\\"
+	NewPath/O/C/Q/Z TempPath,									"Z:\\Experiment\\ver.Current\\Settings\\"
+	NewPath/O/C/Q/Z TempDataPath,								"Z:\\Experiment\\ver.Current\\Data\\"
+	NewPath/O/C/Q/Z TemperPath								"Z:\\Experiment\\ver.Current\\Data\\"
+	Variable/G made1											=	0
+	Variable/G made2											=	0
+	Variable/G made											=	0
 
 	Variable/G TotalScan									=	0
 	Variable/G FixScanOrder								=	0
@@ -95,12 +129,19 @@ Function Param_Init()
 	Variable/G SendCounter									=	0
 	Make/O/N=(7*1024,6) ScanParams=0
 	String/G LoadingScreen
+	String/G Test1
+	String/G Test2
+	String/G Test3
+	String/G Test4
+	Variable/G DDSnum										=	3
+	Variable/G EOnum											=	3
 
-	Make/O/N=(8,2) OverrideWave							=	0
-	Make/O/N=(3,4) EO_INFO							=	{{0,1,2},{2105,7374,3060},{100,100,100},{0,0,0}}	
+	Make/O/N=(8,3) OverrideWave							=	0
+	Make/O/N=(3,4) EO_INFO									=	{{0,1,2},{2105,7374,3060},{100,100,100},{0,0,0}}	
 	Variable/G Mask											=	0
+	Make/O/N=3/T LoadWaveFiles							= {"TestSequence","935Test","PMT Test"}
 
-
+	Variable/G TDC											=0
 
 	Make/O/N=(DDS_Channels,DDS_Params+1) 	DDS_INFO
 	Make/O/N=4 							COMP_INFO		 = {0,0,0,1,1}
@@ -361,9 +402,26 @@ Window Pulse() : Panel
 	DoWindow /K Pulse
 	NewPanel /N=Pulse /K=1 /W=(75,247,409,302) as "Pulse Program"
 	ModifyPanel cbRGB=(65534,65534,65534)
+	String makepop
+	
 	PopupMenu Sequence,pos={68,18},size={202,21},bodyWidth=150,proc=PopMenuProc,title="Sequence"
-	PopupMenu Sequence,mode=1,popvalue=" ",value= #"\" ; Loaded Sequence 1; Loaded Sequence 2; Loaded Sequence 3;...\""
+	PopupMenu Sequence,mode=1,popvalue=" "
+	makepop="PopupMenu Sequence value= \""+makepopnames()+"\""
+	Execute Makepop
 EndMacro
+
+Function/S makepopnames()
+	SetDatafolder Root:ExpParams
+	WAVE/T LoadWaveFiles
+	String names=" "
+	Variable i=0
+
+	For(i=0;i<Dimsize(LoadWavefiles,0);i+=1)
+		names+=";"+LoadWaveFiles[i]
+	EndFor
+	Return names
+
+End
 
 Window pulseCreator() : Panel
 	PauseUpdate; Silent 1		// building window...
@@ -374,6 +432,15 @@ Window pulseCreator() : Panel
 	Button NewItem,pos={15,16},size={80,20},proc=ButtonProc_1,title="New Item"
 	Button DeleteItem,pos={115,16},size={80,20},proc=ButtonProc_2,title="Delete Item"
 	Button SetLoops,pos={215,16},size={80,20},proc=ButtonProc_3,title="Set Loops"
+EndMacro
+
+Window Dataloader() : Panel
+	PauseUpdate; Silent 1		// building window...
+	DoWindow /K Dataloader
+	NewPanel /N=Dataloader /K=1 /W=(75,110,408,210) as "Data Loader"
+	ModifyPanel cbRGB=(65534,65534,65534)
+	Checkbox SingleVariable, pos={35,15},size={80,20},proc=SingleVariable_proc,title="Single Variable", mode=1
+	Checkbox VariableCorrelation, pos={165,15},size={80,20},proc=VariableCorrelation_proc,title="Variable Correlation",mode=1
 EndMacro
 
 

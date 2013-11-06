@@ -237,66 +237,82 @@ function TTL_wrapper(ctrlName,checked)
 	strswitch(ctrlName)
 		case "TTL1_Switch":
 			OverrideWave[0][0]	= checked	
+			OverrideWave[0][2]	= 1
 			UpdateTTL()	
 			break
 		case "TTL2_Switch":
 			OverrideWave[1][0]	= checked
+			OverrideWave[1][2]	= 1
 			UpdateTTL()	
 			break
 		case "TTL3_Switch":
 			OverrideWave[2][0]	= checked
+			OverrideWave[2][2]	= 1
 			UpdateTTL()	
 			break
 		case "TTL4_Switch":
 			OverrideWave[3][0]	= checked
+			OverrideWave[3][2]	= 1
 			UpdateTTL()	
 			break
 		case "TTL5_Switch":
 			OverrideWave[4][0]	= checked
+			OverrideWave[4][2]	= 1
 			UpdateTTL()	
 			break
 		case "TTL6_Switch":
 			OverrideWave[5][0]	= checked
+			OverrideWave[5][2]	= 1
 			UpdateTTL()	
 			break
 		case "TTL7_Switch":
 			OverrideWave[6][0]	= checked
+			OverrideWave[6][2]	= 1
 			UpdateTTL()	
 			break
 		case "TTL8_Switch":
 			OverrideWave[7][0]	= checked
+			OverrideWave[7][2]	= 1
 			UpdateTTL()	
 			break
 		case "TTL1_Override":
 			OverrideWave[0][1]	= checked
+			OverrideWave[0][2]	= 2
 			UpdateTTL()	
 			break
 		case "TTL2_Override":
 			OverrideWave[1][1]	= checked
+			OverrideWave[1][2]	= 2
 			UpdateTTL()	
 			break
 		case "TTL3_Override":
 			OverrideWave[2][1]	= checked
+			OverrideWave[2][2]	= 2
 			UpdateTTL()	
 			break
 		case "TTL4_Override":
 			OverrideWave[3][1]	= checked
+			OverrideWave[3][2]	= 2
 			UpdateTTL()	
 			break
 		case "TTL5_Override":
 			OverrideWave[4][1]	= checked
+			OverrideWave[4][2]	= 2
 			UpdateTTL()	
 			break
 		case "TTL6_Override":
 			OverrideWave[5][1]	= checked
+			OverrideWave[5][2]	= 2
 			UpdateTTL()	
 			break
 		case "TTL7_Override":
 			OverrideWave[6][1]	= checked
+			OverrideWave[6][2]	= 2
 			UpdateTTL()	
 			break
 		case "TTL8_Override":
 			OverrideWave[7][1]	= checked
+			OverrideWave[7][2]	= 2
 			UpdateTTL()	
 			break
 		endswitch
@@ -344,15 +360,83 @@ Function UpdateTTL()
 //	Endif
 	
 	For(i=0; i<8; i+=1)
-		If(OverrideWave[i][1] && OverrideWave[i][0])
+		If(OverrideWave[i][1] && OverrideWave[i][0]&&OverrideWave[i][2]==1)
 			NVAR port = $("VAR_TTL_0"+num2str(i+1))
-			print("Override TTL"+num2str(port)+" ON")
+			print("Override TTL"+num2str(i+1)+" ON")
 			Mask = Mask | port
+		Elseif(OverrideWave[i][1] && OverrideWave[i][0]==0&&OverrideWave[i][2]==1)
+		NVAR port = $("VAR_TTL_0"+num2str(i+1))
+			print("Override TTL"+num2str(i+1)+" OFF")
+		Elseif(OverrideWave[i][1] && OverrideWave[i][0]==0&&OverrideWave[i][2]==2)
+			NVAR port = $("VAR_TTL_0"+num2str(i+1))
+			print("Override TTL"+num2str(i+1)+" Overridden OFF")	
+		Elseif(OverrideWave[i][1] && OverrideWave[i][0]&&OverrideWave[i][2]==2)
+			NVAR port = $("VAR_TTL_0"+num2str(i+1))
+			print("Override TTL"+num2str(i+1)+" Overridden ON")	
+		Elseif(OverrideWave[i][1]==0 &&OverrideWave[i][2]==2)
+			NVAR port = $("VAR_TTL_0"+num2str(i+1))
+			print("Override TTL"+num2str(i+1)+" UNOverridden")				
 		EndIf
+		OverrideWave[i][2]=0
 	EndFor
+
+	MaskWave={Mask,0x0000020}
 	
-	sendSequence({Mask,0x0000001})
+	
+	sendSequence(MaskWave)
 	runSequence(1)
+	
+	
 	
 End 
 
+
+Function TestPrint2ALL(in)
+	WAVE in
+	Variable i=0
+	Variable ii=0
+	Variable row= dimsize(in,0)
+	Variable col= dimsize(in,1)
+	
+	For(i=0;i<row;i+=1)
+		For(ii=0;ii<col;ii+=1)
+			Print(in[i][ii])
+		Endfor
+	Endfor
+End
+
+Function TestPrint4All(in)
+	WAVE in
+	Variable i=0
+	Variable ii=0
+	Variable iii=0
+	Variable iiii=0
+	Variable row= dimsize(in,0)
+	Variable col= dimsize(in,1)
+	Variable layer=dimsize(in,2)
+	Variable chunk=dimsize(in,3)
+	
+	For(i=0;i<row;i+=1)
+		For(ii=0;ii<col;ii+=1)
+				
+			For(iii=0;iii<layer;iii+=1)
+			Print ("coords: "+num2str(i)+", "+num2str(ii)+", "+num2str(iii))
+				for(iiii=0;iiii<chunk;iiii+=1)
+					Print(in[i][ii][iii][iiii])
+				Endfor
+			Endfor
+		Endfor
+	Endfor
+End
+Function TestPrint1ALL(in)
+	WAVE in
+	Variable i=0
+	Variable row= dimsize(in,0)
+
+	
+	For(i=0;i<row;i+=1)
+
+			Print(in[i])
+
+	Endfor
+End

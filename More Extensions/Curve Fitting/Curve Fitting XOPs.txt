@@ -1,0 +1,3 @@
+These XOPs contain external functions (XFUNCs) that can be used to do curve fitting.
+
+If you are interested in these XOPs, be sure to examine the "Multi-peak fit" example experiment (Examples:Curve Fitting).

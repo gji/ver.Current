@@ -1,0 +1,69 @@
+This is one of two special Igor Extensions folders.
+
+The other is created by Igor 6.1 or later when Igor starts up, and is normally
+located here:
+
+	<My Documents>\WaveMetrics\Igor Pro 6 User Files\Igor Extensions
+
+A simple way to locate that folder is to choose "Show Igor Pro 6 User Files" from
+Igor's Help Menu.
+
+You can put Igor extension files in here or shortcuts pointing to extension files.
+
+When Igor starts up, if it finds any Igor extension files (or shortcuts to
+files) in either of these folders, Igor will open them automatically
+when it starts up.
+
+Extensions add to Igor features such as:
+  loading specific types of files
+  number-crunching operations and functions
+  data-acquisition
+
+You will find additional extensions in the More Extensions folder.
+To activate an extension in the More Extensions folder, right-click
+the extension file and choose "Copy", and then locate the
+
+	<My Documents>\WaveMetrics\Igor Pro 6 User Files\Igor Extensions
+
+folder by choosing "Show Igor Pro 6 User Files" from Igor's Help Menu.
+
+Open that Igor Extensions folder, right click inside and choose "Paste Shortcut".
+
+Then restart Igor Pro.
+
+PER-USER IGOR EXTENSIONS
+
+  Users without administrative rights might not be able to put files or shortcuts
+  inside any folder in the Igor Pro Folder. We recommend you use
+  
+ 	<My Documents>\WaveMetrics\Igor Pro 6 User Files\Igor Extensions\
+
+  to activate Igor extensions.
+  
+  Additionally, as with previous versions of Igor, the administrator can set up a
+  "per-user shortcut" in the installed Igor Extensions folder using a target path that
+  uses the %USERPROFILE% environment variable. Then each user can create such a folder
+  in their Documents and Settings folder to match.
+
+  For example, if the administrator creates a shortcut in the installed Igor Pro Folder's
+  Igor Extensions subfolder, and the target of that shortcut is:
+
+	"%USERPROFILE%\My Documents\Igor Global Extensions"
+
+  (Note: the quotes are required to make the shortcut resolve properly, and the
+  administrator will probably need to create the Igor Global Extensions folder in
+  the My Documents folder to successfully create the shortcut.)
+
+  then a user named "Fred" would create a folder here:
+
+	C:\Documents and Settings\Fred\My Documents\Igor Global Extensions 
+
+  and put any XOPs (or shortcuts to XOPs) he wanted to load when Igor starts.
+
+ CREATING YOUR OWN IGOR EXTENSIONS
+ 
+	If you are a C programmer, you can create your own extensions
+	using the optional "IGOR XOP Toolkit".
+	Visit http://www.wavemetrics.com for details.
+
+

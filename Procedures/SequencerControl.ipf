@@ -81,23 +81,79 @@ Function gb_seq(num, byte)
 	return floor(num / (256^(byte))) - 256*floor(num / (256^(byte+1)))
 end
 
-function/WAVE runSequence(reps, [recmask])
+function/WAVE runSequence(reps, [recmask,tdc])
 	Variable reps
-	Variable recmask
+	Variable recmask,tdc
 	recmask = paramIsDefault(recmask) ? 0x00 : recmask
-	
-	Make/B/U/O writeWave = {0x06e, gb_seq(reps,1), gb_seq(recmask,0), 0xFF, 0x0d, 0x0a}
-	VDTOperationsPort2 COM4
-	VDTWriteBinaryWave2 writeWave
+	tdc = paramIsDefault(tdc) ? 0 : tdc
+	Make/B/U/O writeWave = {0x06e, gb_seq(reps,1), gb_seq(reps,0), gb_seq(recmask,3), 0x0d, 0x0a}
+//	VDTOperationsPort2 COM4
+//	VDTWriteBinaryWave2 writeWave\
+	print "TDC = "+num2str(tdc)
 	
 	Variable numChannels = 0
 	variable i
-	for(i=0; i<8; i+=1)
+	for(i=0; i<32; i+=1)
 		numChannels += (recmask / 2^i) & 0x01
 	EndFor
+	If(TDC)
+		Make/o/n=6 tdc_data_temp
+		Variable n
+		VDT2/P=COM7 baud=230400,stopbits=2,killio
+		VDTOpenPort2 COM6
+		VDTOperationsPort2 COM7
+		VDTReadWave2/O=5 tdc_data_temp
+		VDTRead2/O=5 n
+		VDTGetStatus2 0,1,0
+		VDTClosePort2 CO7
+		print tdc_data_temp
+		print n
+		Print V_VDT
+	endif
+		
+	VDTOperationsPort2 COM4
+	VDTWriteBinaryWave2 writeWave	
+	SetDataFolder root:Sequencer:Data
 	Make/B/U/O/n=(numChannels,reps) data
-	VDTReadBinaryWave2/B/TYPE=16 data
-	
-	TestPrintDI(data)
+	VDTReadBinaryWave2/B/TYPE=16/O=5 data
+	SetDataFolder root:Sequencer
+
 	return data
 end
+
+Function seqHist(bins,dataWave)	// Need to be in the Data folder when calling this function
+	Variable bins
+	Wave	dataWave
+	SetDataFolder root:Sequencer:Data		
+	
+	
+
+	Make/N=(bins)/O dataWave_Hist
+	//Histogram/B={0,1,100} dataWave,data_Hist
+	Histogram/B=1 dataWave,dataWave_Hist
+	Display dataWave_Hist
+end
+
+//Function/WAVE runSequence(reps)
+//	Variable reps
+//	SetDataFolder root:Sequencer:Data	
+//					
+//	VDTOperationsPort2 COM7	
+//
+//	Make/B/U/O WriteWave = {0x06e, gb_seq(reps,1), gb_seq(reps,0), 0xFF, 0x0d, 0x0a}
+//	VDTWriteBinaryWave2 WriteWave
+//	//Make/B/U/O/n=(reps) data_01
+//	//VDTReadBinaryWave2/B/TYPE=16 data_01
+//
+//	SetDataFolder root:Sequencer
+//
+//end
+//
+//Function seqHist(bins,dataWave)	// Need to be in the Data folder when calling this function
+//	Variable bins
+//	Wave	dataWave
+//	SetDataFolder root:Sequencer:Data		
+//	
+//	Make/N=(bins)/O dataWave_Hist;DelayUpdate
+//	Histogram/B={0,1,100} data,data_Hist
+//end

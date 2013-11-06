@@ -399,63 +399,94 @@ Function PopMenuProc(pa) : PopupMenuControl
 	SetDataFolder root:ExpParams
 	Make/O/N=(1024,3) LoadedWave 
 	WAVE wave0
+	WAVE/T LoadWaveFiles
 	Variable i,position
+	Variable count=0
 	
+	switch(pa.eventcode)
+		Case 2: 
+			For(i=0;i<dimsize(LoadWaveFiles,0);i+=1)
+				If(i==pa.popNum-2)
+					ClearScanControls()
+					Wave0=0
+					LoadedWave=0
+					LoadWave/D/H/J/M/P=SavePath/N/G LoadWaveFiles[i]+".dat"
+					LoadedWave=Wave0
+					
+					GenerateScanControls(LoadedWave,DefaultSettings())
+					CreateButtons()
+					ControlInfo SetScan
+					position=V_top
+					GetWindow Pulse wsize
+					MoveWindow/W=Pulse V_left,V_top,V_left+950,(100+V_top+position)*72/ScreenResolution
+					count=1
+					break
+				Endif				
+			endFor
+			If (count==0)
+				ClearScanControls()
+				GetWindow Pulse wsize
+				MoveWindow/W=Pulse V_left,V_top,V_left+250,(130+V_top)*72/ScreenResolution
+			Endif
+		break
+		case -1:
+		break
+	Endswitch
 
-	switch( pa.popNum )
-		case 1: // mouse up
-			ClearScanControls()
-			GetWindow Pulse wsize
-			MoveWindow/W=Pulse V_left,V_top,V_left+250,(100+V_top)*72/ScreenResolution
-			break
-		case 2: // control being killed
-			ClearScanControls()
-			Wave0=0
-			LoadedWave=0
-			LoadWave/D/H/J/M/P=SavePath/N/G "TestSequence.dat"
-			LoadedWave=Wave0
-			
-			GenerateScanControls(LoadedWave,DefaultSettings())
-			CreateButtons()
-			ControlInfo SetScan
-			position=V_top
-			GetWindow Pulse wsize
-			MoveWindow/W=Pulse V_left,V_top,V_left+950,(80+V_top+position)*72/ScreenResolution
-						
-//			PopupMenu SelectSettings value=" ; Settings 1 ; Settings 2 ; Settings 3 ;...", popvalue=" "
-			break
-		case 3:
-			ClearScanControls()
-			Wave0=0
-			LoadedWave=0
-			LoadWave/D/H/J/M/P=SavePath/N/G "935Test.dat"
-			LoadedWave=Wave0
-			
-			GenerateScanControls(LoadedWave,DefaultSettings())
-			CreateButtons()
-			ControlInfo SetScan
-			position=v_top
-			GetWindow Pulse wsize
-			MoveWindow/W=Pulse V_left,V_top,V_left+950,(80+V_top+position)*72/ScreenResolution
-			
-			break
-		case 4:
-			ClearScanControls()
-			Wave0=0
-			LoadedWave=0
-			LoadWave/D/H/J/M/P=SavePath/N/G "PMT Test.dat"
-			LoadedWave=Wave0
-			
-			GenerateScanControls(LoadedWave,DefaultSettings())
-			CreateButtons()
-			ControlInfo SetScan
-			position=v_top
-			GetWindow Pulse wsize
-			MoveWindow/W=Pulse V_left,V_top,V_left+950,(80+V_top+position)*72/ScreenResolution
-			break
-		case 5:
-			break
-	endswitch
+//	switch( pa.popNum )
+//		case 1: // mouse up
+//			ClearScanControls()
+//			GetWindow Pulse wsize
+//			MoveWindow/W=Pulse V_left,V_top,V_left+250,(130+V_top)*72/ScreenResolution
+//			break
+//		case 2: // control being killed
+//			ClearScanControls()
+//			Wave0=0
+//			LoadedWave=0
+//			LoadWave/D/H/J/M/P=SavePath/N/G LoadWaveFiles[0]+".dat"
+//			LoadedWave=Wave0
+//			
+//			GenerateScanControls(LoadedWave,DefaultSettings())
+//			CreateButtons()
+//			ControlInfo SetScan
+//			position=V_top
+//			GetWindow Pulse wsize
+//			MoveWindow/W=Pulse V_left,V_top,V_left+950,(100+V_top+position)*72/ScreenResolution
+//						
+////			PopupMenu SelectSettings value=" ; Settings 1 ; Settings 2 ; Settings 3 ;...", popvalue=" "
+//			break
+//		case 3:
+//			ClearScanControls()
+//			Wave0=0
+//			LoadedWave=0
+//			LoadWave/D/H/J/M/P=SavePath/N/G "935Test.dat"
+//			LoadedWave=Wave0
+//			
+//			GenerateScanControls(LoadedWave,DefaultSettings())
+//			CreateButtons()
+//			ControlInfo SetScan
+//			position=v_top
+//			GetWindow Pulse wsize
+//			MoveWindow/W=Pulse V_left,V_top,V_left+950,(100+V_top+position)*72/ScreenResolution
+//			
+//			break
+//		case 4:
+//			ClearScanControls()
+//			Wave0=0
+//			LoadedWave=0
+//			LoadWave/D/H/J/M/P=SavePath/N/G "PMT Test.dat"
+//			LoadedWave=Wave0
+//			
+//			GenerateScanControls(LoadedWave,DefaultSettings())
+//			CreateButtons()
+//			ControlInfo SetScan
+//			position=v_top
+//			GetWindow Pulse wsize
+//			MoveWindow/W=Pulse V_left,V_top,V_left+950,(100+V_top+position)*72/ScreenResolution
+//			break
+//		case 5:
+//			break
+//	endswitch
 	
 	return 0
 End
@@ -1209,8 +1240,8 @@ Function CreateButtons()
 	SetDataFolder root:ExpParams
 	NVAR VerticalButtonPosition
 	
-	SetVariable Loops pos={542,VerticalButtonPosition},win=Pulse,title="Inner Loop", limits={0,2^16,1}, size={150,20},value=_NUM:400
-	SetVariable Times pos={700,VerticalButtonPosition},win=Pulse,title="Outer Loop", limits={0,2^16,1}, size={150,20},value=_NUM:400
+	SetVariable Loops pos={542,VerticalButtonPosition},win=Pulse,title="Data Point Loop", limits={0,65535,1}, size={150,20},value=_NUM:400
+	SetVariable Times pos={700,VerticalButtonPosition},win=Pulse,title="Experimental Loop", limits={0,2^16,1}, size={150,20},value=_NUM:400
 	
 	VerticalButtonPosition+=30
 	
@@ -1233,6 +1264,7 @@ Function SetScanProc(ba) : ButtonControl
 			KillControl/W=Pulse Run
 			ControlInfo SaveSettings
 			Button Run win=Pulse,pos={575,V_top}, title="Run", proc=RunProc,size={100,20}
+			CheckBox TDCbox win=Pulse,pos={683,V_top}, title="TDC on/off",variable=TDC
 			break
 		case -1:
 			break
@@ -1252,6 +1284,7 @@ Function ClearScanProc(ba) : ButtonControl
 			KillControl/W=Pulse SetScan
 			KillControl/W=Pulse ClearScan
 			KillControl/W=Pulse Run
+			KillControl/W=Pulse TDCbox 
 			GetWindow Pulse wsize
 			MoveWindow/W=Pulse V_left,V_top,V_left+250,(100+V_top)*72/ScreenResolution
 			break
@@ -1302,13 +1335,39 @@ Function SaveSettingsProc(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
 	SetDataFolder root:ExpParams
 	NVAR SettingsCheckOut
+	//
+	STring Makepath,Savedatastring
+	WAVE/T LoadWaveFiles
+	Variable count=0
+	Variable i
+	WAVE SCANPARAMS
+	//
 	switch(ba.eventCode)
 		case 2: //mouse up
+		//
+			i=0
+			//
 			DoWindow/K SaveWaveWindow
 //			GetScanOrder()
 			GetScanParams()
 			If(SettingsCheck()==0)
-				Execute "SaveSettingsWindow()"			
+			//
+						ControlInfo Sequence
+			MakePath = "NewPath/C/O/Q TempPath, \"Z:\\Experiment\\ver.Current\\Data\\"+date()+"\""
+			Execute Makepath
+			Do
+			
+				if(StringMatch(IndexedFile(TempPath,-1,".dat"),"*"+LoadWaveFiles[V_VALUE-2]+"_"+date()+"_"+num2str(count)+"*"))
+					Count+=1
+				Else
+					Break
+				Endif
+				i+=1
+			While(1)
+			Savedatastring="Save/O/P=TempPath/G/W ScanParams as \""+LoadWaveFiles[V_VALUE-2]+"_"+date()+"_"+num2str(count)+".dat\""
+			Execute Savedatastring
+			//
+			//	Execute "SaveSettingsWindow()"			
 			Endif
 			break
 		case -1:
@@ -1357,12 +1416,14 @@ EndMacro
 
 Function SaveButtonProc(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
+	setdatafolder root:Expparams
 	WAVE ScanParams
 	Variable SequenceNum
 	String SequenceName
 	ControlInfo/W=Pulse Sequence
 	 SequenceNum=V_Value
 	String SettingName,MakePath
+	String SaveSettingsstring
 	switch(ba.eventCode)
 		case 2: //mouse up
 			ControlInfo/W=SaveSettingsWindow SequenceNamefield
@@ -1371,10 +1432,13 @@ Function SaveButtonProc(ba) : ButtonControl
 			SequenceName=S_Value
 			MakePath = "NewPath/C/O/Q TempPath, \"Z:\\Experiment\\ver.Current\\Settings\\"+SequenceName+"\""
 			Execute Makepath
-			String SaveSettingsstring="Save/P=TempPath/O/G/W ScanParams as \""+SettingName+".dat\""
+			SaveSettingsstring="Save/P=TempPath/O/G/W ScanParams as \""+SettingName+".dat\""
 			Execute SaveSettingsString
 			DoAlert/T="Save Message" 0, "Settings Saved"
 			DoWindow/K SaveSettingsWindow
+			
+			
+
 			break
 		case -1:
 			
@@ -1385,13 +1449,18 @@ End
 //Procedures for Run button - checks to make sure info is input correctly, then sends sequence to the fpga
 Function RunProc(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
+	setDatafolder root:ExpParams
+	WAVE LoadedWave
 	NVAR SendCounter
+	NVAR DDSnum,EOnum
 	switch( ba.eventCode )	
 		case 2: // mouse up
 			GetScanParams()
 			SendCounter=0
 			
 			If (SettingsCheck()==0)
+
+				Make/O/N=(FindMaxInc()*FindTotalScan()*GetExperimentalLoop(),FindTotalStep()+DDSnum+EOnum+1,4,GetDataPointLoop()*FindDataTakeNumber(LoadedWave)+1) sequencerData=0
 				DefineValuesLooper()
 				StopTTL()
 				UpdateTTL()
@@ -1492,12 +1561,13 @@ Function CheckScanOrder()
 	Return FixScanOrder
 End
 
-Function TestPrint(loader)
+Function TestPrint(loader,waver)
 	WAVE loader
+	WAVE waver
 	SetDataFolder root:ExpParams
 	Variable i,ii,iii
 	
-	For (i=0;i<FindTotalStep();i+=1)
+	For (i=0;i<FindTotalinStep(waver);i+=1)
 		String stepper = "Print \"Step Number: "+num2str(i+1)+"\""
 		Execute stepper
 		For(ii=0;ii<7;ii+=1)
@@ -1988,6 +2058,22 @@ Function FindTotalStep()
 	Return TotalStep
 End
 
+Function FindTotalinStep(in)
+	Wave in
+	SetDataFolder root:ExpParams
+	Variable TotalStep=0
+	Variable i=0
+	Do
+		If(in[i][1]!=0)
+			TotalStep+=1
+		Else
+			Break
+		Endif
+		i+=1
+	While(i<1024)
+	Return TotalStep
+End
+
 Function FindTotalScan()
 	SetDataFolder root:ExpParams
 	WAVE ScanParams
@@ -2094,24 +2180,28 @@ Function DefineValuesLooper()
 	WAVE LoadedWave
 	Make/O/N=(3,4) DDSWAVE
 	MAKE/O/N=(FindTotalStep(),2) VALWAVE
-	Variable ScanCount=1
+	Variable ScanCount=0
 	Variable i
 	Variable ii
 	Variable Incrementer
-	ScanCount=0
 	Variable outerloop=0
 	Variable wat=0
 	
 	ControlInfo times
 	outerloop=V_Value
 	
+	
+	
+	//wat increments the experimental loop
 	Do
 		If (FindTotalScan()>0)
+			//Scancount increments through the total number of steps to scan
 			Do
 			Incrementer=0
 			ii=0
 			i=0
 			GetScanParams()
+				// i variable scans through steps to find the position of scancount in scan params and sets it equal to i (I guess this part is unneccesary)
 				For (i=0;i<FindTotalStep();i+=1)
 					If (i==floor(FindScanPos(ScanCount+1)/7))
 						If(LoadedWave[i][0]==1||LoadedWave[i][0]==7||LoadedWave[i][0]==8)
@@ -2124,13 +2214,13 @@ Function DefineValuesLooper()
 							While (ii<5)
 							Do
 								If (ii==1)
-									SendtoFPGA(DefineValues(i,ii,incrementer),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1))//step number, substep, increment number//tells function to grab the setpoints for the DDS//sends to FPGA
+									SendtoFPGA(DefineValues(i,ii,incrementer),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1),i+ii/10,incrementer)//step number, substep, increment number//tells function to grab the setpoints for the DDS//sends to FPGA
 								//	Print("Sent to SendtoFPGA: ")
 								//	TestPrintVALS(DefineValues(i,ii,incrementer))
 								//TestPrintDDS(GrabDDSValues(-1,-1,-1))						
 								Else
 							
-									SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(i,ii,incrementer),GrabMagiQValues(-1,-1,-1))//Tells function to grab setpoints//step number, substep, imcrement number
+									SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(i,ii,incrementer),GrabMagiQValues(-1,-1,-1),i+ii/10,incrementer)//Tells function to grab setpoints//step number, substep, imcrement number
 								Endif
 								incrementer+=1
 							While (ScanParams[7*i+ii][4]*incrementer<=ScanParams[7*i+ii][3]-ScanParams[7*i+ii][2])
@@ -2143,7 +2233,7 @@ Function DefineValuesLooper()
 								ii+=1
 							While (ii<7)
 							Do						
-								SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(-1,-1,-1),GrabMagiQValues(i,ii,incrementer))//Tells function to grab setpoints//step number, substep, imcrement number
+								SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(-1,-1,-1),GrabMagiQValues(i,ii,incrementer),i+ii/10,incrementer)//Tells function to grab setpoints//step number, substep, imcrement number
 								incrementer+=1
 							While (ScanParams[7*i+ii][4]*incrementer<=ScanParams[7*i+ii][3]-ScanParams[7*i+ii][2])
 						Elseif(LoadedWave[i][0]==2||LoadedWave[i][0]==3)//||LoadedWave
@@ -2156,22 +2246,21 @@ Function DefineValuesLooper()
 							While (ii<7)
 							Do
 								If (ii==1)
-									SendtoFPGA(DefineValues(i,ii,incrementer),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1))//step number, substep, increment number//tells function to grab the setpoints for the DDS//sends to FPGA
+									SendtoFPGA(DefineValues(i,ii,incrementer),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1),i+ii/10,incrementer)//step number, substep, increment number//tells function to grab the setpoints for the DDS//sends to FPGA
 								//	Print("Sent to SendtoFPGA: ")
 								//	TestPrintVALS(DefineValues(i,ii,incrementer))
 								//TestPrintDDS(GrabDDSValues(-1,-1,-1))						
 								Elseif(ii<5)
 							
-									SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(i,ii,incrementer),GrabMagiQValues(-1,-1,-1))//Tells function to grab setpoints//step number, substep, imcrement number
+									SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(i,ii,incrementer),GrabMagiQValues(-1,-1,-1),i+ii/10,incrementer)//Tells function to grab setpoints//step number, substep, imcrement number
 								Else
-									SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(-1,-1,-1),GrabMagiQValues(i,ii,incrementer))//Tells function to grab setpoints//step number, substep, imcrement number
+									SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(-1,-1,-1),GrabMagiQValues(i,ii,incrementer),i+ii/10,incrementer)//Tells function to grab setpoints//step number, substep, imcrement number
 								Endif
 								incrementer+=1
 							While (ScanParams[7*i+ii][4]*incrementer<=ScanParams[7*i+ii][3]-ScanParams[7*i+ii][2])
 						Else
 							Do
-							
-								SendtoFPGA(DefineValues(i,0,incrementer),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1))
+								SendtoFPGA(DefineValues(i,0,incrementer),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1),i+ii/10,incrementer)
 								incrementer+=1
 							While (ScanParams[7*i][4]*incrementer<ScanParams[7*i][3]-ScanParams[7*i][2])
 						Endif
@@ -2181,7 +2270,7 @@ Function DefineValuesLooper()
 				ScanCount+=1
 			While (ScanCount<FindTotalScan())
 		Else
-			SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1))
+			SendtoFPGA(DefineValues(-1,-1,-1),GrabDDSValues(-1,-1,-1),GrabMagiQValues(-1,-1,-1),i+ii/10,incrementer)
 		Endif
 		wat+=1
 	While(	wat<outerloop)
@@ -2300,7 +2389,7 @@ Function/WAVE GrabDDSValues(step,substep,increment)
 				ReturnWave[i-1][2]=ScanParams[7*FindDDSLocation(i)+4][1]
 				ReturnWave[i-1][3]=ScanParams[7*FindDDSLocation(i)+3][1]
 			Elseif (FindDDSLocation(i)<0)
-			Print(i)
+			
 				For (ii=0;ii<3;ii+=1)
 					ReturnWave[i-1][ii+1]=DDSSetPoints[ii][i-1]
 				Endfor
@@ -2311,6 +2400,7 @@ Function/WAVE GrabDDSValues(step,substep,increment)
 	Return ReturnWave
 End
 
+//Probably doesn't do anything to EO3
 //Returns (EO num, Freq, Amp)
 Function/WAVE GrabMagiQValues(step,substep,increment)
 	Variable step,substep,increment
@@ -2318,7 +2408,7 @@ Function/WAVE GrabMagiQValues(step,substep,increment)
 	WAVE LoadedWave
 	WAVE ScanParams
 	WAVE EOSetPoints
-	MAKE/O/N=(2,3) EOReturnWave
+	MAKE/O/N=(3,3) EOReturnWave
 	NVAR STATE_DET_FREQ,STATE_DET_AMP,STATE_DET_PHASE
 	NVAR FLR_DET_FREQ,FLR_DET_AMP,FLR_DET_PHASE
 	NVAR COOL_FREQ,COOL_AMP,COOL_PHASE
@@ -2427,7 +2517,8 @@ Function FindDDSLocation(DDSnum)
 
 End
 
-Function SendtoFPGA(valuewave,ddsvaluewave,eovaluewave)
+Function/WAVE SendtoFPGA(valuewave,ddsvaluewave,eovaluewave,scanner,incrementer)
+	Variable scanner,incrementer
 	WAVE valuewave
 	WAVE ddsvaluewave
 	WAVE eovaluewave
@@ -2469,6 +2560,8 @@ Function SendtoFPGA(valuewave,ddsvaluewave,eovaluewave)
 			PreviousElementNumberscaled+=FindGroupSize(groupcount)*LoadedWave[groupcount-1][2]
 			groupcount+=1
 		While	(groupcount<=TotalGroupNumber())
+		
+//*** This is for running the AO and EO frequencies
 		//	i=0
 		//	Do
 		//		Print(DDS_Info[i][3])
@@ -2487,7 +2580,7 @@ Function SendtoFPGA(valuewave,ddsvaluewave,eovaluewave)
 		//	While(i<3)
 		
 		
-		//	
+//	*** This is for Pring a running message
 		//	If(SendCounter==0)
 		//		Print("Sending to FPGA....")
 		//		LoadingScreen="..."
@@ -2499,17 +2592,21 @@ Function SendtoFPGA(valuewave,ddsvaluewave,eovaluewave)
 		//	Endif
 		//	
 		//	SendCounter=mod(SendCounter+1,5)
-		//	Print("*****************")
-		//	TestPrintEO(eovaluewave)
-			
+
+		
 			SendSequence(WavetoFPGA)
 			
-			ControlInfo Loops
-			loopmultiplier=V_Value
+			
+		//******* How to take data from PMT	plugged into DI_01
 		
-			runSequence(loopmultiplier)
 		
-			//Alternatively, can use a do function to take data after each run:
+			//recmask is the DI channel we take data on
+	NVAR TDC=root:ExpParams:TDC
+	runSequence(GetDataPointLoop(),recmask=DI_01,tdc=TDC)
+	//AddtoData(runSequence(GetDataPointLoop(),recmask=DI_01),valuewave,ddsvaluewave,eovaluewave,scanner,incrementer)
+
+		
+		//******Alternatively, can use a do function to take data after each run:
 		//	i=0
 		//	Do
 		//		runSequence(1)
@@ -2518,7 +2615,8 @@ Function SendtoFPGA(valuewave,ddsvaluewave,eovaluewave)
 		//	While (i<loopmultiplier)
 	//40 us between scans
 
-	
+	print ddsvaluewave
+	print	eovaluewave
 End
 
 Function TestPrintEO(EOwave)
@@ -2598,13 +2696,137 @@ Function StopTTL()
 	
 End
 
-Function TestprintDI(datum)
-	Wave datum
-	SetDatafolder root:Sequencer:Data
+Function FindMaxInc()
+	SetDatafolder root:ExpParams
+	WAVE ScanParams
+	Variable MAXINC
+	Variable	i=0
+	Variable ii=0
 	
-	Variable i=0
-	For (i=0;i<128;i+=1)
-		Print(datum[i])
-	Endfor
+	For(i=0;i<FindTotalStep();i+=1)
+		For(ii=0;ii<7;ii+=1)
+			If(ScanParams[7*i+ii][4]!=0)
+				If(MaxINC<(ScanParams[7*i+ii][3]-ScanParams[7*i+ii][2])/ScanParams[7*i+ii][4])
+					MAXINC=(ScanParams[7*i+ii][3]-ScanParams[7*i+ii][2])/ScanParams[7*i+ii][4]
+				Endif
+			Endif
+		EndFor
+	EndFor
+
+	Return MAXINC
+end
+
+Function GetDataPointLoop()
+	ControlInfo Loops
+	
+	Return V_Value
+
 End
+
+Function GetExperimentalLoop()
+	ControlInfo Times
+	Return V_Value
+	
+End
+
+Function FindDataTakeNumber(in)
+	WAVE in
+	SetDatafolder root:ExpParams
+	WAVE NameWave
+	Variable i=0
+	Variable Datacount=0
+	
+	For(i=0;i<FindTotalStep();i+=1)
+		If(gb_seq(NameWave[in[i][0]],3))
+			Datacount+=1
+		Endif
+	EndFor
+	
+	Return datacount
+End
+
+
+//This only works for data collection on 1 pmt also it probably does not work well for more than 1 data collection stage per experiment
+//I think this will write both data collection stages onto the same wave, so if you can figure out how to tell where they split
+	//you can probably save them into different files and then write a program to compare them or whatever
+
+//sequencerData[i][0][0][0] is the set of step numbers which are being incremented for a collection of data - you can find the name or ttl 
+	//by referencing the valwave which contains the sequence sent to the fpga at a given time
+	//these are given by step+substep/10 where substep refers to time, time(eo/ao), frequency,amplitude,phase, eo frequency,eo amplitude
+//sequencerData[i][1][0][1] is the increment you are at for the ith set of data
+//SequencerData[i][j][k][0] is the list of values sent to the FPGA, DDS, and MagiQ cards for the ith step
+	// 1<j<steps+1 is the value wave
+	// steps+1<j<steps+1+ddsnum is the dds wave
+	// steps+ddsnum<j is the eo wave
+//Sequencerdata[i][0][0][j] is the set of data collected for the ith step
+Function AddtoData(dat,val,dds,eo,scanner,incrementer)
+	Wave dat,val,dds,eo
+	Variable scanner,incrementer
+	setDatafolder root:Expparams
+	WAVE sequencerData
+	NVAR DDSnum,EOnum
+	String Makepath,Savedatastring
+	WAVE/T TTLNAMES
+	WAVE/T LoadWaveFiles
+	
+	Variable i=1
+	Variable ii=0
+	Variable stps
+	Variable place=FindNextinData()
+	sequencerData[place][0][0][0]=Scanner
+	sequencerData[place][1][0][1]=incrementer
+	For(i=1;i<stps+ddsnum+eonum+1;i+=1)
+		If(i<stps+1)
+			sequencerData[place][i][0][0]=val[i-1][0]
+			sequencerData[place][i][1][0]=val[i-1][1]
+		Elseif(i<stps+1+ddsNum&&i>stps)
+			For(ii=0;ii<4;ii+=1)
+				sequencerData[place][i][ii][0]=dds[i-1-stps][ii]
+			EndFor
+		Else
+			For(ii=0;ii<3;ii+=1)
+				sequencerData[place][i][ii][0]=eo[i-1-stps-ddsnum][ii]
+			EndFor
+		Endif
+	Endfor
+	For(i=1;i<GetDatapointloop()*FindDataTakeNumber(val)+1;i+=1)
+		sequencerData[place][0][0][i]=dat[i-1]
+	Endfor
+	ControlInfo Sequence
+	MakePath = "NewPath/C/O/Q TempdataPath, \"Z:\\Experiment\\ver.Current\\Data\\"+date()+"\""
+	Execute Makepath
+	i=0
+	Do
+		if(StringMatch(IndexedFile(TempDataPath,-1,".dat"),"*"+LoadWaveFiles[V_VALUE-2]+"_"+date()+"_"+num2str(ii)+"*"))
+			ii+=1
+		Else
+			Break
+		Endif
+		i+=1
+	While(1)
+	
+	Savedatastring="Save/P=TempDataPath/O/G/W sequencerData as \""+LoadWaveFiles[V_VALUE-2]+"_"+date()+"_"+num2str(ii)+".dat\""
+	Execute Savedatastring
+	
+	
+End
+	
+Function FindNextinData()
+	setDatafolder root:Expparams
+	WAVE sequencerData
+	Variable i=0
+	variable loc=0
+	
+	For(i=0;i<FindMaxInc()*FindTotalScan()*GetExperimentalLoop();i+=1)
+		If(sequencerData[i][0][0][0])
+			loc+=1
+		Endif
+	EndFor
+	
+	Return loc
+End
+
+//Need to add something to process/display data
+//Need to add something to save data
+//Need to add something to load data
 
