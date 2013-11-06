@@ -2759,9 +2759,9 @@ End
 	// steps+1<j<steps+1+ddsnum is the dds wave
 	// steps+ddsnum<j is the eo wave
 //Sequencerdata[i][0][0][j] is the set of data collected for the ith step
-Function AddtoData(dat,val,dds,eo,scanner,incrementer)
+Function OrganizeData(dat,val,dds,eo,scanner,incrementer,tosave)
 	Wave dat,val,dds,eo
-	Variable scanner,incrementer
+	Variable scanner,incrementer,tosave
 	setDatafolder root:Expparams
 	WAVE sequencerData
 	NVAR DDSnum,EOnum
@@ -2792,6 +2792,7 @@ Function AddtoData(dat,val,dds,eo,scanner,incrementer)
 	For(i=1;i<GetDatapointloop()*FindDataTakeNumber(val)+1;i+=1)
 		sequencerData[place][0][0][i]=dat[i-1]
 	Endfor
+	If(tosave)
 	ControlInfo Sequence
 	MakePath = "NewPath/C/O/Q TempdataPath, \"Z:\\Experiment\\ver.Current\\Data\\"+date()+"\""
 	Execute Makepath
@@ -2807,7 +2808,7 @@ Function AddtoData(dat,val,dds,eo,scanner,incrementer)
 	
 	Savedatastring="Save/P=TempDataPath/O/G/W sequencerData as \""+LoadWaveFiles[V_VALUE-2]+"_"+date()+"_"+num2str(ii)+".dat\""
 	Execute Savedatastring
-	
+	Endif
 	
 End
 	
@@ -2826,7 +2827,5 @@ Function FindNextinData()
 	Return loc
 End
 
-//Need to add something to process/display data
-//Need to add something to save data
-//Need to add something to load data
+
 

@@ -440,7 +440,7 @@ Window Dataloader() : Panel
 	NewPanel /N=Dataloader /K=1 /W=(75,110,408,210) as "Data Loader"
 	ModifyPanel cbRGB=(65534,65534,65534)
 	Checkbox SingleVariable, pos={35,15},size={80,20},proc=SingleVariable_proc,title="Single Variable", mode=1
-	Checkbox VariableCorrelation, pos={165,15},size={80,20},proc=VariableCorrelation_proc,title="Variable Correlation",mode=1
+	Checkbox VariableCorrelation, pos={165,15},size={80,20},proc=VariableCorrelation_proc,title="Variable Correlation",mode=1,disable=1
 EndMacro
 
 

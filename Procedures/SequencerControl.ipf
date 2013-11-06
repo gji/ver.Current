@@ -98,17 +98,18 @@ function/WAVE runSequence(reps, [recmask,tdc])
 	EndFor
 	If(TDC)
 		Make/o/n=6 tdc_data_temp
-		Variable n
+//		Variable n
 		VDT2/P=COM7 baud=230400,stopbits=2,killio
-		VDTOpenPort2 COM6
+		VDTOpenPort2 COM7
 		VDTOperationsPort2 COM7
-		VDTReadWave2/O=5 tdc_data_temp
-		VDTRead2/O=5 n
-		VDTGetStatus2 0,1,0
-		VDTClosePort2 CO7
+		VDTReadBinaryWave2/B/TYPE=16/O=5 tdc_data_temp
+//		VDTReadWave2/O=5 tdc_data_temp
+//		VDTRead2/O=5 n
+//		VDTGetStatus2 0,1,0
+		VDTClosePort2 COM7
 		print tdc_data_temp
-		print n
-		Print V_VDT
+//		print n
+//		Print V_VDT
 	endif
 		
 	VDTOperationsPort2 COM4

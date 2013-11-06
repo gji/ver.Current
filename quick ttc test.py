@@ -20,7 +20,7 @@ data=[];
 while True:
 	s = ser.read(6)
 
-
+	print ord(s[3])
 	out = (ord(s[5]) & 0b00011111)*(256 ** 5) + (ord(s[4]))*(256 ** 4) + (ord(s[3]))*(256 ** 3) + (ord(s[2]))*(256 ** 2) + (ord(s[2]))*(256 ** 1) + (ord(s[0]))*(256 ** 0)
 	out /=1000000.0
 	data.append(out)
