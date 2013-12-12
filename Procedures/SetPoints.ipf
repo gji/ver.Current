@@ -1,8 +1,8 @@
 #pragma rtGlobals=3		// Use modern global access method and strict wave access.
 
-function DDS_wrapper(ctrlName,varNum,varStr,varName,checked) : SetVariableControl
+function DDS_wrapper(ctrlName,varNum,varStr,varName) : SetVariableControl
 	String ctrlName,varStr,varName
-	variable varNum,checked
+	variable varNum
 
 	SetDataFolder root:DDS
 	Variable Frequency,Phase,Ampl
