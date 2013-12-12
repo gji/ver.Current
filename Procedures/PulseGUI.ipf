@@ -344,7 +344,7 @@ Function CreateWave()
 	
 	For (i=0;i<StepNum;i+=1)
 		PulseCreatorWave[i][0]=PopupVals[i]
-		Print PopupVals[i]
+		//Print PopupVals[i]
 	EndFor
 	
 	For (j=0;j<StepNum;j+=1)
@@ -1336,38 +1336,38 @@ Function SaveSettingsProc(ba) : ButtonControl
 	SetDataFolder root:ExpParams
 	NVAR SettingsCheckOut
 	//
-	STring Makepath,Savedatastring
-	WAVE/T LoadWaveFiles
-	Variable count=0
-	Variable i
-	WAVE SCANPARAMS
+//	STring Makepath,Savedatastring
+//	WAVE/T LoadWaveFiles
+//	Variable count=0
+//	Variable i
+//	WAVE SCANPARAMS
 	//
 	switch(ba.eventCode)
 		case 2: //mouse up
 		//
-			i=0
+		//	i=0
 			//
 			DoWindow/K SaveWaveWindow
-//			GetScanOrder()
+
 			GetScanParams()
 			If(SettingsCheck()==0)
 			//
-						ControlInfo Sequence
-			MakePath = "NewPath/C/O/Q TempPath, \"Z:\\Experiment\\ver.Current\\Data\\"+date()+"\""
-			Execute Makepath
-			Do
-			
-				if(StringMatch(IndexedFile(TempPath,-1,".dat"),"*"+LoadWaveFiles[V_VALUE-2]+"_"+date()+"_"+num2str(count)+"*"))
-					Count+=1
-				Else
-					Break
-				Endif
-				i+=1
-			While(1)
-			Savedatastring="Save/O/P=TempPath/G/W ScanParams as \""+LoadWaveFiles[V_VALUE-2]+"_"+date()+"_"+num2str(count)+".dat\""
-			Execute Savedatastring
-			//
-			//	Execute "SaveSettingsWindow()"			
+//						ControlInfo Sequence
+//			MakePath = "NewPath/C/O/Q TempPath, \"Z:\\Experiment\\ver.Current\\Data\\"+date()+"\""
+//			Execute Makepath
+//			Do
+//			
+//				if(StringMatch(IndexedFile(TempPath,-1,".dat"),"*"+LoadWaveFiles[V_VALUE-2]+"_"+date()+"_"+num2str(count)+"*"))
+//					Count+=1
+//				Else
+//					Break
+//				Endif
+//				i+=1
+//			While(1)
+//			Savedatastring="Save/O/P=TempPath/G/W ScanParams as \""+LoadWaveFiles[V_VALUE-2]+"_"+date()+"_"+num2str(count)+".dat\""
+//			Execute Savedatastring
+//			//
+				Execute "SaveSettingsWindow()"			
 			Endif
 			break
 		case -1:
@@ -2194,12 +2194,15 @@ Function DefineValuesLooper()
 	
 	//wat increments the experimental loop
 	Do
+	ScanCount=0
+		//print "pass"
 		If (FindTotalScan()>0)
 			//Scancount increments through the total number of steps to scan
 			Do
 			Incrementer=0
 			ii=0
 			i=0
+			
 			GetScanParams()
 				// i variable scans through steps to find the position of scancount in scan params and sets it equal to i (I guess this part is unneccesary)
 				For (i=0;i<FindTotalStep();i+=1)
@@ -2615,8 +2618,8 @@ Function/WAVE SendtoFPGA(valuewave,ddsvaluewave,eovaluewave,scanner,incrementer)
 		//	While (i<loopmultiplier)
 	//40 us between scans
 
-	print ddsvaluewave
-	print	eovaluewave
+	//print ddsvaluewave
+	//print	eovaluewave
 End
 
 Function TestPrintEO(EOwave)
@@ -2793,20 +2796,20 @@ Function OrganizeData(dat,val,dds,eo,scanner,incrementer,tosave)
 		sequencerData[place][0][0][i]=dat[i-1]
 	Endfor
 	If(tosave)
-	ControlInfo Sequence
+	ControlInfo Sequences
 	MakePath = "NewPath/C/O/Q TempdataPath, \"Z:\\Experiment\\ver.Current\\Data\\"+date()+"\""
 	Execute Makepath
 	i=0
 	Do
-		if(StringMatch(IndexedFile(TempDataPath,-1,".dat"),"*"+LoadWaveFiles[V_VALUE-2]+"_"+date()+"_"+num2str(ii)+"*"))
-			ii+=1
+		if(StringMatch(IndexedFile(TempDataPath,-1,".dat"),"*"+S_VALUE+"_"+date()+"_"+num2str(i)+"*"))
+			i+=1
 		Else
 			Break
 		Endif
-		i+=1
+
 	While(1)
 	
-	Savedatastring="Save/P=TempDataPath/O/G/W sequencerData as \""+LoadWaveFiles[V_VALUE-2]+"_"+date()+"_"+num2str(ii)+".dat\""
+	Savedatastring="Save/P=TempDataPath/O/G/W sequencerData as \""+S_VALUE+"_"+date()+"_"+num2str(i)+".dat\""
 	Execute Savedatastring
 	Endif
 	

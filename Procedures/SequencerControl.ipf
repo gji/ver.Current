@@ -70,7 +70,7 @@ function sendSequence(sequence)
 			writeWave[13*i] = {0x6d, gb_seq(i,1),gb_seq(i,0), gb_seq(sequence[i][0],3),gb_seq(sequence[i][0],2),gb_seq(sequence[i][0],1),gb_seq(sequence[i][0],0), gb_seq(sequence[i][1],3),gb_seq(sequence[i][1],2),gb_seq(sequence[i][1],1),gb_seq(sequence[i][1],0),0x0d,0x0a}
 		endfor
 		writeWave[13*i] = {0x72, gb_seq((i-1),1),gb_seq((i-1),0)} //sets max address to run to, counter adds 1 at the end that we need to take out
-		VDTOperationsPort2 COM4
+		VDTOperationsPort2 COM12
 		VDTWriteBinaryWave2 writeWave
 	endif
 end
@@ -89,35 +89,43 @@ function/WAVE runSequence(reps, [recmask,tdc])
 	Make/B/U/O writeWave = {0x06e, gb_seq(reps,1), gb_seq(reps,0), gb_seq(recmask,3), 0x0d, 0x0a}
 //	VDTOperationsPort2 COM4
 //	VDTWriteBinaryWave2 writeWave\
-	print "TDC = "+num2str(tdc)
 	
 	Variable numChannels = 0
 	variable i
 	for(i=0; i<32; i+=1)
 		numChannels += (recmask / 2^i) & 0x01
 	EndFor
+	
+	// If the TDC is enabled, we open it beforehand since the buffer needs to be opened
 	If(TDC)
-		Make/o/n=6 tdc_data_temp
-//		Variable n
 		VDT2/P=COM7 baud=230400,stopbits=2,killio
 		VDTOpenPort2 COM7
-		VDTOperationsPort2 COM7
-		VDTReadBinaryWave2/B/TYPE=16/O=5 tdc_data_temp
-//		VDTReadWave2/O=5 tdc_data_temp
-//		VDTRead2/O=5 n
-//		VDTGetStatus2 0,1,0
-		VDTClosePort2 COM7
-		print tdc_data_temp
-//		print n
-//		Print V_VDT
 	endif
-		
-	VDTOperationsPort2 COM4
+	
+	VDT2/P=COM12 baud=230400,stopbits=2,killio
+	VDTOpenPort2 COM12
+	VDTOperationsPort2 COM12
 	VDTWriteBinaryWave2 writeWave	
 	SetDataFolder root:Sequencer:Data
 	Make/B/U/O/n=(numChannels,reps) data
 	VDTReadBinaryWave2/B/TYPE=16/O=5 data
+	VDTClosePort2 COM12
 	SetDataFolder root:Sequencer
+	
+	// TDC data comes in as 6 bytes in little endian. The last byte 
+	If(TDC)
+		Variable tdc_points
+		VDTOperationsPort2 COM7
+		VDTGetStatus2 0, 0, 0
+		tdc_points = V_VDT
+		
+		Make/o/n=(tdc_points) tdc_data_temp
+		VDTReadBinaryWave2/B/TYPE=0x48/O=1 tdc_data_temp
+		VDTClosePort2 COM7
+		Make/o/n=(tdc_points/6) tdc_data
+		tdc_data = tdc_data_temp[6*p] + tdc_data_temp[6*p+1]*(2^8) + tdc_data_temp[6*p+2]*(2^8)^2 + tdc_data_temp[6*p+3]*(2^8)^3 + tdc_data_temp[6*p+4]*(2^8)^4 + (tdc_data_temp[6*p+5] & 0x1F)*(2^8)^5
+		print tdc_data
+	endif
 
 	return data
 end
