@@ -60,10 +60,6 @@
 function sendSequence(sequence)
 	Wave sequence
 	
-	SetDataFolder root:ExpParams
-	SVAR SEQ_PORT
-	String seq_p = SEQ_PORT
-	
 	SetDataFolder root:Sequencer:Data
 	
 	if(DimSize(sequence,0)>0) 
@@ -74,14 +70,8 @@ function sendSequence(sequence)
 			writeWave[13*i] = {0x6d, gb_seq(i,1),gb_seq(i,0), gb_seq(sequence[i][0],3),gb_seq(sequence[i][0],2),gb_seq(sequence[i][0],1),gb_seq(sequence[i][0],0), gb_seq(sequence[i][1],3),gb_seq(sequence[i][1],2),gb_seq(sequence[i][1],1),gb_seq(sequence[i][1],0),0x0d,0x0a}
 		endfor
 		writeWave[13*i] = {0x72, gb_seq((i-1),1),gb_seq((i-1),0)} //sets max address to run to, counter adds 1 at the end that we need to take out
-		
-		VDT2/P=COM12 baud=230400,stopbits=2,killio
-		VDTOpenPort2 $seq_p
-		VDTOperationsPort2 $seq_p
+		VDTOperationsPort2 COM12
 		VDTWriteBinaryWave2 writeWave
-		VDTClosePort2 $seq_p
-		
-		KillWaves writeWave
 	endif
 end
 
@@ -94,11 +84,6 @@ end
 function/WAVE runSequence(reps, [recmask,tdc])
 	Variable reps
 	Variable recmask,tdc
-	
-	SetDataFolder root:ExpParams
-	SVAR SEQ_PORT
-	String seq_p = SEQ_PORT
-	
 	recmask = paramIsDefault(recmask) ? 0x00 : recmask
 	tdc = paramIsDefault(tdc) ? 0 : tdc
 	Make/B/U/O writeWave = {0x06e, gb_seq(reps,1), gb_seq(reps,0), gb_seq(recmask,3), 0x0d, 0x0a}
@@ -117,14 +102,14 @@ function/WAVE runSequence(reps, [recmask,tdc])
 		VDTOpenPort2 COM7
 	endif
 	
-	VDT2/P=$seq_p baud=230400,stopbits=2,killio
-	VDTOpenPort2 $seq_p
-	VDTOperationsPort2 $seq_p
+	VDT2/P=COM12 baud=230400,stopbits=2,killio
+	VDTOpenPort2 COM12
+	VDTOperationsPort2 COM12
 	VDTWriteBinaryWave2 writeWave	
 	SetDataFolder root:Sequencer:Data
 	Make/B/U/O/n=(numChannels,reps) data
 	VDTReadBinaryWave2/B/TYPE=16/O=5 data
-	VDTClosePort2 $seq_p
+	VDTClosePort2 COM12
 	SetDataFolder root:Sequencer
 	
 	// TDC data comes in as 6 bytes in little endian. The last byte 
@@ -141,8 +126,6 @@ function/WAVE runSequence(reps, [recmask,tdc])
 		tdc_data = tdc_data_temp[6*p] + tdc_data_temp[6*p+1]*(2^8) + tdc_data_temp[6*p+2]*(2^8)^2 + tdc_data_temp[6*p+3]*(2^8)^3 + tdc_data_temp[6*p+4]*(2^8)^4 + (tdc_data_temp[6*p+5] & 0x1F)*(2^8)^5
 		print tdc_data
 	endif
-	
-	KillWaves writeWave
 
 	return data
 end

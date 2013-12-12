@@ -41,29 +41,6 @@ EndMacro
 
 Function Param_Init()
 	NewDataFolder/O/S root:ExpParams
-	
-	String/G SEQ_NAME 					= "Sequencer"
-	String/G DDS_NAME 					= "DDS"
-	
-	String/G SEQ_PORT 					= ""
-	String/G DDS_PORT 					= ""
-	
-	SVAR S_VDT
-	VDTGetPortListDescription2
-	String ports = S_VDT
-	
-	Variable n= ItemsInList(ports)
-	Make/O/T/N=(n) devices = StringFromList(p,ports)
-	Variable t;
-	for(t=0; t<n; t+=1)
-		String device = devices[t]
-		if(strsearch(device, SEQ_NAME,0) != -1)
-			SEQ_PORT = device[(strsearch(device,",",0)+1),strlen(device)]
-		endif
-		if(strsearch(device, DDS_NAME,0) != -1)
-			DDS_PORT = device[(strsearch(device,",",0)+1),strlen(device)]
-		endif
-	endfor
 
 	Variable/G LIVE_UP					= 	0
 	Variable/G CUR_POS					= 	LOAD_POS		
@@ -108,7 +85,7 @@ Function Param_Init()
 	String/G	WAVE_Hardware			=	":waveforms:Symmetric_Hardware.csv"
 
 	//Variables for Pulse Program
-	NewDataFolder/O/S root:DataAnalysis
+	NewDataFolder root:DataAnalysis
 	Variable/G SequenceCurrent							=	0
 	Variable/G VerticalButtonPosition					=	16
 	Variable/G VerticalButtonPos							=	16
@@ -492,10 +469,10 @@ Window OverrideVariables() : Panel
 		ddsFreqBox="SetVariable DDS"+num2str(i)+"_FREQ_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Frequency\",font=\"Arial\",limits={0,400,0.01},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][0]"
 		position+=20
 		
-		ddsPhaseBox="SetVariable DDS"+num2str(i)+"_PHASE_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Phase\",font=\"Arial\",limits={0,180,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][2]"
+		ddsPhaseBox="SetVariable DDS"+num2str(i)+"_PHASE_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Phase\",font=\"Arial\",limits={0,1023,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][2]"
 		position+=20
 		
-		ddsAmpBox="SetVariable DDS"+num2str(i)+"_AMPL_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Amplitude\",font=\"Arial\",limits={0,1023,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][1]"
+		ddsAmpBox="SetVariable DDS"+num2str(i)+"_AMPL_BOX,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_wrapper,title=\"DDS"+num2str(i)+" Amplitude\",font=\"Arial\",limits={0,180,1},value= root:ExpParams:DDS_INFO["+num2str(i-1)+"][1]"
 		position+=20
 		
 		ddsOverride="Checkbox DDS"+num2str(i)+"_Override,pos={50,"+num2str(position)+"},size={195,20},bodyWidth=130,proc=DDS_Overridewrapper,title=\"DDS "+num2str(i)+" Override\",font=\"Arial\",value=0"
