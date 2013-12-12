@@ -5,6 +5,7 @@ Macro Exp_Init()
 	DefaultGUIFont all={"Segoe UI", 12, 0}, panel={"Segoe UI",12,3}
 
 // Fills appropriate waves and variables	
+	
 	Param_Init()
 	DC_Init()
 	Seq_init()
@@ -48,8 +49,8 @@ Function Param_Init()
 	String/G SEQ_PORT 					= ""
 	String/G DDS_PORT 					= ""
 	
-	SVAR S_VDT
 	VDTGetPortListDescription2
+	SVAR S_VDT
 	String ports = S_VDT
 	
 	Variable n= ItemsInList(ports)
@@ -108,7 +109,7 @@ Function Param_Init()
 	String/G	WAVE_Hardware			=	":waveforms:Symmetric_Hardware.csv"
 
 	//Variables for Pulse Program
-	NewDataFolder/O/S root:DataAnalysis
+	NewDataFolder/O root:DataAnalysis
 	Variable/G SequenceCurrent							=	0
 	Variable/G VerticalButtonPosition					=	16
 	Variable/G VerticalButtonPos							=	16
@@ -482,7 +483,6 @@ Window OverrideVariables() : Panel
 	String TTLLabel
 	String TTLSwitch
 	String TTLOverride
-
 	
 	Do 
 		
