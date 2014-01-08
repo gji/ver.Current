@@ -329,6 +329,7 @@ Function UpdateTTL()
 	Variable i=0
 	Variable j=0
 	Mask=0
+	
 //	Do
 //		If (OverrideWave[i][1])
 //			If(OverrideWave[i][0])
@@ -360,6 +361,7 @@ Function UpdateTTL()
 //	Endif
 	
 	For(i=0; i<8; i+=1)
+
 		If(OverrideWave[i][1] && OverrideWave[i][0]&&OverrideWave[i][2]==1)
 			NVAR port = $("VAR_TTL_0"+num2str(i+1))
 			print("Override TTL"+num2str(i+1)+" ON")
@@ -377,7 +379,6 @@ Function UpdateTTL()
 			NVAR port = $("VAR_TTL_0"+num2str(i+1))
 			print("Override TTL"+num2str(i+1)+" UNOverridden")				
 		EndIf
-		OverrideWave[i][2]=0
 	EndFor
 
 	MaskWave={Mask,0x0000020}

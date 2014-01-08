@@ -2583,7 +2583,7 @@ Function/WAVE SendtoFPGA(valuewave,ddsvaluewave,eovaluewave,scanner,incrementer)
 		//	While(i<3)
 		
 		
-//	*** This is for Pring a running message
+//	*** This is for Printing a running message
 		//	If(SendCounter==0)
 		//		Print("Sending to FPGA....")
 		//		LoadingScreen="..."
