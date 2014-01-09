@@ -16,18 +16,17 @@ Function OpenWaveFile(ba) : ButtonControl
 	WAVE		COMP_INFO
 	WAVE/T		WAVE_INFO
 	
-	String lookup = "zxyhu"
+	String lookup = "zxyhdu"
 	
 	Switch( ba.eventCode )
 		Case 2:
 			Variable ctrlNum = strsearch(lookup,num2char(ba.ctrlName[0]),0)
-			If(ctrlNum == 4)
+			If(ctrlNum == 5) // Update
 				LoadDCWaveMatricies()
-//				upPos(vals[5],0)
 				If(LIVE_UP)
 					updateVoltages()
 				EndIf
-				Break
+				Break // Get out of here before file selection box opens
 			EndIf
 			Variable refNum
 			
@@ -101,14 +100,11 @@ function ButtonProc(ba) : ButtonControl
 			Variable ctrlNum = strsearch(lookup,num2char(ba.ctrlName[0]),0)
 			Variable curVal = COMP_INFO[ctrlNum];
 			If (ctrlNum!=5)
-			
 				If ( stringmatch(num2char(ba.ctrlName[4]), "p") )
 					COMP_INFO[ctrlNum] = round(curVal*100+1)/100
 				Else
 					COMP_INFO[ctrlNum] = round(curVal*100-1)/100
 				EndIf
-			Else
-//				upPos(vals[ctrlNum],(stringmatch(num2char(ba.ctrlName[4]), "p"))?(1):(-1))
 			EndIf
 			If(LIVE_UP)
 				updateVoltages()
@@ -169,31 +165,8 @@ End
 //
 //--------------------------------------------------------------
 
-//// Updates position, moving ion position up, direction=1; down, direction=-1; nowhere, otherwise
-//Function upPos( direction)
-//	SetDataFolder root:DCVolt	
-//	NVAR CUR_POS		=	root:ExpParams:CUR_POS
-//
-//	Wave vals
-//	Wave fields
-//	
-//	Wave tmat = $("mat0")
-//	FindValue/V=(curPos) tmat
-//	if ( direction == 1 )
-//		curPos = tmat[V_Value+1]
-//	elseif (direction == -1)
-//		curPos = tmat[V_Value-1]
-//	endif
-//	vals[5]=curPos
-//	
-//	Variable i
-//	for(i=0; i<4; i+=1)
-//		Wave tmat = $("mat" + num2str(i))
-//		FindValue/V=(vals[5]) tmat
-//		fields[][i] = tmat[V_Value][p+1]
-//	endfor
-//End
 
+// This function uses basic 2-point linear interpolation for positions not given voltages
 function updateVoltages()
 	SetDataFolder root:DCVolt
 	
@@ -206,39 +179,8 @@ function updateVoltages()
 	Variable i	
 	
 	RAW_VOLTAGES		= 0
-//	VARIABLE	j			= 0
-//	WAVE tmat = $("mat0")		
-//	FindValue/V=(0) tmat	
-//	variable d
-//	d	=	tmat[V_Value+1]-tmat[V_Value]
-//	print d	
-//	Do 
-//		j = mod(CUR_POS,d)			
-//		if(j>d/2)
-//			CUR_POS	+=d-j
-//		else	
-//			CUR_POS	+=	j
-//		endif	
-//	while (j)	
-//	FindValue/V=(CUR_POS) tmat
-//	VARIABLE	k	=	V_Value-1
-//	interp
-
-	For(i=0; i<DimSize(COMP_INFO,0)-1;i+=1)		
-		//WAVE tmat = $("mat0")	
+	For(i=0; i<4;i+=1)  // There are 4 different waveforms (x,y,z,harmonic)
 		WAVE tmat = $("mat" + num2str(i))
-		
-		//WAVE
-//		FindValue/V=(CUR_POS) tmat
-//		variable k = v_value
-//		if (k	==	-1)
-//			print "DC Update error"
-//			print k
-//			print CUR_POS+i							
-//			return -1
-//		elseif(k > 0)
-//			FIELDS[][i] = tmat[k][p+1]
-//		endif
 		// A temporary array to store the individual columns of tmat, minus the position column
 		Make/O/N=(Dimsize(tmat,0)) temp
 		FindLevel/Q tmat, CUR_POS
@@ -254,7 +196,7 @@ function updateVoltages()
 				FIELDS[j-1][i] = temp(V_LevelX) // Igor will automatically interpolate a 1D wave.
 			EndFor
 		endif
-		//KillWaves temp, tempX
+		KillWaves temp
 		
 		RAW_VOLTAGES[]	+= COMP_INFO[i] * FIELDS[p][i]
 	EndFor
@@ -291,9 +233,7 @@ Function sendVoltageGroup(RAW_VOLTAGES)
 		EndIf
 	EndFor
 	
-	//
 	overVoltWarning(OUT_VOLTAGES)
-	//
 	
 	For(i=0;i<96;i+=1)
 		CMDS[floor(i/8)] += num2str(OUT_VOLTAGES[i]) + "," + num2str(i-8*floor(i/8)) + ";"
@@ -304,7 +244,6 @@ Function sendVoltageGroup(RAW_VOLTAGES)
 	EndFor
 End
 
-//
 Function overVoltWarning(OUT_VOLTAGES)
 	WAVE		OUT_VOLTAGES
 	Variable voltCap
@@ -321,8 +260,8 @@ Function overVoltWarning(OUT_VOLTAGES)
 	
 		
 END
-//
-//Test Functions//
+
+//Test Functions
 
 Function Scan_l(k,COMP_INFO,Holder,Scale,Step, Wait)
 	Variable k
@@ -460,45 +399,7 @@ Function LoadParamScan()
 		Sleep/s/B Wait
 		Scan_j(i,COMP_INFO,Holder,Scale,Step, Wait) 
 	EndFor
-End		
-
-
-//
-
-//Function Stop()
-//	Make/T/O/N=12 cmds
-//	Variable i
-//	for(i=0;i<12;i+=1)
-//		cmds[i]=""
-//	endfor
-//	for(i=0;i<96;i+=1)
-//		cmds[floor(i/8)] += "0" + "," + num2str(i-8*floor(i/8)) + ";"
-//	endfor
-//	for(i=0;i<12;i+=1)
-//		DAQmx_AO_SetOutputs /KEEP=1/DEV="D"+num2str(i+1) cmds[i]
-//	endfor
-//End
-//
-//Function Test()
-//	Make/T/O/N=12 cmds
-//	Variable i
-//	for(i=0;i<12;i+=1)
-//		cmds[i]=""
-//	endfor
-//	for(i=0;i<96;i+=1)
-//		cmds[floor(i/8)] += num2str(i/10) + "," + num2str(i-8*floor(i/8)) + ";"
-//	endfor
-//	for(i=0;i<12;i+=1)
-//		DAQmx_AO_SetOutputs /KEEP=1/DEV="D"+num2str(i+1) cmds[i]
-//	endfor
-//End
-
-
-
-
-
-
-
+End	
 
 
 

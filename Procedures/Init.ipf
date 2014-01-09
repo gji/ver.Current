@@ -35,7 +35,7 @@ Macro Exp_Init()
 	DataLoader()
 	PulseCreator()	//For Creating Pulse Sequences
 	Pulse()			//For Running Pulse Sequence
-//	DCCtrl() 			//For Setting DC Bias on Trap
+	DCCtrl() 			//For Setting DC Bias on Trap
 //	DDS_Control()	//For Setting DDS Values
 	OverrideVariables()
 EndMacro
@@ -168,11 +168,8 @@ Function Param_Init()
 	Variable/G TDC											=0
 
 	Make/O/N=(DDS_Channels,DDS_Params+1) 	DDS_INFO
-	Make/O/N=4 							COMP_INFO		 = {0,0,0,1,1}
-	Make/O/T/N=4 						WAVE_INFO		 = {WAVE_Ez, WAVE_Ex, WAVE_Ey, WAVE_Harm}
-	
-	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_Hardware	
-				
+	Make/O/N=5 							COMP_INFO		 = {0,0,0,1,1}
+	Make/O/T/N=5 						WAVE_INFO		 = {WAVE_Ez, WAVE_Ex, WAVE_Ey, WAVE_Harm, WAVE_Hardware}
 
 
 	Variable j,i
@@ -249,11 +246,16 @@ Function DC_init()
 	updateVoltages()
 End
 
-Function LoadDCWaveMatricies() //Loads all voltage matricies
+Function LoadDCWaveMatricies() // Loads all voltage matricies
 	SetDataFolder root:DCVolt
 	
 	WAVE COMP_INFO			=	root:ExpParams:COMP_INFO
 	WAVE/T WAVE_INFO		=	root:ExpParams:WAVE_INFO
+	
+	// Store the hardware map in ExpParams
+	SetDataFolder root:ExpParams
+	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_INFO[4]
+	SetDataFolder root:DCVolt
 	WAVE/T HARDWARE_MAP	=	root:ExpParams:HARDWARE_MAP
 	
 	Variable i,j,k,m=0;
@@ -267,17 +269,14 @@ Function LoadDCWaveMatricies() //Loads all voltage matricies
 	NVAR CUR_POS				= root:ExpParams:CUR_POS
 	
 	Make/O/N=(NUM_ELECT,4)	FIELDS
-	Make/O/N=(NUM_ELECT)	RAW_VOLTAGES
-	Make/O/N=96 	OUT_VOLTAGES
-	Make/T/O/N=12	CMDS	
+	Make/O/N=(NUM_ELECT) RAW_VOLTAGES
+	Make/O/N=96  OUT_VOLTAGES
+	Make/T/O/N=12 CMDS	
 	
-	
-	
-	
-	for(i=0; i<DimSize(COMP_INFO,0); i+=1)
+	for(i=0; i<4; i+=1) // There are 4 different waveforms (x,y,z,harmonic). Also see updateVoltages.
 		SetDataFolder root:DCVolt:temp
-		WAVE t = LoadDCWaveMatrixHelper(WAVE_INFO[i], num2str(i))
-		Make/O/N=(DimSize(t,0),NUM_ELECT+1) ::$("mat"+num2str(i)) //Extra row for indicies
+		WAVE t = LoadDCWaveMatrixHelper(WAVE_INFO[i], num2str(i)) // Grab each waveform
+		Make/O/N=(DimSize(t,0),NUM_ELECT+1) ::$("mat"+num2str(i)) // Extra row for indicies
 		WAVE out = ::$("mat"+num2str(i))
 		for(k=0; k<DimSize(t,0);k+=1)
 			out[k][0] = t[k][0]
@@ -286,7 +285,7 @@ Function LoadDCWaveMatricies() //Loads all voltage matricies
 			endfor
 		endfor
 		for(j=1; j<DimSize(t,1);j+=1)
-			FindValue/TEXT=GetDimLabel(t,1,j) HARDWARE_MAP //Stores into V_Value
+			FindValue/TEXT=GetDimLabel(t,1,j) HARDWARE_MAP // Look for electrode, stores into V_Value
 			Variable col, row
 			col=floor(V_value/DimSize(HARDWARE_MAP, 0))
 			row=V_value-col*DimSize(HARDWARE_MAP, 0)
@@ -379,7 +378,7 @@ EndMacro
 Window DCSettings(l,r,t,b) : Panel
 	Variable l,r,t,b
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(r+8,t+30,r+8+400,t+30+165) as "DC Voltage Settings"
+	NewPanel /K=1 /W=(r+8,t+30,r+8+400,t+30+165+30) as "DC Voltage Settings"
 	ModifyPanel cbRGB=(65534,65534,65534)
 	SetVariable zfile,pos={100,17.5},size={195,20},bodyWidth=185,title="Z Voltage File"
 	SetVariable zfile,value= root:ExpParams:WAVE_INFO[0]
@@ -389,11 +388,14 @@ Window DCSettings(l,r,t,b) : Panel
 	SetVariable yfile,value= root:ExpParams:WAVE_INFO[2]
 	SetVariable hfile,pos={100,107.5},size={195,20},bodyWidth=185,title="Harm. Voltage File"
 	SetVariable hfile,value= root:ExpParams:WAVE_INFO[3]
+	SetVariable dfile,pos={100,137.5},size={195,20},bodyWidth=185,title="Hardware Map File"
+	SetVariable dfile,value= root:ExpParams:WAVE_Hardware
 	Button zopen,pos={300,15},size={50,20},proc=OpenWaveFile,title="Open"
 	Button xopen,pos={300,45},size={50,20},proc=OpenWaveFile,title="Open"
 	Button yopen,pos={300,75},size={50,20},proc=OpenWaveFile,title="Open"
-	Button hopen,pos={300,105},size={50,20},proc=OpenWaveFile,title="Open"
-	Button updateFields,pos={137.5,135},size={135,20},proc=OpenWaveFile,title="Update Field Waves"
+	Button hdopen,pos={300,105},size={50,20},proc=OpenWaveFile,title="Open"
+	Button dopen,pos={300,135},size={50,20},proc=OpenWaveFile,title="Open"
+	Button updateFields,pos={137.5,165},size={135,20},proc=OpenWaveFile,title="Update Field Waves"
 EndMacro
 
 Window DDS_Control() : Panel

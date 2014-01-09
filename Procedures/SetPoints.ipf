@@ -59,25 +59,25 @@ function DDS_wrapper(ctrlName,varNum,varStr,varName) : SetVariableControl
 			break
 		case "DDS3_FREQ_BOX":
 			If(DDS_INFO[2][3])
-				Frequency	=	DDS_INFO[1][0]*10^6
-				Ampl		=	DDS_INFO[1][1]
-				Phase		=	DDS_INFO[1][2]		
+				Frequency	=	DDS_INFO[2][0]*10^6
+				Ampl		=	DDS_INFO[2][1]
+				Phase		=	DDS_INFO[2][2]		
 				setDDS(3,Frequency,Phase,Ampl)
 			Endif
 			break
 		case "DDS3_PHASE_BOX":
 			If(DDS_INFO[2][3])
-				Frequency	=	DDS_INFO[1][0]*10^6
-				Ampl		=	DDS_INFO[1][1]
-				Phase		=	DDS_INFO[1][2]		
+				Frequency	=	DDS_INFO[2][0]*10^6
+				Ampl		=	DDS_INFO[2][1]
+				Phase		=	DDS_INFO[2][2]		
 				setDDS(3,Frequency,Phase,Ampl)
 			Endif
 			break
 		case "DDS3_AMPL_BOX":
 			If(DDS_INFO[2][3])
-				Frequency	=	DDS_INFO[1][0]*10^6
-				Ampl		=	DDS_INFO[1][1]
-				Phase		=	DDS_INFO[1][2]		
+				Frequency	=	DDS_INFO[2][0]*10^6
+				Ampl		=	DDS_INFO[2][1]
+				Phase		=	DDS_INFO[2][2]		
 				setDDS(3,Frequency,Phase,Ampl)
 			Endif
 			break		
