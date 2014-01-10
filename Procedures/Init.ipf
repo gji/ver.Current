@@ -163,14 +163,31 @@ Function Param_Init()
 	Make/O/N=(8,3) OverrideWave							=	0
 	Make/O/N=(3,4) EO_INFO									=	{{0,1,2},{2105,7374,3060},{100,100,100},{0,0,0}}	
 	Variable/G Mask											=	0
-	Make/O/N=3/T LoadWaveFiles							= {"TestSequence","935Test","PMT Test"}
+	
+	
+	//Make/O/N=3/T LoadWaveFiles							= {"TestSequence","935Test","PMT Test"}
+	Make/O/N=0/T LoadWaveFiles
+	
+	// Grab all sequences in the folder
+	Variable fileIndex = 0
+	PathInfo home
+	NewPath/O SequencesPath, S_path+"Sequences:"
+	do
+		String fileName
+		fileName = IndexedFile(SequencesPath, fileIndex, "????")
+		if (strlen(fileName) == 0)
+			break
+		endif
+		InsertPoints 0,1,LoadWaveFiles
+		LoadWaveFiles[0] = fileName
+		fileIndex += 1
+	while(1)
 
 	Variable/G TDC											=0
 
 	Make/O/N=(DDS_Channels,DDS_Params+1) 	DDS_INFO
 	Make/O/N=5 							COMP_INFO		 = {0,0,0,1,1}
 	Make/O/T/N=5 						WAVE_INFO		 = {WAVE_Ez, WAVE_Ex, WAVE_Ey, WAVE_Harm, WAVE_Hardware}
-
 
 	Variable j,i
 	for(i=0;i!=(DDS_Channels); i+=1)
