@@ -466,15 +466,13 @@ Function/S makepopnames()
 
 End
 
-Window pulseCreator() : Panel
+Window PulseCreator() : Panel
 	PauseUpdate; Silent 1		// building window...
-	DoWindow /K PulseCreator
-	NewPanel /N=PulseCreator /K=1 /W=(75,110,408,210) as "Pulse Creator"
+	NewPanel /K=1 /W=(996,136,1329,186) as "Pulse Creator"
 	ModifyPanel cbRGB=(65534,65534,65534)
-	//ModifyPanel cbRGB=(0,26112,39168)
-	Button NewItem,pos={15,16},size={80,20},proc=ButtonProc_1,title="New Item"
-	Button DeleteItem,pos={115,16},size={80,20},proc=ButtonProc_2,title="Delete Item"
-	Button SetLoops,pos={215,16},size={80,20},proc=ButtonProc_3,title="Set Loops"
+	Button NewItem,pos={15,16},size={80,20},proc=NewItemPressed,title="New Item"
+	Button DeleteItem,pos={117,16},size={80,20},proc=DeleteItemPressed,title="Delete Item"
+	Button SetLoops,pos={219,16},size={80,20},proc=ButtonProc_3,title="Set Loops"
 EndMacro
 
 Window Dataloader() : Panel
