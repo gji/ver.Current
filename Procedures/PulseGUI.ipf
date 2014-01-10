@@ -436,7 +436,6 @@ Function GenerateScanControls(load,settingwave)
 	NVAR RAMAN1
 	NVAR RAMAN2
 	NVAR PMT
-	NVAR StepN
 	NVAR VerticalButtonPosition
 	NVAR DDS1Counter,DDS2Counter,DDS3Counter,DDS7Counter,DDS8counter
 	String Makegrouptitle
@@ -449,7 +448,6 @@ Function GenerateScanControls(load,settingwave)
 	
 	Variable i,j
 	Variable/G TotalStep	
-	StepN=1
 	TotalStep=FindtotalStep()
 	VerticalButtonPosition=65
 	
@@ -458,99 +456,67 @@ Function GenerateScanControls(load,settingwave)
 	For (j=0; j<TotalStep; j+=1)
 		If (j>0)
 			If (load[j][1]!=load[j-1][1])
-				Makegrouptitle= "TitleBox Group"+num2str(load[j][1])+"Title, fixedSize=1,frame=4,labelBack=(0,0,0),fColor=(65535,65535,65535),anchor=MC,pos={75,VerticalButtonPosition},size={150,20}, title=\"Group: "+num2str(load[j][1])+" Loops: "+num2str(load[load[j][1]-1][2])+"\""
-				Execute Makegrouptitle
+				TitleBox $("Group"+num2str(load[j][1])+"Title"), fixedSize=1,frame=4,labelBack=(0,0,0),fColor=(65535,65535,65535),anchor=MC,pos={75,VerticalButtonPosition},size={150,20}, title="Group: "+num2str(load[j][1])+" Loops: "+num2str(load[load[j][1]-1][2])
 				VerticalButtonPosition+=25
 			Endif
 		Endif
-		StepN=j+1
 		GenerateScan(load[j][0],j,settingwave)
 	EndFor
 	
 End
 
 
-//generates title and scan controls for a passed operation name
+// Generates title and scan controls for a passed operation name
+// We do this by looking up the operation in a string that contains
+// all the controls each operation needs, then looping through the 
+// controls and displaying the proper one. The +2 on the checkbox
+// simply centers it w.r.t. other controls.
+// Eventually the lookup table should be in init
+// The various parameters are:
+// TTL 1,7,8: AOM
+// TTL 10: EOM
+// TTL 2,3: AOM + EOM
 Function GenerateScan(name,step,settingwave)
 	WAVE settingwave
 	Variable name,step
+	
 	SetDataFolder root:ExpParams
-	NVAR VerticalButtonPosition
-	NVAR StepN
 	WAVE/T TTLNames
-	NVAR DDS1Counter,DDS2Counter,DDS3Counter
-	NVAR DDS7Counter,DDS8counter
-	NVAR filler
-	WAVE Settings
-	String Scan0Command 
-	String Scan1Command 
-	String Scan2Command 
-	String Scan3Command 
-	String Scan4Command 
-	String Scan5Command
-	String Count,Counting
-	filler=0
+	NVAR VerticalButtonPosition
+	
+	TitleBox $("Step"+num2str(step+1)+"Title"),labelBack=(65535,65535,65535),frame=5, fixedSize=1,anchor=MC,pos={15,VerticalButtonPosition},size={150,20}, title=TTLNames[name],win=Pulse
 
-
-	String TitleBoxCommand = "TitleBox Step"+num2str(StepN)+"Title,labelBack=(65535,65535,65535),frame=5, fixedSize=1,anchor=MC,pos={15,VerticalButtonPosition},size={150,20}, title=\""+TTLNames[name]+"\",win=Pulse"
-	Execute TitleBoxCommand
-	If (name==1||name==7||name==8)
-		Scan0Command = "CheckBox Step"+num2str(StepN)+"Scan0, pos={170,VerticalButtonPosition}, title=\"Duration\", win=Pulse,value="+num2str(settingwave[7*step+1][0])
-		Scan1Command = "CheckBox Step"+num2str(StepN)+"Scan1, pos={170,VerticalButtonPosition+20}, title=\"Scan Fequency\", win=Pulse,value="+num2str(settingwave[7*step+2][0])
-		Scan2Command = "CheckBox Step"+num2str(StepN)+"Scan2, pos={170,VerticalButtonPosition+40}, title=\"Scan Amplitude\", win=Pulse,value="+num2str(settingwave[7*step+3][0])
-		Scan3Command = "CheckBox Step"+num2str(StepN)+"Scan3, pos={170,VerticalButtonPosition+60}, title=\"Scan Phase\", win=Pulse,value="+num2str(settingwave[7*step+4][0])
-		count = "filler=DDS"+num2str(name)+"Counter"
-		Execute count
-		If (filler==0)
-			counting = "DDS"+num2str(name)+"Counter+=1"
-			Execute counting
-			
-			Execute Scan0Command
-			Execute Scan1Command
-			Execute Scan2Command
-			Execute Scan3Command
-			VerticalButtonPosition+=80
-		Else
-			Execute Scan0Command
-			VerticalButtonPosition+=20
-		Endif
-	Elseif(name==10)
-		Scan0Command = "CheckBox Step"+num2str(StepN)+"Scan0, pos={170,VerticalButtonPosition}, title=\"Duration\", win=Pulse,value="+num2str(settingwave[7*step+1][0])
-		Scan4Command = "CheckBox Step"+num2str(StepN)+"Scan4, pos={170,VerticalButtonPosition+20}, title=\"Scan Frequency\", win=Pulse,value="+num2str(settingwave[7*step+5][0])
-		Scan5Command = "CheckBox Step"+num2str(StepN)+"Scan5, pos={170,VerticalButtonPosition+40}, title=\"Scan Power\", win=Pulse,value="+num2str(settingwave[7*step+6][0])
-		Execute Scan0Command
-		Execute Scan4Command
-		Execute Scan5Command
-		VerticalButtonPosition+=60
-	Elseif(name==2||name==3)
-		Scan0Command = "CheckBox Step"+num2str(StepN)+"Scan0, pos={170,VerticalButtonPosition}, title=\"Duration\", win=Pulse,value="+num2str(settingwave[7*step+1][0])
-		Scan1Command = "CheckBox Step"+num2str(StepN)+"Scan1, pos={170,VerticalButtonPosition+20}, title=\"Scan AO Fequency\", win=Pulse,value="+num2str(settingwave[7*step+2][0])
-		Scan2Command = "CheckBox Step"+num2str(StepN)+"Scan2, pos={170,VerticalButtonPosition+40}, title=\"Scan AO Amplitude\", win=Pulse,value="+num2str(settingwave[7*step+3][0])
-		Scan3Command = "CheckBox Step"+num2str(StepN)+"Scan3, pos={170,VerticalButtonPosition+60}, title=\"Scan AO Phase\", win=Pulse,value="+num2str(settingwave[7*step+4][0])
-		Scan4Command = "CheckBox Step"+num2str(StepN)+"Scan4, pos={170,VerticalButtonPosition+80}, title=\"Scan EO Fequency\", win=Pulse,value="+num2str(settingwave[7*step+5][0])
-		Scan5Command = "CheckBox Step"+num2str(StepN)+"Scan5, pos={170,VerticalButtonPosition+100}, title=\"Scan EO Amplitude\", win=Pulse,value="+num2str(settingwave[7*step+6][0])
-		count = "filler=DDS"+num2str(name)+"Counter"
-		Execute count
-		If (filler==0)
-			counting = "DDS"+num2str(name)+"Counter+=1"
-			Execute counting
-			
-			Execute Scan0Command
-			Execute Scan1Command
-			Execute Scan2Command
-			Execute Scan3Command
-			Execute Scan4Command
-			Execute Scan5Command
-			VerticalButtonPosition+=120
-		Else
-			Execute Scan0Command
-			VerticalButtonPosition+=20
-		Endif
-	Else
-		String ScanCommand = "CheckBox Step"+num2str(StepN)+"Scan, pos={170,VerticalButtonPosition}, title=\"Scan Duration\", win=Pulse,value="+num2str(settingwave[7*step][0])
-		Execute ScanCommand
-		VerticalButtonPosition+=20
-	Endif
+	String parameterLookupTable="0123;012345;012345;0;0;0;0123;0123;0;045" // For TTLs 1,2,3,4,5,6,7,8,9,10
+	String commandsToExecute = StringFromList(name-1, parameterLookupTable) // Grab the right command, we're 0 indexed
+	if(stringmatch(commandsToExecute,""))
+		commandsToExecute = "0"
+	endif
+	
+	Variable i=0
+	for(i=0; i<strlen(commandsToExecute); i+=1)
+		switch(str2num(commandsToExecute[i]))
+			case 0:
+				CheckBox $("Step"+num2str(step+1)+"Scan0"), pos={170,VerticalButtonPosition+2}, title="Duration", win=Pulse,value=settingwave[7*step+1][0]
+				break
+			case 1:
+				CheckBox $("Step"+num2str(step+1)+"Scan1"), pos={170,VerticalButtonPosition+2}, title="AO Frequency", win=Pulse,value=settingwave[7*step+2][0]
+				break
+			case 2:
+				CheckBox $("Step"+num2str(step+1)+"Scan2"), pos={170,VerticalButtonPosition+2}, title="AO Amplitude", win=Pulse,value=settingwave[7*step+3][0]
+				break
+			case 3:
+				CheckBox $("Step"+num2str(step+1)+"Scan3"), pos={170,VerticalButtonPosition+2}, title="AO Phase", win=Pulse,value=settingwave[7*step+4][0]
+				break
+			case 4:
+				CheckBox $("Step"+num2str(step+1)+"Scan4"), pos={170,VerticalButtonPosition+2}, title="EO Frequency", win=Pulse,value=settingwave[7*step+5][0]
+				break
+			case 5:
+				CheckBox $("Step"+num2str(step+1)+"Scan5"), pos={170,VerticalButtonPosition+2}, title="EO Power", win=Pulse,value=settingwave[7*step+6][0]
+				break
+			default: // Bad parameter in lookup table!
+		endswitch
+		VerticalButtonPosition += 20
+	endfor
 End
 
 // Deletes all current scan controls, titles, buttons, and loops
@@ -570,7 +536,7 @@ Function ClearScanControls()
 	while(1)
 End
 
-//Resets to before scan bounds were generated
+// Resets to before scan bounds were generated
 Function ClearScanBounds()
 	String controlNames = ControlNameList("Pulse")
 	Variable i
@@ -579,7 +545,7 @@ Function ClearScanBounds()
 		if(strlen(ctrlName) == 0)
 			break
 		endif
-		if(GrepString(ctrlName,"Step[0-9]+(lower|upper|Inc|setpoint).*"))
+		if(GrepString(ctrlName,"Step[0-9]+(lower|upper|Inc|setpoint|ScanOrder).*"))
 			KillControl/W=Pulse $ctrlName
 		endif
 		i+=1
@@ -658,7 +624,6 @@ Function GenerateBounds(load,settingwave)
 	Variable ScanOrder=1
 	Make/O/N=(5120,6) ScanParams=0
 	NVAR DDS1Counter,DDS2Counter,DDS3Counter,DDSCounted,DDS7Counter,DDS8Counter,DDS10Counter
-	NVAR filler
 	String getscan0, count, counting
 	String getscan1
 	String getscan2
@@ -750,9 +715,6 @@ Function GenerateBounds(load,settingwave)
 			generatesetpoint1 = "SetVariable Step"+num2str(i+1)+"setpoint1, pos={340, VerticalButtonPosition+20}, title=\"Frequency (MHZ)\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+2][1])
 			generatesetpoint2 = "SetVariable Step"+num2str(i+1)+"setpoint2, pos={340, VerticalButtonPosition+40}, title=\"Amplitude\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+3][1])
 			generatesetpoint3 = "SetVariable Step"+num2str(i+1)+"setpoint3, pos={340, VerticalButtonPosition+60}, title=\"Phase\", win=Pulse,size={130,20},bodywidth=50,value=_NUM:"+num2str(SettingWave[7*i+4][1])
-				
-				
-
 				
 			count = "DDSCounted=DDS"+num2str(load[i][0])+"Counter"
 			Execute count
@@ -1165,15 +1127,15 @@ Function ClearScanProc(ba) : ButtonControl
 	switch( ba.eventCode )	
 		case 2: // mouse up
 			ClearScanBounds()
-			PopupMenu Sequence popmatch=" ", win=Pulse
 			
-			KillControl/W=Pulse Loops
-			KillControl/W=Pulse SetScan
-			KillControl/W=Pulse ClearScan
+			//PopupMenu Sequence popmatch=" ", win=Pulse
+			//KillControl/W=Pulse Loops
+			//KillControl/W=Pulse SetScan
+			//KillControl/W=Pulse ClearScan
 			KillControl/W=Pulse Run
 			KillControl/W=Pulse TDCbox 
 			GetWindow Pulse wsize
-			MoveWindow/W=Pulse V_left,V_top,V_left+250,(100+V_top)*72/ScreenResolution
+			//MoveWindow/W=Pulse V_left,V_top,V_left+250,(100+V_top)*72/ScreenResolution
 			break
 		case -1:
 			break

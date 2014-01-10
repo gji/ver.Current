@@ -114,7 +114,6 @@ Function Param_Init()
 	Variable/G VerticalButtonPosition					=	16
 	Variable/G VerticalButtonPos							=	16
 	Variable/G VerticalLoopPosition						=	16
-	Variable/G StepNum										=	0
 	Variable/G GroupNumber									=	0
 	Variable/G GroupError									= 	0
 	Make/O/N=10 NameWave									=	{DELAY,COOL,STATE_DET,FLR_DET,PUMP,COOL_SHTR,LOAD_SHTR,RAMAN1,RAMAN2,PMT}
@@ -141,11 +140,9 @@ Function Param_Init()
 	Variable/G GroupMultiplier							=	1
 	Make/O/N=(1024,2) PulseSequence
 	Make/O/N=1024 TimeSequence
-	Variable/G StepN											=	0
 	Variable/G DDS1Counter,DDS2Counter,DDS3Counter	=	0
 	Variable/G DDS7Counter,DDS8Counter,DDSCounted		=	0
 	Variable/G DDS10Counter							 	=	0
-	Variable/G filler										=	0
 	Make/O/N=(5120,6) Settings							=	0
 	Variable/G SettingsCheckOut							=	0
 	Make/O/N=(3,4) DDSsetPoints							=	{{COOL_FREQ,COOL_PHASE,COOL_AMP},{STATE_DET_FREQ,STATE_DET_PHASE,STATE_DET_AMP},{FLR_DET_FREQ,FLR_DET_PHASE,FLR_DET_AMP}}
