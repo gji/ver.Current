@@ -453,6 +453,7 @@ Function GenerateScanControls(load,settingwave)
 	
 	TitleBox Group1Title,frame=4,fixedSize=1,labelBack=(0,0,0),fColor=(65535,65535,65535),anchor=MC,pos={75,VerticalButtonPosition-25},size={150,20}, title="Group: "+num2str(load[0][1])+" Loops: "+num2str(load[load[0][1]-1][2])
 	
+	String existingPulses = ""
 	For (j=0; j<TotalStep; j+=1)
 		If (j>0)
 			If (load[j][1]!=load[j-1][1])
@@ -460,7 +461,7 @@ Function GenerateScanControls(load,settingwave)
 				VerticalButtonPosition+=25
 			Endif
 		Endif
-		GenerateScan(load[j][0],j,settingwave)
+		existingPulses = GenerateScan(load[j][0],j,settingwave,existingPulses)
 	EndFor
 	
 End
@@ -476,47 +477,53 @@ End
 // TTL 1,7,8: AOM
 // TTL 10: EOM
 // TTL 2,3: AOM + EOM
-Function GenerateScan(name,step,settingwave)
+// This function intelligently links scans of the same frequency source
+// and returns an updated list of frequency sources that are being scanned
+Function/S GenerateScan(name,step,settingwave,existingPulses)
 	WAVE settingwave
 	Variable name,step
+	String existingPulses
 	
 	SetDataFolder root:ExpParams
 	WAVE/T TTLNames
 	NVAR VerticalButtonPosition
+	SVAR TTL_PARAMS
 	
 	TitleBox $("Step"+num2str(step+1)+"Title"),labelBack=(65535,65535,65535),frame=5, fixedSize=1,anchor=MC,pos={15,VerticalButtonPosition},size={150,20}, title=TTLNames[name],win=Pulse
 
-	String parameterLookupTable="0123;012345;012345;0;0;0;0123;0123;0;045" // For TTLs 1,2,3,4,5,6,7,8,9,10
-	String commandsToExecute = StringFromList(name-1, parameterLookupTable) // Grab the right command, we're 0 indexed
+	String commandsToExecute = StringFromList(name, TTL_PARAMS) // Grab the right command
 	if(stringmatch(commandsToExecute,""))
 		commandsToExecute = "0"
 	endif
 	
+	Variable beenScanned = 0
+	if(stringmatch(ListMatch(existingPulses, num2str(name)+",*"), "")) // if it's already been scanned, mark it as so
+		existingPulses += num2str(name) + "," + num2str(step) + ";"
+	else
+		beenScanned = str2num(StringFromList(1,ListMatch(existingPulses, num2str(name)+",*"),",")) + 1 // grabs step, +1 to avoid step=0 meaning no scan
+	endif
+	
 	Variable i=0
+	String valStr;
 	for(i=0; i<strlen(commandsToExecute); i+=1)
-		switch(str2num(commandsToExecute[i]))
-			case 0:
-				CheckBox $("Step"+num2str(step+1)+"Scan0"), pos={170,VerticalButtonPosition+2}, title="Duration", win=Pulse,value=settingwave[7*step+1][0]
-				break
-			case 1:
-				CheckBox $("Step"+num2str(step+1)+"Scan1"), pos={170,VerticalButtonPosition+2}, title="AO Frequency", win=Pulse,value=settingwave[7*step+2][0]
-				break
-			case 2:
-				CheckBox $("Step"+num2str(step+1)+"Scan2"), pos={170,VerticalButtonPosition+2}, title="AO Amplitude", win=Pulse,value=settingwave[7*step+3][0]
-				break
-			case 3:
-				CheckBox $("Step"+num2str(step+1)+"Scan3"), pos={170,VerticalButtonPosition+2}, title="AO Phase", win=Pulse,value=settingwave[7*step+4][0]
-				break
-			case 4:
-				CheckBox $("Step"+num2str(step+1)+"Scan4"), pos={170,VerticalButtonPosition+2}, title="EO Frequency", win=Pulse,value=settingwave[7*step+5][0]
-				break
-			case 5:
-				CheckBox $("Step"+num2str(step+1)+"Scan5"), pos={170,VerticalButtonPosition+2}, title="EO Power", win=Pulse,value=settingwave[7*step+6][0]
-				break
-			default: // Bad parameter in lookup table!
-		endswitch
+		String titles = "Duration;AO Frequency;AO Amplitude;AO Phase;EO Frequency;EO Power"
+		Variable index = str2num(commandsToExecute[i])
+
+		CheckBox $("Step"+num2str(step+1)+"Scan"+num2str(index)), pos={170,VerticalButtonPosition+2}, title=StringFromList(index, titles), win=Pulse,value=settingwave[7*step+index+1][0]
+		
+		if(index > 0)
+			if(beenScanned == 0)
+				Variable/G $("Step"+num2str(step+1)+"Scan"+num2str(index)+"Value")
+				CheckBox $("Step"+num2str(step+1)+"Scan"+num2str(index)), variable=$("Step"+num2str(step+1)+"Scan"+num2str(index)+"Value")
+			else
+				CheckBox $("Step"+num2str(step+1)+"Scan"+num2str(index)), variable=$("Step"+num2str(beenScanned)+"Scan"+num2str(index)+"Value")
+			endif
+		endif
+
 		VerticalButtonPosition += 20
 	endfor
+	
+	return existingPulses
 End
 
 // Deletes all current scan controls, titles, buttons, and loops
@@ -545,7 +552,7 @@ Function ClearScanBounds()
 		if(strlen(ctrlName) == 0)
 			break
 		endif
-		if(GrepString(ctrlName,"Step[0-9]+(lower|upper|Inc|setpoint|ScanOrder).*"))
+		if(GrepString(ctrlName,"Step[0-9]+(lower|upper|inc|Inc|setpoint|ScanOrder).*"))
 			KillControl/W=Pulse $ctrlName
 		endif
 		i+=1
@@ -598,8 +605,124 @@ Function ClearScanBounds()
 //	EndFor
 End
 
+Function GenerateBounds(load, settingwave)
+	wave load
+	wave Settingwave
+	
+	SetDataFolder root:ExpParams
+	SVAR TTL_PARAMS
+	
+	String controlNames = ControlNameList("Pulse")
+	Variable i = 0
+	Variable ScanOrder = 1
+	
+	String scanned = ""
+	do
+		String ctrlName = StringFromList(i,controlNames)
+		if(strlen(ctrlName) == 0)
+			break
+		endif
+		if(GrepString(ctrlName,"Step[0-9]+Scan[0-9]+"))
+			String numStep, numScan
+			SplitString/E="Step([0-9]+)Scan([0-9]+)" ctrlName, numStep, numScan			
+			Variable loadID = str2num(numStep)-1
+			Variable scanID = str2num(numScan)
+			
+			Variable beenScanned = 0
+			// This next code block makes sure that frequency sources are only scanned once per experiment
+			if(scanID == 0) // only check once per step
+				// we now want to make sure that the id in question describes frequency source(s)
+				Variable ttlType = load[loadID][0]
+				String ttlparam = StringFromList(ttlType, TTL_PARAMS)
+				if(!stringmatch(ttlparam,"") && str2num(ttlparam) > 0) // make sure ttlparam is not either 0 or empty
+					// if it isn't 0/empty, it can only be scanned once! (except for duration)
+					print scanned
+					if(stringmatch(ListMatch(scanned, num2str(ttlType)), "")) // if it's already been scanned, mark it as so
+						scanned += num2str(ttlType) + ";"
+					else
+						beenScanned = 1
+					endif
+				endif
+			endif
+			
+			ControlInfo $ctrlName
+			switch(scanID)
+				case 0:
+					SetVariable $("Step"+numStep+"setpoint0"), pos={340, V_top}, title="Time Duration (us)", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=SettingWave[7*i+1][1]
+					if(V_Value == 1)
+						SetVariable $("Step"+numStep+"lowerlim0"), pos={540, V_top}, title="Start Duration (us)", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=SettingWave[7*i+1][2]
+						SetVariable $("Step"+numStep+"upperlim0"), pos={740, V_top}, title="End Duration (us)", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=SettingWave[7*i+1][3]
+						SetVariable $("Step"+numStep+"inc0"), pos={940, V_top}, title="Increment (us)", win=Pulse,size={130,20},bodywidth=50,limits={.02,2000000,.02},value=SettingWave[7*i+1][4]
+						SetVariable $("Step"+numStep+"ScanOrder0"), pos={1080, V_top}, title="Scan Order", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=SettingWave[7*i+1][5]
+						SettingWave[7*i+1][5] = ScanOrder
+						ScanOrder+=1
+					endif
+				break
+				case 1:
+					SetVariable $("Step"+numStep+"setpoint1"), pos={340, V_top}, title="AO Frequency (MHZ)", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+2][1]
+					if(beenScanned == 0 && V_Value == 1) 
+						SetVariable $("Step"+numStep+"lowerlim1"), pos={540, V_top}, title="Start AO Frequency (MHZ)", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+2][2]
+						SetVariable $("Step"+numStep+"upperlim1"), pos={740, V_top}, title="End AO Frequency (MHZ)", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+2][3]
+						SetVariable $("Step"+numStep+"inc1"), pos={940, V_top}, title="Increment (MHZ)", win=Pulse,size={130,20},bodywidth=50,limits={0.001,400,.001},value=SettingWave[7*i+2][4]
+						SetVariable $("Step"+numStep+"ScanOrder1"), pos={1080, V_top}, title="Scan Order", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=SettingWave[7*i+2][5]
+						SettingWave[7*i+2][5] = ScanOrder
+						ScanOrder+=1
+					endif
+				break
+				case 2:
+					SetVariable $("Step"+numStep+"setpoint2"), pos={340, V_top}, title="AO Amplitude", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+3][1]
+					if(beenScanned == 0 && V_Value == 1) 
+						SetVariable $("Step"+numStep+"lowerlim2"), pos={540, V_top}, title="Start AO Amplitude", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+3][2],limits={0,1023,1}
+						SetVariable $("Step"+numStep+"upperlim2"), pos={740, V_top}, title="End AO Amplitude (MHZ)", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+3][3],limits={0,1023,1}
+						SetVariable $("Step"+numStep+"inc2"), pos={940, V_top}, title="Increment", win=Pulse,size={130,20},bodywidth=50,limits={1,1023,1},value=SettingWave[7*i+3][4]
+						SetVariable $("Step"+numStep+"ScanOrder2"), pos={1080, V_top}, title="Scan Order", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=SettingWave[7*i+3][5]
+						SettingWave[7*i+3][5] = ScanOrder
+						ScanOrder+=1
+					endif
+				break
+				case 3:
+					SetVariable $("Step"+numStep+"setpoint3"), pos={340, V_top}, title="AO Phase", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+4][1]
+					if(beenScanned == 0 && V_Value == 1) 
+						SetVariable $("Step"+numStep+"lowerlim3"), pos={540, V_top}, title="Start AO Phase", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+4][2]
+						SetVariable $("Step"+numStep+"upperlim3"), pos={740, V_top}, title="End AO Phase", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+4][3]
+						SetVariable $("Step"+numStep+"inc3"), pos={940, V_top}, title="Increment (Degrees)", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=SettingWave[7*i+4][4]
+						SetVariable $("Step"+numStep+"ScanOrder3"), pos={1080, V_top}, title="Scan Order", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=SettingWave[7*i+4][5]
+						SettingWave[7*i+4][5] = ScanOrder
+						ScanOrder+=1
+					endif
+				break
+				case 4:
+					SetVariable $("Step"+numStep+"setpoint4"), pos={340, V_top}, title="EO Frequency (MHZ)", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+5][1]
+					if(beenScanned == 0 && V_Value == 1) 
+						SetVariable $("Step"+numStep+"lowerlim4"), pos={540, V_top}, title="Start EO Frequency (MHZ)", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+5][2]
+						SetVariable $("Step"+numStep+"upperlim4"), pos={740, V_top}, title="End EO Frequency", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+5][3]
+						SetVariable $("Step"+numStep+"inc4"), pos={940, V_top}, title="Increment (MHZ)", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=SettingWave[7*i+5][4]
+						SetVariable $("Step"+numStep+"ScanOrder4"), pos={1080, V_top}, title="Scan Order", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=SettingWave[7*i+5][5]
+						SettingWave[7*i+5][5] = ScanOrder
+						ScanOrder+=1
+					endif
+				break
+				case 5:
+					SetVariable $("Step"+numStep+"setpoint5"), pos={340, V_top}, title="EO Amplitude", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+6][1]
+					if(beenScanned == 0 && V_Value == 1) 
+						SetVariable $("Step"+numStep+"lowerlim5"), pos={540, V_top}, title="Start EO Amplitude", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+6][2]
+						SetVariable $("Step"+numStep+"upperlim5"), pos={740, V_top}, title="End EO Amplitude (MHZ)", win=Pulse,size={130,20},bodywidth=50,value=SettingWave[7*i+6][3]
+						SetVariable $("Step"+numStep+"inc5"), pos={940, V_top}, title="Increment", win=Pulse,size={130,20},bodywidth=50,limits={1,360,1},value=SettingWave[7*i+6][4]
+						SetVariable $("Step"+numStep+"ScanOrder5"), pos={1080, V_top}, title="Scan Order", win=Pulse,size={130,20},bodywidth=50,limits={1,1024,1},value=SettingWave[7*i+6][5]
+						SettingWave[7*i+6][5] = ScanOrder
+						ScanOrder+=1
+					endif
+				break
+				default: // Bad parameter in lookup table!
+			endswitch
+			i+=1
+		endif
+	while(1)
+
+End
+
 //Dynamically Generates Scan bounds or set points based on selected scan parameters
-Function GenerateBounds(load,settingwave)
+Function GenerateBounds2(load,settingwave)
 	WAVE load
 	WAVE Settingwave
 	SetDataFolder root:ExpParams

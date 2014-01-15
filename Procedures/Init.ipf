@@ -89,6 +89,15 @@ Function Param_Init()
 	Variable/G RAMAN2					=	TTL_08
 	Variable/G PMT						=	DI_01	// PMT might be gated, might need to add a TTL pulse here
 
+	// The following should be matched up, in order, with TTLNames
+	// Eg. 0 is for Delay, 0123 is for Cooling
+	// 0 is duration
+	// 1 is for AO frequency
+	// 2 is for AO amplitude
+	// 3 is for AO phase
+	// 4 is for EO frequency
+	// 5 is for EO power
+	String/G 	 TTL_PARAMS				=	"0;0123;012345;012345;0;0;0;0123;0123;0;045"
 	
 	Variable/G COOL_FREQ				= 	200 // MHz
 	Variable/G COOL_AMP					=	100 // Max Amp
