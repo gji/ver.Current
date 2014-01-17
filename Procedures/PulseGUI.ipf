@@ -14,19 +14,30 @@
 Function NewItemPressed(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
 	SetDataFolder root:ExpParams
-	NVAR VerticalButtonPos
-	NVAR StepNum
+	wave GroupVals
+	
 	switch( ba.eventCode )
 		case 2: // mouse up
-			VerticalButtonPos+=30
-			StepNum+=1
+			Variable numItem = str2num(GetUserData("PulseCreator", "NewItem", ""))
+			numItem += 1
+			InsertPoints numItem-1,1,GroupVals
+			if(numItem > 1)
+				GroupVals[numItem-1] = GroupVals[numItem-2]
+			else
+				GroupVals[numItem-1] = 1
+			endif
+			InsertPoints numItem-1,1,PopupVals
+			Button NewItem userdata=num2str(numItem)
 			
-			PopupMenu $("Popup"+num2str(StepNum)) win=PulseCreator, pos={15,VerticalButtonPos}, value=MakeNames(), Title="Step " + num2str(StepNum)
-			SetVariable $("GroupBox"+num2str(StepNum)) win=PulseCreator, pos={200,VerticalButtonPos}, title= "Group", size={80,20}, value=_NUM:1, limits={1,1024,1} 
+			PopupMenu $("StepType"+num2str(numItem)) win=PulseCreator, pos={15,numItem*30+16}, value=MakeNames(), Title="Step " + num2str(numItem), proc=StepTypeChanged
+			if(numItem > 1)
+				CheckBox $("NewGroup"+num2str(numItem))win=PulseCreator, pos={200,numItem*30+16+4}, title= "New Group", size={80,20}, proc=NewGroupChecked
+			endif
+			ValDisplay $("GroupVal"+num2str(numItem)) win=PulseCreator, pos={285,numItem*30+16+4}, frame=2, size={20,20}, value=#("root:ExpParams:GroupVals["+num2str(numItem-1)+"]")
 
 			KillControl/W=PulseCreator ExportSeq
 			GetWindow PulseCreator wsize
-			MoveWindow/W=PulseCreator V_left,V_top,V_left+250,(68+V_top+VerticalButtonPos)*72/ScreenResolution
+			MoveWindow/W=PulseCreator V_left,V_top,V_left+250,(68+V_top+numItem*30+16)*72/ScreenResolution
 			ClearLoops()
 		case -1: // control being killed
 	endswitch
@@ -36,19 +47,12 @@ End
 Function/S MakeNames()
 	SetDataFolder root:ExpParams
 	WAVE/T TTLNames
-	String nametoreturn=" "
-	String dummy
-	Variable i=0
+	String nametoreturn=""
 	
-	Do
-		dummy=TTLNames[i]
-		If(i<dimsize(TTLNames,0)-1)
-			nametoreturn+=dummy+" ; "
-		Else
-			nametoreturn+=dummy
-		Endif
-		i+=1
-	While(i<dimsize(TTLNames,0))
+	Variable i
+	for(i=0;i<dimsize(TTLNames,0);i+=1)
+		nametoreturn += SelectString(i==0,";","") + TTLNames[i] 
+	endfor
 	
 	Return nametoreturn
 End
@@ -58,23 +62,26 @@ Function DeleteItemPressed(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
 
 	SetDataFolder root:ExpParams
-	NVAR VerticalButtonPos
-	NVAR StepNum
-
+	wave GroupVals
+	
 	switch( ba.eventCode )
 		case 2: // mouse up
-			If (StepNum>0)
-				VerticalButtonPos-=30
-				
-				KillControl/W=PulseCreator $("Popup"+num2str(StepNum))
-				KillControl/W=PulseCreator $("GroupBox"+num2str(StepNum))
-				StepNum-=1
-				
+			Variable numItem = str2num(GetUserData("PulseCreator", "NewItem", ""))
+			
+			If (numItem>0)
+				KillControl/W=PulseCreator $("StepType"+num2str(numItem))
+				KillControl/W=PulseCreator $("NewGroup"+num2str(numItem))
+				KillControl/W=PulseCreator $("GroupVal"+num2str(numItem))
 				KillControl/W=PulseCreator ExportSeq
 				ClearLoops()
 				
+				numItem -= 1
+				DeletePoints numItem,1,GroupVals
+				DeletePoints numItem,1,PopupVals
+				Button NewItem userdata=num2str(numItem)
+				
 				GetWindow PulseCreator wsize
-				MoveWindow/W=PulseCreator V_left,V_top,V_left+250,(68+V_top+VerticalButtonPos)*72/ScreenResolution
+				MoveWindow/W=PulseCreator V_left,V_top,V_left+250,(68+V_top+numItem*30+16)*72/ScreenResolution
 			Endif
 			break
 		case -1: // control being killed
@@ -82,188 +89,123 @@ Function DeleteItemPressed(ba) : ButtonControl
 	endswitch
 
 	return 0
+End
+
+// Executed when the step is changed
+Function StepTypeChanged(ctrlName,popNum,popStr) : PopupMenuControl
+	String ctrlName
+	Variable popNum
+	String popStr
+	
+	SetDataFolder root:ExpParams
+	wave PopupVals
+
+	String popupNumSt
+	SplitString/E=("StepType([0-9]+)") ctrlname, popupNumSt
+	Variable popupNum = str2num(popupNumSt)
+	
+	PopupVals[popupNum-1]=popNum-1
+End
+
+// Executed when new group checkbox clicked
+Function NewGroupChecked(ctrlName,checked) : CheckBoxControl
+	String ctrlName
+	Variable checked
+	
+	KillControl/W=PulseCreator ExportSeq
+	ClearLoops()
+	Variable numItem = str2num(GetUserData("PulseCreator", "NewItem", ""))
+	GetWindow PulseCreator wsize
+	MoveWindow/W=PulseCreator V_left,V_top,V_left+250,(68+V_top+numItem*30+16)*72/ScreenResolution
+	
+	SetDataFolder root:ExpParams
+	wave GroupVals
+	
+	String groupNumSt
+	SplitString/E=("NewGroup([0-9]+)") ctrlname, groupNumSt
+	Variable groupNum = str2num(groupNumSt)
+
+	Variable i
+	for(i=groupNum-1; i<DimSize(GroupVals,0); i+=1)
+		GroupVals[i] += (checked==0?-1:1)
+	endfor
 End
 
 //Set Loops button procedure - generates loop inputs and export sequence button
-Function ButtonProc_3(ba) : ButtonControl
+Function SetLoopsPressed(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
 	SetDataFolder root:ExpParams
-	NVAR StepNum
 	NVAR GroupError
-	NVAR VerticalButtonPos
 	
 	switch( ba.eventCode )
 		case 2: // mouse up
-			if (StepNum>1)
-				GetGroupVals()
-				Ordered()
-				If (GroupError==0)
-					Incremented()
-				Endif
-				If (GroupError==0)
-					GenerateLoops()
-				Endif
+			Variable numItem = str2num(GetUserData("PulseCreator", "NewItem", ""))
+
+			if (numItem>0)
+				GenerateLoops()
+				
+				GetWindow PulseCreator wsize
+				MoveWindow/W=PulseCreator V_left,V_top,V_left+350,(68+V_top+numItem*30+16)*72/ScreenResolution
 			Endif
-			GetWindow PulseCreator wsize
-			MoveWindow/W=PulseCreator V_left,V_top,V_left+350,V_top+50+floor(VerticalButtonPos*0.7)
 			break
 		case -1: // control being killed
 			break
 	endswitch
 
 	return 0
-End
-
-//Checks if the group numbers are in order
-Function Ordered()
-	SetDataFolder root:ExpParams
-	NVAR StepNum
-	WAVE GroupVals
-	NVAR GroupError
-	Variable i
-	
-	GroupError=0
-	for (i=1;i<StepNum;i+=1)
-		If (GroupVals[i-1]>GroupVals[i])
-			GroupError=1
-		Endif
-	endFor
-	If (GroupError==1)
-		DoAlert/T="Grouping Error" 0, "Groups Out of Order"
-	Endif
-End
-
-
-//Checks to make sure the group numbers do not skip a number
-Function Incremented()
-	SetDataFolder root:ExpParams
-	NVAR StepNum
-	WAVE GroupVals
-	NVAR GroupError
-	Variable i
-	
-	for (i=1;i<StepNum;i+=1)
-		If (GroupVals[i-1] != GroupVals[i] && GroupVals[i-1]!= GroupVals[i]-1)
-				
-			GroupError=1
-		Endif
-	endFor
-	If (GroupError==1)
-		DoAlert/T="Grouping Error" 0, "Groups Not Incremented by 1"
-	Endif
-End
-
-//Grabs operation names
-Function GetPopupVals()
-	SetDataFolder root:ExpParams
-	NVAR StepNum
-	WAVE NameWave
-	Variable i
-	Make/O/N=(StepNum) PopupVals=0
-	Variable Value
-	
-	For(i=0 ; i< StepNum ; i+=1)
-		String GetPopupVal = "ControlInfo Popup"+num2str(i+1)+" ; Value= V_Value; PopupVals["+num2str(i)+"]=Value-1"
-		Execute GetPopupVal
-	EndFor
-End
-
-//Grabs group number for each operation
-Function GetGroupVals()
-	SetDataFolder root:ExpParams
-	NVAR StepNum
-	Variable i
-	Make/O/N=(StepNum) GroupVals=0
-	Variable Value
-
-	For(i=0 ; i< StepNum ; i+=1)
-		String GetGroupVal = "ControlInfo GroupBox"+num2str(i+1)+" ; Value= V_Value; GroupVals["+num2str(i)+"]=Value"
-		Execute GetGroupVal
-	EndFor
-End
-
-//Grabs the loop numbers for each group
-Function GetLoopVals()
-	SetDataFolder root:ExpParams
-	NVAR GroupNumber
-	Variable i
-	Make/O/N=(GroupNumber) LoopVals=0
-	Variable Value
-
-	For(i=0 ; i< GroupNumber ; i+=1)
-		String GetLoopVal = "ControlInfo LoopGroup"+num2str(i+1)+" ; Value= V_Value; LoopVals["+num2str(i)+"]=Value"
-		Execute GetLoopVal
-	EndFor
 End
 
 //Generates the loop input controls
 Function GenerateLoops()
 	SetDataFolder root:ExpParams
-	NVAR StepNum
-	NVAR GroupNumber
-	NVAR VerticalButtonPos
-	NVAR VerticalLoopPosition
+
 	WAVE GroupVals
 	Variable i=0
 	
-	GroupNumber=GroupVals[StepNum]
-	VerticalLoopPosition=16	
+	Variable groupNumber = GroupVals[str2num(GetUserData("PulseCreator", "NewItem", ""))]
+	Make/O/N=(groupNumber) LoopVals=1
+	
+	Variable VerticalLoopPosition=16	
 	ClearLoops()
 	
-	For (i=0;i<GroupNumber;i+=1)
+	For (i=0;i<groupNumber;i+=1)
 		VerticalLoopPosition+=30
-		String CommandLoop = "SetVariable LoopGroup"+num2str(i+1)+" win=PulseCreator,pos={321,VerticalLoopPosition-30},title=\"Group "+num2str(i+1)+" Loops\", size={120,20}, value=_NUM:1, limits={1,1024,1}"
-		Execute CommandLoop
+		SetVariable $("LoopGroup"+num2str(i+1)) win=PulseCreator,pos={321,VerticalLoopPosition+2},title="Group "+num2str(i+1)+" Loops", size={120,20}, value=LoopVals[i], limits={1,1024,1}
 	EndFor
-	Button ExportSeq win=PulseCreator,appearance={native}, proc=ButtonProc_4, pos={321,VerticalButtonPos},title="Export Sequence", size={100,20}
-	
+	Button ExportSeq win=PulseCreator, proc=ExportSequencePressed, pos={321,16},title="Export Sequence", size={100,20}, userdata=num2str(groupNumber)
 End
 
 //Deletes all loop controls
 Function ClearLoops()
 	SetDataFolder root:ExpParams
-	Variable i=0
 	
-	For (i=0; i<1024;i+=1)
-		String KillLoop = "KillControl/W=PulseCreator LoopGroup"+num2str(i+1)
-		Execute KillLoop
-	EndFor
+	String controlNames = ControlNameList("PulseCreator")
+	Variable i
+	do
+		String ctrlName = StringFromList(i,controlNames)
+		if(strlen(ctrlName) == 0)
+			break
+		endif
+		if(GrepString(ctrlName,"LoopGroup[0-9]+"))
+			KillControl/W=PulseCreator $ctrlName
+		endif
+		i+=1
+	while(1)
 End
 
 //Export Sequence button procedure - exports sequence
-Function ButtonProc_4(ba) : ButtonControl
+Function ExportSequencePressed(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
 	SetDataFolder root:ExpParams
-	NVAR StepNum
-	NVAR GroupNumber
-	NVAR GroupError
-	WAVE GroupVals
 	NVAR TooLong	
 	WAVE PulseCreatorWave
 	switch( ba.eventCode )
 		case 2: // mouse up
-			GroupError=0
 			DoWindow/K SaveWaveWindow
 		
-			GetGroupVals()
-			If (GroupVals[StepNum-1]!=GroupNumber)
-				GroupError=1
-				DoAlert/T="Grouping Error" 0, "Set Loops"
-			Endif
-			If (GroupError==0)
-				Ordered()
-			Endif
-			If (GroupError==0)
-				Incremented()
-			Endif
-			If (GroupError!=0)
-				KillControl/W=PulseCreator ExportSeq
-			Else
-				TestWaveSize()
-				If (TooLong==0)
-					CreateWave()
-					Execute "SaveWaveWindow()"
-				Endif
+			If (TestWaveSize()==0)
+				CreateWave()
+				Save/P=SavePath/G/I/W PulseCreatorWave
 			Endif
 			break
 		case -1: // control being killed
@@ -273,27 +215,24 @@ Function ButtonProc_4(ba) : ButtonControl
 	return 0
 End
 
-//Checks to make sure that the exported sequence is not longer than the size allowed by the FPGA
+// Checks to make sure that the exported sequence is not longer than the size allowed by the FPGA
+// Returns 0 if OK
 Function TestWaveSize()
 	SetDatafolder root:ExpParams
 	WAVE PopupVals
 	WAVE GroupVals
 	WAVE LoopVals
-	NVAR StepNum
-	NVAR GroupNumber
-	NVAR TooLong
 	
+	Variable numItem = str2num(GetUserData("PulseCreator", "NewItem", ""))
+	
+	Variable TooLong
 	Variable TotalSize=0
 	Variable GroupSize=1
 	Variable CurrentGroup=1
-	Variable i	
-	
-	GetPopupVals()
-	GetGroupVals()
-	GetLoopVals()
+	Variable i
 	
 	TooLong=0
-	For (i=0;i<StepNum-1;i+=1)
+	For (i=0;i<numItem;i+=1)
 		if (GroupVals[i+1]==GroupVals[i])
 			GroupSize+=1
 		Else
@@ -307,6 +246,8 @@ Function TestWaveSize()
 		DoAlert/T="Sequence Length Problem" 0, "Sequence Is Too Long"
 		TooLong=1
 	Endif
+	
+	return TooLong
 End
 
 //Takes info from the step name, group numbers, and loop numbers and creates a wave
@@ -316,59 +257,10 @@ Function CreateWave()
 	WAVE GroupVals
 	WAVE LoopVals
 	WAVE PulseCreatorWave
-	NVAR StepNum
-	NVAR GroupNumber
-	Variable GroupSize=1
-	Variable i,j,k
 	
-	
-	PulseCreatorWave=0
-	
-	GetPopupVals()
-	GetGroupVals()
-	GetLoopVals()
-	
-	For (i=0;i<StepNum;i+=1)
-		PulseCreatorWave[i][0]=PopupVals[i]
-		//Print PopupVals[i]
-	EndFor
-	
-	For (j=0;j<StepNum;j+=1)
-		PulseCreatorWave[j][1]=GroupVals[j]
-	EndFor
-	
-	For (k=0;k<GroupNumber;k+=1)
-		PulseCreatorWave[k][2]=LoopVals[k]
-	EndFor
-	
-End
-
-//Creates a window with options to save the wave
-Window SaveWaveWindow() : Panel
-	PauseUpdate; Silent 1		// building window...
-	NewPanel /W=(806,108,1138,208) as "Save Sequence as..."
-	SetVariable WaveSaveName pos={100,17.5},size={195,20},BodyWidth=185,title="Sequence Name:",value=_STR:"SequenceName"
-	Button WaveSaveButton pos={197.5,57.5},size={100,20},title="Save Sequence",proc=ButtonProc_5
-EndMacro
-
-//Save Button procedure - Saves the wave
-Function ButtonProc_5(ba) : ButtonControl
-	STRUCT WMButtonAction &ba
-	SetDataFolder root:ExpParams
-	WAVE PulseCreatorWave
-	String SequenceName
-	
-	switch( ba.eventCode )	
-		case 2: // mouse up
-			ControlInfo WaveSaveName
-			SequenceName=S_Value
-			Save/P=SavePath/O/G/W PulseCreatorWave as SequenceName+".dat"
-			DoAlert/T="Save Message" 0, "Pulse Sequence Saved as "+SequenceName+".dat"
-			DoWindow/K SaveWaveWindow
-			break
-		case -1: // control being killed
-			break
-	endswitch
+	PulseCreatorWave[][0]=(p<DimSize(PopupVals,0)?PopupVals[p]:0)
+	PulseCreatorWave[][1]=(p<DimSize(GroupVals,0)?GroupVals[p]:0)
+	PulseCreatorWave[][2]=(p<DimSize(LoopVals,0)?LoopVals[p]:0)
 End
 
 
@@ -390,7 +282,7 @@ Function PopMenuProc(pa) : PopupMenuControl
 	Variable count=0
 	
 	switch(pa.eventcode)
-		Case 2: 
+		Case 2:
 			For(i=0;i<dimsize(LoadWaveFiles,0);i+=1)
 				If(i==pa.popNum-2)
 					ClearScanControls()
@@ -437,14 +329,8 @@ Function GenerateScanControls(load,settingwave)
 	NVAR RAMAN2
 	NVAR PMT
 	NVAR VerticalButtonPosition
-	NVAR DDS1Counter,DDS2Counter,DDS3Counter,DDS7Counter,DDS8counter
-	String Makegrouptitle
+
 	ClearScanControls()
-	DDS1Counter=0
-	DDS2Counter=0
-	DDS3Counter=0
-	DDS7Counter=0
-	DDS8Counter=0
 	
 	Variable i,j
 	Variable/G TotalStep	
@@ -491,7 +377,7 @@ Function/S GenerateScan(name,step,settingwave,existingPulses)
 	
 	TitleBox $("Step"+num2str(step+1)+"Title"),labelBack=(65535,65535,65535),frame=5, fixedSize=1,anchor=MC,pos={15,VerticalButtonPosition},size={150,20}, title=TTLNames[name],win=Pulse
 
-	String commandsToExecute = StringFromList(name, TTL_PARAMS) // Grab the right command
+	String commandsToExecute = StringFromList(name, TTL_PARAMS) // Grab the right commands
 	if(stringmatch(commandsToExecute,""))
 		commandsToExecute = "0"
 	endif
@@ -557,52 +443,6 @@ Function ClearScanBounds()
 		endif
 		i+=1
 	while(1)
-
-//
-//	Variable i
-//	For (i=0;i<=FindtotalStep();i+=1)
-//		String killlower0 = "KillControl/W=Pulse Step"+num2str(i)+"lowerlim0"
-//		String killlower1 = "KillControl/W=Pulse Step"+num2str(i)+"lowerlim1"
-//		String killlower2= "KillControl/W=Pulse Step"+num2str(i)+"lowerlim2"
-//		String killlower3= "KillControl/W=Pulse Step"+num2str(i)+"lowerlim3"
-//		String killlower4= "KillControl/W=Pulse Step"+num2str(i)+"lowerlim4"
-//		String killlower5= "KillControl/W=Pulse Step"+num2str(i)+"lowerlim5"
-//		String killlower = "KillControl/W=Pulse Step"+num2str(i)+"lowerlim"
-//		String killupper = "KillControl/W=Pulse Step"+num2str(i)+"upperlim"
-//		String killupper0= "KillControl/W=Pulse Step"+num2str(i)+"upperlim0"
-//		String killupper1= "KillControl/W=Pulse Step"+num2str(i)+"upperlim1"
-//		String killupper2= "KillControl/W=Pulse Step"+num2str(i)+"upperlim2"
-//		String killupper3 = "KillControl/W=Pulse Step"+num2str(i)+"upperlim3"
-//		String killupper4 = "KillControl/W=Pulse Step"+num2str(i)+"upperlim4"
-//		String killupper5 = "KillControl/W=Pulse Step"+num2str(i)+"upperlim5"
-//		String killinc = "KillControl/W=Pulse Step"+num2str(i)+"Inc"
-//		String killinc0 = "KillControl/W=Pulse Step"+num2str(i)+"Inc0"
-//		String killinc1 = "KillControl/W=Pulse Step"+num2str(i)+"Inc1"
-//		String killinc2 = "KillControl/W=Pulse Step"+num2str(i)+"Inc2"
-//		String killinc3 = "KillControl/W=Pulse Step"+num2str(i)+"Inc3"
-//		String killinc4 = "KillControl/W=Pulse Step"+num2str(i)+"Inc4"
-//		String killinc5 = "KillControl/W=Pulse Step"+num2str(i)+"Inc5"
-//		String killset = "KillControl/W=Pulse Step"+num2str(i)+"setpoint"
-//		String killset0 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint0"
-//		String killset1 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint1"
-//		String killset2 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint2"
-//		String killset3 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint3"
-//		String killset4 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint4"
-//		String killset5 = "KillControl/W=Pulse Step"+num2str(i)+"setpoint5"
-//		String killSO = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder"
-//		String killSO0 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder0"
-//		String killSO1 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder1"
-//		String killSO2 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder2"
-//		String killSO3 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder3"
-//		String killSO4 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder4"
-//		String killSO5 = "KillControl/W=Pulse Step"+num2str(i)+"ScanOrder5"
-//		Execute killSO1+";"+killSO2+";"+killSO3+";"+killSO+";"+killSO0+";"+killSO4+";"+killSO5
-//		Execute killlower+";"+killlower1+";"+killlower2+";"+killlower3+";"+killlower0+";"+killlower5+";"+killlower4
-//		Execute killupper+";"+killupper1+";"+killupper2+";"+killupper3+";"+killinc+";"+killinc1
-//		Execute killinc0+";"+killupper0+";"+killupper4+";"+killupper5
-//		Execute killinc2+";"+killinc3+";"+killset+";"+killset1+";"+killset2+";"+killset3
-//		Execute killset0+";"+killinc5+";"+killinc4+";"+killset4+";"+killset5
-//	EndFor
 End
 
 Function GenerateBounds(load, settingwave)

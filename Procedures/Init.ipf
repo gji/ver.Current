@@ -119,9 +119,12 @@ Function Param_Init()
 
 	//Variables for Pulse Program
 	NewDataFolder/O root:DataAnalysis
+	
+	Make/O/N=0 GroupVals
+	Make/O/N=0 PopupVals
+	
 	Variable/G SequenceCurrent							=	0
 	Variable/G VerticalButtonPosition					=	16
-	Variable/G VerticalButtonPos							=	16
 	Variable/G VerticalLoopPosition						=	16
 	Variable/G GroupNumber									=	0
 	Variable/G GroupError									= 	0
@@ -451,17 +454,29 @@ Window Pulse() : Panel
 	DoWindow /K Pulse
 	NewPanel /N=Pulse /K=1 /W=(75,247,409,302) as "Pulse Program"
 	ModifyPanel cbRGB=(65534,65534,65534)
-	String makepop
 	
-	PopupMenu Sequence,pos={68,18},size={202,21},bodyWidth=150,proc=PopMenuProc,title="Sequence"
-	PopupMenu Sequence,mode=1,popvalue=" "
-	makepop="PopupMenu Sequence value= \""+makepopnames()+"\""
-	Execute Makepop
+	PopupMenu Sequence,pos={68,18},size={202,21},bodyWidth=150,proc=PopMenuProc,title="Sequence",mode=1,value=makepopnames()
 EndMacro
 
 Function/S makepopnames()
 	SetDatafolder Root:ExpParams
 	WAVE/T LoadWaveFiles
+	
+	Make/O/N=0/T LoadWaveFiles
+	Variable fileIndex = 0
+	PathInfo home
+	NewPath/O SequencesPath, S_path+"Sequences:"
+	do
+		String fileName
+		fileName = IndexedFile(SequencesPath, fileIndex, "????")
+		if (strlen(fileName) == 0)
+			break
+		endif
+		InsertPoints 0,1,LoadWaveFiles
+		LoadWaveFiles[0] = fileName
+		fileIndex += 1
+	while(1)
+	
 	String names=" "
 	Variable i=0
 
@@ -476,9 +491,9 @@ Window PulseCreator() : Panel
 	PauseUpdate; Silent 1		// building window...
 	NewPanel /K=1 /W=(996,136,1329,186) as "Pulse Creator"
 	ModifyPanel cbRGB=(65534,65534,65534)
-	Button NewItem,pos={15,16},size={80,20},proc=NewItemPressed,title="New Item"
+	Button NewItem,pos={15,16},size={80,20},proc=NewItemPressed,title="New Item",userdata="0" // store num of items in NewItem
 	Button DeleteItem,pos={117,16},size={80,20},proc=DeleteItemPressed,title="Delete Item"
-	Button SetLoops,pos={219,16},size={80,20},proc=ButtonProc_3,title="Set Loops"
+	Button SetLoops,pos={219,16},size={80,20},proc=SetLoopsPressed,title="Set Loops"
 EndMacro
 
 Window Dataloader() : Panel
