@@ -195,8 +195,8 @@ Function Param_Init()
 	Variable/G TDC											=0
 
 	Make/O/N=(DDS_Channels,DDS_Params+1) 	DDS_INFO
-	Make/O/N=5 							COMP_INFO		 = {0,0,0,1,1}
-	Make/O/T/N=5 						WAVE_INFO		 = {WAVE_Ez, WAVE_Ex, WAVE_Ey, WAVE_Harm, WAVE_Hardware}
+	Make/O/N=7 							COMP_INFO		 = {0,0,0,0,0,1,1}
+	Make/O/T/N=7 						WAVE_INFO		 = {WAVE_Ez, WAVE_Ex, WAVE_Ey, WAVE_Ey, WAVE_Ey, WAVE_Harm, WAVE_Hardware}
 
 	Variable j,i
 	for(i=0;i!=(DDS_Channels); i+=1)
@@ -280,7 +280,7 @@ Function LoadDCWaveMatricies() // Loads all voltage matricies
 	
 	// Store the hardware map in ExpParams
 	SetDataFolder root:ExpParams
-	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_INFO[4]
+	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_INFO[6]
 	SetDataFolder root:DCVolt
 	WAVE/T HARDWARE_MAP	=	root:ExpParams:HARDWARE_MAP
 	
@@ -294,24 +294,33 @@ Function LoadDCWaveMatricies() // Loads all voltage matricies
 	Variable/G NUM_ELECT 	= m;
 	NVAR CUR_POS				= root:ExpParams:CUR_POS
 	
-	Make/O/N=(NUM_ELECT,4)	FIELDS
+	Make/O/N=(NUM_ELECT,6)	FIELDS
 	Make/O/N=(NUM_ELECT) RAW_VOLTAGES
 	Make/O/N=96  OUT_VOLTAGES
 	Make/T/O/N=12 CMDS	
 	
-	for(i=0; i<4; i+=1) // There are 4 different waveforms (x,y,z,harmonic). Also see updateVoltages.
+	for(i=0; i<6; i+=1) // There are 6 possible waveforms
 		SetDataFolder root:DCVolt:temp
-		WAVE t = LoadDCWaveMatrixHelper(WAVE_INFO[i], num2str(i)) // Grab each waveform
-		Make/O/N=(DimSize(t,0),NUM_ELECT+1) ::$("mat"+num2str(i)) // Extra row for indicies
-		WAVE out = ::$("mat"+num2str(i))
+		if(StringMatch(WAVE_INFO[i],""))
+			Wave t = $("mat"+num2str(i))
+			print "Skipping voltage file " + num2str(i)
+			KillWaves t
+			continue
+		endif
+		WAVE t = LoadDCWaveMatrixHelper(WAVE_INFO[i], num2str(i)) // Grab each waveform into temp matrix
+		Make/O/N=(DimSize(t,0),NUM_ELECT+1) ::$("mat"+num2str(i)) // Make actual matrix. Extra row for indicies
+		WAVE out = ::$("mat"+num2str(i)) // Get a wave reference to the just-created wave
+		// Put ion positions into actual matrix, fill rest with 0's
 		for(k=0; k<DimSize(t,0);k+=1)
 			out[k][0] = t[k][0]
 			for(j=1;j<NUM_ELECT+1;j+=1)
 				out[k][j]=0	
 			endfor
 		endfor
+		// Do actual copying of voltages, referencing the hardware map
 		for(j=1; j<DimSize(t,1);j+=1)
 			FindValue/TEXT=GetDimLabel(t,1,j) HARDWARE_MAP // Look for electrode, stores into V_Value
+			// pos = HARDWARE_MAP[V_value][0]
 			Variable col, row
 			col=floor(V_value/DimSize(HARDWARE_MAP, 0))
 			row=V_value-col*DimSize(HARDWARE_MAP, 0)
@@ -327,6 +336,7 @@ Function LoadDCWaveMatricies() // Loads all voltage matricies
 	endfor		
 End
 
+// This function loads in a waveform from the given name
 Function/WAVE LoadDCWaveMatrixHelper(filename, outname) //Loads single voltage matrix
 	String filename
 	String outname
@@ -371,57 +381,57 @@ End
 
 Window DCCtrl() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /N=DCCtrl/K=1 /W=(30+0,75+0,30+260,75+260) as "Trap DC Voltage Control"
+	NewPanel /N=DCCtrl/K=1 /W=(30+0,75+0,30+260,75+260+60) as "Trap DC Voltage Control"
 	ModifyPanel cbRGB=(65534,65534,65534)
-	Button zvalp,pos={135,15},size={50,20},proc=ButtonProc,title="Z+"
-	Button zvalm,pos={195,15},size={50,20},proc=ButtonProc,title="Z-"
-	Button xvalp,pos={135,45},size={50,20},proc=ButtonProc,title="X+"
-	Button xvalm,pos={195,45},size={50,20},proc=ButtonProc,title="X-"
-	Button yvalp,pos={135,75},size={50,20},proc=ButtonProc,title="Y+"
-	Button yvalm,pos={195,75},size={50,20},proc=ButtonProc,title="Y-"
-	Button hvalp,pos={135,105},size={50,20},proc=ButtonProc,title="H+"
-	Button hvalm,pos={195,105},size={50,20},proc=ButtonProc,title="H-"
-	Button gvalp,pos={135,135},size={50,20},proc=ButtonProc,title="G+"
-	Button gvalm,pos={195,135},size={50,20},proc=ButtonProc,title="G-"
-	SetVariable zpos,pos={20,17.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Z Field"
-	SetVariable zpos,limits={-inf,inf,0},value= root:ExpParams:COMP_INFO[0]
-	SetVariable xpos,pos={20,47.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="X Field"
-	SetVariable xpos,limits={-inf,inf,0},value= root:ExpParams:COMP_INFO[1]
-	SetVariable ypos,pos={20,77.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Y Field"
-	SetVariable ypos,limits={-inf,inf,0},value= root:ExpParams:COMP_INFO[2]
-	SetVariable harmScale,pos={20,107.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Harm. SF"
-	SetVariable harmScale,limits={-inf,inf,0},value= root:ExpParams:COMP_INFO[3]
-	SetVariable globScale,pos={20,137.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Glob. SF"
-	SetVariable globScale,limits={-inf,inf,0},value= root:ExpParams:COMP_INFO[4]
-	SetVariable posIon,pos={20,167.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Ion Pos."
+	SetVariable apos,pos={20,17.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="A Field"
+	SetVariable apos,limits={-inf,inf,.1},value= root:ExpParams:COMP_INFO[0]
+	SetVariable bpos,pos={20,47.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="B Field"
+	SetVariable bpos,limits={-inf,inf,.1},value= root:ExpParams:COMP_INFO[1]
+	SetVariable cpos,pos={20,77.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="C Field"
+	SetVariable cpos,limits={-inf,inf,.1},value= root:ExpParams:COMP_INFO[2]
+	SetVariable dpos,pos={20,77.5+30},size={100,20},bodyWidth=60,proc=fieldUpdate,title="D Field"
+	SetVariable dpos,limits={-inf,inf,.1},value= root:ExpParams:COMP_INFO[3]
+	SetVariable epos,pos={20,77.5+60},size={100,20},bodyWidth=60,proc=fieldUpdate,title="E Field"
+	SetVariable epos,limits={-inf,inf,.1},value= root:ExpParams:COMP_INFO[4]
+	SetVariable harmScale,pos={20,107.5+60},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Harm. SF"
+	SetVariable harmScale,limits={-inf,inf,.1},value= root:ExpParams:COMP_INFO[5]
+	SetVariable globScale,pos={20,137.5+60},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Glob. SF"
+	SetVariable globScale,limits={-inf,inf,.1},value= root:ExpParams:COMP_INFO[6]
+	SetVariable posIon,pos={20,167.5+60},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Ion Pos."
 	SetVariable posIon,limits={-inf,inf,0},value= root:ExpParams:CUR_POS
-	Button update,pos={135,195},size={110,20},proc=Update,title="Update"
-	Button settings,pos={135,225},size={110,20},proc=openSettings,title="Settings"
-	CheckBox liveupdate,pos={46,198},size={76,14},proc=LiveUpCheck,title="Live Update"
+	Button update,pos={135,195+60},size={110,20},proc=Update,title="Update"
+	Button settings,pos={135,225+60},size={110,20},proc=openSettings,title="Settings"
+	CheckBox liveupdate,pos={46,198+60},size={76,14},proc=LiveUpCheck,title="Live Update"
 	CheckBox liveupdate,value= 0,side= 1
 EndMacro
 
 Window DCSettings(l,r,t,b) : Panel
 	Variable l,r,t,b
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(r+8,t+30,r+8+400,t+30+165+30) as "DC Voltage Settings"
+	NewPanel /K=1 /W=(r+8,t+30,r+8+400,t+30+165+30+60) as "DC Voltage Settings"
 	ModifyPanel cbRGB=(65534,65534,65534)
-	SetVariable zfile,pos={100,17.5},size={195,20},bodyWidth=185,title="Z Voltage File"
-	SetVariable zfile,value= root:ExpParams:WAVE_INFO[0]
-	SetVariable xfile,pos={100,47.5},size={195,20},bodyWidth=185,title="X Voltage File"
-	SetVariable xfile,value= root:ExpParams:WAVE_INFO[1]
-	SetVariable yfile,pos={100,77.5},size={195,20},bodyWidth=185,title="Y Voltage File"
-	SetVariable yfile,value= root:ExpParams:WAVE_INFO[2]
-	SetVariable hfile,pos={100,107.5},size={195,20},bodyWidth=185,title="Harm. Voltage File"
-	SetVariable hfile,value= root:ExpParams:WAVE_INFO[3]
-	SetVariable dfile,pos={100,137.5},size={195,20},bodyWidth=185,title="Hardware Map File"
-	SetVariable dfile,value= root:ExpParams:WAVE_Hardware
-	Button zopen,pos={300,15},size={50,20},proc=OpenWaveFile,title="Open"
-	Button xopen,pos={300,45},size={50,20},proc=OpenWaveFile,title="Open"
-	Button yopen,pos={300,75},size={50,20},proc=OpenWaveFile,title="Open"
-	Button hdopen,pos={300,105},size={50,20},proc=OpenWaveFile,title="Open"
-	Button dopen,pos={300,135},size={50,20},proc=OpenWaveFile,title="Open"
-	Button updateFields,pos={137.5,165},size={135,20},proc=OpenWaveFile,title="Update Field Waves"
+	SetVariable afile,pos={100,17.5},size={195,20},bodyWidth=185,title="A Voltage File"
+	SetVariable afile,value= root:ExpParams:WAVE_INFO[0]
+	SetVariable bfile,pos={100,47.5},size={195,20},bodyWidth=185,title="B Voltage File"
+	SetVariable bfile,value= root:ExpParams:WAVE_INFO[1]
+	SetVariable cfile,pos={100,77.5},size={195,20},bodyWidth=185,title="C Voltage File"
+	SetVariable cfile,value= root:ExpParams:WAVE_INFO[2]
+	SetVariable dfile,pos={100,77.5+30},size={195,20},bodyWidth=185,title="D Voltage File"
+	SetVariable dfile,value= root:ExpParams:WAVE_INFO[3]
+	SetVariable efile,pos={100,77.5+60},size={195,20},bodyWidth=185,title="E Voltage File"
+	SetVariable efile,value= root:ExpParams:WAVE_INFO[4]
+	SetVariable hfile,pos={100,107.5+60},size={195,20},bodyWidth=185,title="Harm. Voltage File"
+	SetVariable hfile,value= root:ExpParams:WAVE_INFO[5]
+	SetVariable wfile,pos={100,137.5+60},size={195,20},bodyWidth=185,title="Hardware Map File"
+	SetVariable wfile,value= root:ExpParams:WAVE_INFO[6]
+	Button aopen,pos={300,15},size={50,20},proc=OpenWaveFile,title="Open"
+	Button bopen,pos={300,45},size={50,20},proc=OpenWaveFile,title="Open"
+	Button copen,pos={300,75},size={50,20},proc=OpenWaveFile,title="Open"
+	Button dopen,pos={300,75+30},size={50,20},proc=OpenWaveFile,title="Open"
+	Button eopen,pos={300,75+60},size={50,20},proc=OpenWaveFile,title="Open"
+	Button hopen,pos={300,105+60},size={50,20},proc=OpenWaveFile,title="Open"
+	Button wopen,pos={300,135+60},size={50,20},proc=OpenWaveFile,title="Open"
+	Button updateFields,pos={137.5,165+60},size={135,20},proc=OpenWaveFile,title="Update Field Waves"
 EndMacro
 
 Window DDS_Control() : Panel

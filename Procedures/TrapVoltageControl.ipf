@@ -16,12 +16,12 @@ Function OpenWaveFile(ba) : ButtonControl
 	WAVE		COMP_INFO
 	WAVE/T		WAVE_INFO
 	
-	String lookup = "zxyhdu"
+	String lookup = "abcdehwu"
 	
 	Switch( ba.eventCode )
 		Case 2:
 			Variable ctrlNum = strsearch(lookup,num2char(ba.ctrlName[0]),0)
-			If(ctrlNum == 5) // Update
+			If(ctrlNum == 7) // Update
 				LoadDCWaveMatricies()
 				If(LIVE_UP)
 					updateVoltages()
@@ -66,51 +66,24 @@ Function fieldUpdate(sva) : SetVariableControl
 	SetDataFolder root:ExpParams
 	NVAR LIVE_UP
 	WAVE COMP_INFO
+	
+	STRING lookup = "abcdehgp"
 
 	Switch( sva.eventCode )
 		Case 1: // mouse up
 		Case 2: // Enter key
 		Case 3: // Live update
-			
+			Variable ctrlNum = strsearch(lookup,num2char(sva.ctrlName[0]),0)
+			Variable curVal = COMP_INFO[ctrlNum];
+			If (ctrlNum!=7)
+				COMP_INFO[ctrlNum] = round(COMP_INFO[ctrlNum]*100)/100
+			EndIf
+
 			If(LIVE_UP)
 				updateVoltages()
 			EndIf
 			Break
 		Case -1: // control being killed
-			Break
-	EndSwitch
-
-	Return 0
-End
-
-//// +/- buttons for fields
-function ButtonProc(ba) : ButtonControl
-	STRUCT WMButtonAction &ba
-	
-	SetDataFolder root:DCVolt
-	WAVE COMP_INFO		=	root:ExpParams:COMP_INFO
-	WAVE FIELDS
-	
-	NVAR LIVE_UP			=	root:ExpParams:LIVE_UP
-
-	STRING lookup = "zxyhgp"
-
-	Switch( ba.eventCode )
-		Case 2:
-			Variable ctrlNum = strsearch(lookup,num2char(ba.ctrlName[0]),0)
-			Variable curVal = COMP_INFO[ctrlNum];
-			If (ctrlNum!=5)
-				If ( stringmatch(num2char(ba.ctrlName[4]), "p") )
-					COMP_INFO[ctrlNum] = round(curVal*100+1)/100
-				Else
-					COMP_INFO[ctrlNum] = round(curVal*100-1)/100
-				EndIf
-			EndIf
-			If(LIVE_UP)
-				updateVoltages()
-			EndIf
-			Break
-		Case -1:
 			Break
 	EndSwitch
 
@@ -179,8 +152,11 @@ function updateVoltages()
 	Variable i	
 	
 	RAW_VOLTAGES		= 0
-	For(i=0; i<4;i+=1)  // There are 4 different waveforms (x,y,z,harmonic)
+	For(i=0; i<6;i+=1)  // There are 6 different waveforms
 		WAVE tmat = $("mat" + num2str(i))
+		if(!WaveExists(tmat))
+			continue
+		endif
 		// A temporary array to store the individual columns of tmat, minus the position column
 		Make/O/N=(Dimsize(tmat,0)) temp
 		FindLevel/Q tmat, CUR_POS
@@ -201,7 +177,7 @@ function updateVoltages()
 		RAW_VOLTAGES[]	+= COMP_INFO[i] * FIELDS[p][i]
 	EndFor
 	
-	RAW_VOLTAGES		*= COMP_INFO[4]
+	RAW_VOLTAGES		*= COMP_INFO[6]
 	
 	sendVoltageGroup(RAW_VOLTAGES)
 End

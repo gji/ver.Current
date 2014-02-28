@@ -169,7 +169,9 @@ Function StartExposureThread()
 	Make/O/N=(xDim,yDim)/W/U temp
 	DoWindow/K camView
 	NewImage/N=camView/K=1 temp
-	SetAxis/A left
+	SetAxis/A/R left
+	ModifyImage temp log=1
+	ModifyImage temp ctab= {*,*,VioletOrangeYellow,0}
 	
 	Make/N=4096/O temp_Hist
 	DoWindow/K camHist
@@ -292,11 +294,11 @@ Wave temp,RANGE
 
 if((RANGE[0] == 1 && switching ==1 )|| (RANGE[0] ==0 && switching ==0))
 				Button rangeCont title="Auto Range"
-				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],Grays,0}
+				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],VioletOrangeYellow,0}
 				RANGE[0] = 0
 			else
 				Button rangeCont title="Hold Range"
-				ModifyImage/W=camView temp ctab= {*,*,Grays,0}
+				ModifyImage/W=camView temp ctab= {*,*,VioletOrangeYellow,0}
 				RANGE[0] = 1
 			endif
 End
@@ -388,7 +390,7 @@ Function EventNewRange(sva) : SetVariableControl
 		case 3: // Live update
 			if(RANGE[0] == 0)
 				Button rangeCont title="Auto Range"
-				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],Grays,0}
+				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],VioletOrangeYellow,0}
 			endif
 			break
 		case -1: // control being killed
@@ -433,10 +435,10 @@ Function MarqueeSetROI()
 	printf format, V_flag, left,top,right,bottom
 	ROI[0][0] = left
 	ROI[1][0] = right
-	ROI[0][1] = bottom
+	ROI[0][1] = top
 	//print bottom
-	//print ROI[0][1]
-	ROI[1][1] = top
+	print ROI[0][1] - ROI[1][1]
+	ROI[1][1] = bottom
 	CamUpdate()
 End
 
