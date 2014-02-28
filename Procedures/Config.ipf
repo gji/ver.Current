@@ -3,10 +3,14 @@
 Constant LOAD_POS			= 0
 Constant DDS_Channels		= 6
 Constant DDS_Params		= 3
-Constant COOL_CNL			= 0 	
-Constant STATE_DET_CNL	= 1 
-Constant FLR_DET_CNL		= 2	
-Constant CARDS				= 12
+Constant TRAP_RF_CNL		= 0
+Constant COOL_CNL			= 1	
+Constant PUMP_CNL			= 2
+Constant STATE_DET_CNL	= 3 
+Constant FLR_DET_CNL		= 4	
+Constant NUM_DACS			= 2
+Constant NUM_DC_OUTS		= 12
+Constant SHUTTLE_DURATION = 100	// Shuttling time in microseconds
 
 // TTL Hexbits for pulse programs
 
