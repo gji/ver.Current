@@ -16,13 +16,13 @@ Function OpenWaveFile(ba) : ButtonControl
 	WAVE		COMP_INFO
 	WAVE/T		WAVE_INFO
 	
-	String lookup = "abcdehwu"
+	String lookup = "zxyhdu"
 	
 	Switch( ba.eventCode )
 		Case 2:
 			Variable ctrlNum = strsearch(lookup,num2char(ba.ctrlName[0]),0)
-			If(ctrlNum == 7) // Update
-				LoadDCWaveMatricies()
+			If(ctrlNum == 5) // Update
+				LoadDCWaveMatrices()
 				If(LIVE_UP)
 					updateVoltages()
 				EndIf
@@ -66,24 +66,51 @@ Function fieldUpdate(sva) : SetVariableControl
 	SetDataFolder root:ExpParams
 	NVAR LIVE_UP
 	WAVE COMP_INFO
-	
-	STRING lookup = "abcdehgp"
 
 	Switch( sva.eventCode )
 		Case 1: // mouse up
 		Case 2: // Enter key
 		Case 3: // Live update
-			Variable ctrlNum = strsearch(lookup,num2char(sva.ctrlName[0]),0)
-			Variable curVal = COMP_INFO[ctrlNum];
-			If (ctrlNum!=7)
-				COMP_INFO[ctrlNum] = round(COMP_INFO[ctrlNum]*100)/100
-			EndIf
-
+			
 			If(LIVE_UP)
 				updateVoltages()
 			EndIf
 			Break
 		Case -1: // control being killed
+			Break
+	EndSwitch
+
+	Return 0
+End
+
+//// +/- buttons for fields
+function ButtonProc(ba) : ButtonControl
+	STRUCT WMButtonAction &ba
+	
+	SetDataFolder root:DCVolt
+	WAVE COMP_INFO		=	root:ExpParams:COMP_INFO
+	WAVE FIELDS
+	
+	NVAR LIVE_UP			=	root:ExpParams:LIVE_UP
+
+	STRING lookup = "zxyhgp"
+
+	Switch( ba.eventCode )
+		Case 2:
+			Variable ctrlNum = strsearch(lookup,num2char(ba.ctrlName[0]),0)
+			Variable curVal = COMP_INFO[ctrlNum];
+			If (ctrlNum!=5)
+				If ( stringmatch(num2char(ba.ctrlName[4]), "p") )
+					COMP_INFO[ctrlNum] = round(curVal*100+1)/100
+				Else
+					COMP_INFO[ctrlNum] = round(curVal*100-1)/100
+				EndIf
+			EndIf
+			If(LIVE_UP)
+				updateVoltages()
+			EndIf
+			Break
+		Case -1:
 			Break
 	EndSwitch
 
@@ -152,11 +179,8 @@ function updateVoltages()
 	Variable i	
 	
 	RAW_VOLTAGES		= 0
-	For(i=0; i<6;i+=1)  // There are 6 different waveforms
+	For(i=0; i<4;i+=1)  // There are 4 different waveforms (x,y,z,harmonic)
 		WAVE tmat = $("mat" + num2str(i))
-		if(!WaveExists(tmat))
-			continue
-		endif
 		// A temporary array to store the individual columns of tmat, minus the position column
 		Make/O/N=(Dimsize(tmat,0)) temp
 		FindLevel/Q tmat, CUR_POS
@@ -177,7 +201,7 @@ function updateVoltages()
 		RAW_VOLTAGES[]	+= COMP_INFO[i] * FIELDS[p][i]
 	EndFor
 	
-	RAW_VOLTAGES		*= COMP_INFO[6]
+	RAW_VOLTAGES		*= COMP_INFO[4]
 	
 	sendVoltageGroup(RAW_VOLTAGES)
 End
@@ -198,11 +222,11 @@ Function sendVoltageGroup(RAW_VOLTAGES)
 	
 	Variable 		i
 	
-	For(i=0;i<12;i+=1)
+	For(i=0;i<NUM_DACS;i+=1)
 		CMDS[i]=""
 	EndFor
 	
-	For(i=0;i<96;i+=1)
+	For(i=0;i<NUM_DC_OUTS;i+=1)
 		FindValue/TEXT=num2str(i+1)/TXOP=4 HARDWARE_MAP
 		if(V_Value < NUM_ELECT)
 			OUT_VOLTAGES[i] = RAW_VOLTAGES[V_Value]
@@ -211,12 +235,12 @@ Function sendVoltageGroup(RAW_VOLTAGES)
 	
 	overVoltWarning(OUT_VOLTAGES)
 	
-	For(i=0;i<96;i+=1)
+	For(i=0;i<NUM_DC_OUTS;i+=1)
 		CMDS[floor(i/8)] += num2str(OUT_VOLTAGES[i]) + "," + num2str(i-8*floor(i/8)) + ";"
 	EndFor
 	
-	For(i=0;i<12;i+=1)
-		DAQmx_AO_SetOutputs /KEEP=1/DEV="D"+num2str(i+1) CMDS[i]
+	For(i=0;i<NUM_DACS;i+=1)
+		DAQmx_AO_SetOutputs /KEEP=1/DEV="DAC"+num2str(i+1) CMDS[i]
 	EndFor
 End
 
@@ -226,7 +250,7 @@ Function overVoltWarning(OUT_VOLTAGES)
 	Variable i
 	voltCap = 10
 	i = 0
-	For(i=0;i<96;i+=1)
+	For(i=0;i<NUM_DC_OUTS;i+=1)
 		if(OUT_VOLTAGES[i] >= voltCap)
 			
 			Abort "Exceeded 10 Volts"
