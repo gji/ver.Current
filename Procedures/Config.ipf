@@ -1,16 +1,12 @@
 #pragma rtGlobals=1		// Use modern global access method.
 
-Constant LOAD_POS			= 0
+Constant LOAD_POS			= -440
 Constant DDS_Channels		= 6
 Constant DDS_Params		= 3
-Constant TRAP_RF_CNL		= 0
-Constant COOL_CNL			= 1	
-Constant PUMP_CNL			= 2
-Constant STATE_DET_CNL	= 3 
-Constant FLR_DET_CNL		= 4	
-Constant NUM_DACS			= 2
-Constant NUM_DC_OUTS		= 12
-Constant SHUTTLE_DURATION = 100	// Shuttling time in microseconds
+Constant COOL_CNL			= 0 	
+Constant STATE_DET_CNL	= 1 
+Constant FLR_DET_CNL		= 2	
+Constant CARDS				= 12
 
 // TTL Hexbits for pulse programs
 

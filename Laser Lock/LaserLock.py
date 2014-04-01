@@ -125,6 +125,27 @@ def Lock(con, cur):
         #print freq
         print round(error_369,4), round(error_399,4), round(error_935,4)
         time.sleep(.01)
+        if (error_369>=5) or(error_399>=5) or(error_935>=5):
+            winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
+            winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
+            winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
+            winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
+            ADDA1.setVoltage(0,0)
+            ADDA1.setVoltage(1,0)
+            ADDA1.setVoltage(2,0)
+            print "Lock Broken!"
+            break
+        if (error_369<=-5) or(error_399<=-5) or(error_935<=-5):
+            winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
+            winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
+            winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
+            winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
+            ADDA1.setVoltage(0,0)
+            ADDA1.setVoltage(1,0)
+            ADDA1.setVoltage(2,0)
+            print "Lock Broken!"
+            break
+
 
 @atexit.register
 def reset_voltages():

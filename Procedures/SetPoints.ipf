@@ -123,103 +123,103 @@ function DDS_Overridewrapper(ctrlName,checked) : CheckBoxControl
 	endswitch
 End
 
-//Function EO_OverrideWrapper(ctrlName,Checked) :CheckBoxControl
-//	String ctrlName
-//	variable checked
-//
-//	SetDataFolder root:ExpParams
-//	Variable Frequency,Amplitude
-//	WAVE EO_INFO 
-//	
-//	strswitch(ctrlName)
-//		case "EO1_Override":
-//			EO_INFO[0][3]	= checked
-//			If(EO_INFO[0][3])
-//				Frequency=EO_INFO[0][1]
-//				Amplitude=EO_INFO[0][2]
-//				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[0][0]
-//			Endif
-//			break
-//		case "EO2_Override":
-//			EO_INFO[1][3]	= checked
-//			If(EO_INFO[1][3])
-//				Frequency=EO_INFO[1][1]
-//				Amplitude=EO_INFO[1][2]
-//				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[1][0]
-//			Endif
-//			break
-//		case "EO3_Override":
-//			EO_INFO[2][3]	= checked
-//			If(EO_INFO[2][3])
-//				Frequency=EO_INFO[2][1]
-//				Amplitude=EO_INFO[2][2]
-//				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[2][0]
-//			Endif
-//			break			
-//	endswitch
-//	
-//	
-//End
-//
-//function EO_wrapper(ctrlName,varNum,varStr,varName) : SetVariableControl
-//	String ctrlName,varStr,varName
-//	variable varNum
-//
-//	SetDataFolder root:ExpParams
-//	Variable Frequency,Amplitude
-//	WAVE EO_INFO 
-//	
-//	strswitch(ctrlName)
-//		case "EO1_FREQ_BOX":
-//			EO_INFO[0][1]=varNum*10^6
-//			If(EO_INFO[0][3])
-//				Frequency=EO_INFO[0][1]
-//				Amplitude=EO_INFO[0][2]
-//				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[0][0]
-//			Endif
-//			break
-//		case "EO1_AMPL_BOX":
-//			EO_INFO[0][2]=varNum
-//			If(EO_INFO[0][3])
-//				Frequency=EO_INFO[0][1]
-//				Amplitude=EO_INFO[0][2]
-//				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[0][0]
-//			Endif
-//			break
-//		case "EO2_FREQ_BOX":
-//			EO_INFO[1][1]=varNum*10^6	
-//			If(EO_INFO[1][3])
-//				Frequency=EO_INFO[1][1]
-//				Amplitude=EO_INFO[1][2]
-//				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[1][0]
-//			Endif
-//			break
-//		case "EO2_AMPL_BOX":
-//			EO_INFO[1][2]=varNum	
-//			If(EO_INFO[1][3])
-//				Frequency=EO_INFO[1][1]
-//				Amplitude=EO_INFO[1][2]
-//				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[1][0]
-//			Endif
-//			break
-//		case "EO3_FREQ_BOX":
-//			EO_INFO[2][1]=varNum*10^6	
-//			If(EO_INFO[2][3])
-//				Frequency=EO_INFO[2][1]
-//				Amplitude=EO_INFO[2][2]
-//				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[2][0]
-//			Endif
-//			break
-//		case "EO3_AMPL_BOX":
-//			EO_INFO[2][2]=varNum	
-//			If(EO_INFO[2][3])
-//				Frequency=EO_INFO[2][1]
-//				Amplitude=EO_INFO[2][2] 
-//				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[2][0]
-//			Endif
-//			break						
-//	endswitch
-//end
+Function EO_OverrideWrapper(ctrlName,Checked) :CheckBoxControl
+	String ctrlName
+	variable checked
+
+	SetDataFolder root:ExpParams
+	Variable Frequency,Amplitude
+	WAVE EO_INFO 
+	
+	strswitch(ctrlName)
+		case "EO1_Override":
+			EO_INFO[0][3]	= checked
+			If(EO_INFO[0][3])
+				Frequency=EO_INFO[0][1]
+				Amplitude=EO_INFO[0][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[0][0]
+			Endif
+			break
+		case "EO2_Override":
+			EO_INFO[1][3]	= checked
+			If(EO_INFO[1][3])
+				Frequency=EO_INFO[1][1]
+				Amplitude=EO_INFO[1][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[1][0]
+			Endif
+			break
+		case "EO3_Override":
+			EO_INFO[2][3]	= checked
+			If(EO_INFO[2][3])
+				Frequency=EO_INFO[2][1]
+				Amplitude=EO_INFO[2][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[2][0]
+			Endif
+			break			
+	endswitch
+	
+	
+End
+
+function EO_wrapper(ctrlName,varNum,varStr,varName) : SetVariableControl
+	String ctrlName,varStr,varName
+	variable varNum
+
+	SetDataFolder root:ExpParams
+	Variable Frequency,Amplitude
+	WAVE EO_INFO 
+	
+	strswitch(ctrlName)
+		case "EO1_FREQ_BOX":
+			EO_INFO[0][1]=varNum*10^6
+			If(EO_INFO[0][3])
+				Frequency=EO_INFO[0][1]
+				Amplitude=EO_INFO[0][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[0][0]
+			Endif
+			break
+		case "EO1_AMPL_BOX":
+			EO_INFO[0][2]=varNum
+			If(EO_INFO[0][3])
+				Frequency=EO_INFO[0][1]
+				Amplitude=EO_INFO[0][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[0][0]
+			Endif
+			break
+		case "EO2_FREQ_BOX":
+			EO_INFO[1][1]=varNum*10^6	
+			If(EO_INFO[1][3])
+				Frequency=EO_INFO[1][1]
+				Amplitude=EO_INFO[1][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[1][0]
+			Endif
+			break
+		case "EO2_AMPL_BOX":
+			EO_INFO[1][2]=varNum	
+			If(EO_INFO[1][3])
+				Frequency=EO_INFO[1][1]
+				Amplitude=EO_INFO[1][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[1][0]
+			Endif
+			break
+		case "EO3_FREQ_BOX":
+			EO_INFO[2][1]=varNum*10^6	
+			If(EO_INFO[2][3])
+				Frequency=EO_INFO[2][1]
+				Amplitude=EO_INFO[2][2]
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[2][0]
+			Endif
+			break
+		case "EO3_AMPL_BOX":
+			EO_INFO[2][2]=varNum	
+			If(EO_INFO[2][3])
+				Frequency=EO_INFO[2][1]
+				Amplitude=EO_INFO[2][2] 
+				MMCSET/O=1/F=(Frequency)/P=(Amplitude) EO_INFO[2][0]
+			Endif
+			break						
+	endswitch
+end
 
 function TTL_wrapper(ctrlName,checked)
 	String ctrlName

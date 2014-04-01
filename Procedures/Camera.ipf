@@ -11,67 +11,50 @@ EndMacro
 
 Window CamControl() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(1457,78,1827,376) as "Camera Control"
+	NewPanel /K=1 /W=(1458,133,1828,467) as "Camera Control"
 	ModifyPanel cbRGB=(65534,65534,65534)
-	
 	Button startCap,pos={28,55},size={116,26},disable=2,proc=EventStartCapture,title="Start Capture"
 	Button stopCap,pos={27,90},size={117,27},disable=2,proc=EventStopCapture,title="Stop Capture"
-	
-	SetVariable setExpLarge,pos={172,27},size={170,16},bodyWidth=100,proc = VarCamUpdate,title="Exposure (ms)"
+	SetVariable setExpLarge,pos={164,27},size={178,18},bodyWidth=100,proc=VarCamUpdate,title="Exposure (ms)"
 	SetVariable setExpLarge,limits={0,999999,1},value= root:Camera:EXPOSURE_LARGE
-	
-	SetVariable exposurelow,pos={174,45},size={168,16},bodyWidth=100,proc = VarCamUpdate,title="Exposure (ns)"
+	SetVariable exposurelow,pos={168,45},size={174,18},bodyWidth=100,proc=VarCamUpdate,title="Exposure (ns)"
 	SetVariable exposurelow,limits={3,999980,20},value= root:Camera:EXPOSURE_SMALL
-	
-	SetVariable delayhigh,pos={189,81},size={153,16},bodyWidth=100,proc = VarCamUpdate,title="Delay (ms)"
+	SetVariable delayhigh,pos={182,81},size={160,18},bodyWidth=100,proc=VarCamUpdate,title="Delay (ms)"
 	SetVariable delayhigh,limits={0,999999,1},value= root:Camera:DELAY_LARGE
-	
-	SetVariable delaylow,pos={191,99},size={151,16},bodyWidth=100,proc = VarCamUpdate,title="Delay (ns)"
+	SetVariable delaylow,pos={186,99},size={156,18},bodyWidth=100,proc=VarCamUpdate,title="Delay (ns)"
 	SetVariable delaylow,limits={0,999999,20},value= root:Camera:DELAY_SMALL
-	
 	Button openCam,pos={27,18},size={117,27},proc=EventOpenCamera,title="Open Camera"
-	
-	SetVariable roiymax,pos={79,137},size={47,16},bodyWidth=30,proc = VarCamUpdate,title="Y+"
+	SetVariable roiymax,pos={77,137},size={49,18},bodyWidth=30,proc=VarCamUpdate,title="Y+"
 	SetVariable roiymax,limits={1,32,1},value= root:Camera:ROI[1][1]
-	
-	SetVariable roixmin,pos={55,162},size={44,16},bodyWidth=30,proc = VarCamUpdate,title="X-"
+	SetVariable roixmin,pos={53,162},size={46,18},bodyWidth=30,proc=VarCamUpdate,title="X-"
 	SetVariable roixmin,limits={1,40,1},value= root:Camera:ROI[0],noedit= 1
-	
-	SetVariable roixmax,pos={106,162},size={47,16},bodyWidth=30,proc = VarCamUpdate,title="X+"
+	SetVariable roixmax,pos={104,162},size={49,18},bodyWidth=30,proc=VarCamUpdate,title="X+"
 	SetVariable roixmax,limits={1,40,1},value= root:Camera:ROI[1]
-	
-	SetVariable roiymin,pos={81,189},size={44,16},bodyWidth=30,proc = VarCamUpdate,title="Y-"
+	SetVariable roiymin,pos={79,189},size={46,18},bodyWidth=30,proc=VarCamUpdate,title="Y-"
 	SetVariable roiymin,limits={1,32,1},value= root:Camera:ROI[0][1]
-	
-	SetVariable xbins,pos={175,146},size={59,16},bodyWidth=30,proc=EventXBins,title="X Bin"
+	SetVariable xbins,pos={173,146},size={61,18},bodyWidth=30,proc=EventXBins,title="X Bin"
 	SetVariable xbins,limits={0,999999,1},value= root:Camera:BINS[0]
-	
-	SetVariable ybins,pos={175,180},size={59,16},bodyWidth=30,proc=EventYBins,title="Y Bin"
+	SetVariable ybins,pos={173,180},size={61,18},bodyWidth=30,proc=EventYBins,title="Y Bin"
 	SetVariable ybins,limits={0,999999,1},value= root:Camera:BINS[1]
-	
-	SetVariable gainCont,pos={268,135},size={56,16},bodyWidth=30,proc = VarCamUpdate,title="Gain"
+	SetVariable gainCont,pos={266,135},size={58,18},bodyWidth=30,proc=VarCamUpdate,title="Gain"
 	SetVariable gainCont,limits={0,999999,1},value= root:Camera:GAIN
-	
-	SetVariable decayCont,pos={259,153},size={65,16},bodyWidth=30,proc = VarCamUpdate,title="Decay"
+	SetVariable decayCont,pos={258,153},size={66,18},bodyWidth=30,proc=VarCamUpdate,title="Decay"
 	SetVariable decayCont,limits={0,999999,1},value= root:Camera:DECAY
-	
-	SetVariable trigCont,pos={257,171},size={67,16},bodyWidth=30,proc = VarCamUpdate,title="Trigger"
+	SetVariable trigCont,pos={252,171},size={72,18},bodyWidth=30,proc=VarCamUpdate,title="Trigger"
 	SetVariable trigCont,limits={0,999999,1},value= root:Camera:TRIGGER
-	
-	SetVariable loopCont,pos={261,189},size={63,16},bodyWidth=30,proc = VarCamUpdate,title="Loops"
+	SetVariable loopCont,pos={258,189},size={66,18},bodyWidth=30,proc=VarCamUpdate,title="Loops"
 	SetVariable loopCont,limits={0,999999,1},value= root:Camera:LOOPS
-	
-	SetVariable FPSDisplay,pos={296,270},size={64,16},bodyWidth=40,title="FPS"
+	SetVariable FPSDisplay,pos={306,0},size={63,18},bodyWidth=40,title="FPS"
 	SetVariable FPSDisplay,limits={-inf,inf,0},value= root:Camera:FPS[0],noedit= 1
-	
 	Button rangeCont,pos={126,252},size={117,27},proc=EventRangeSet,title="Hold Range"
-	
-	SetVariable rangeMax,pos={198,225},size={72,16},bodyWidth=48,proc=EventNewRange,title="Max"
+	SetVariable rangeMax,pos={196,225},size={74,18},bodyWidth=48,proc=EventNewRange,title="Max"
 	SetVariable rangeMax,limits={1,4096,1},value= root:Camera:RANGE[2]
-	
-	SetVariable rangeMin,pos={100,225},size={71,16},bodyWidth=50,proc=EventNewRange,title="Min"
+	SetVariable rangeMin,pos={96,225},size={75,18},bodyWidth=50,proc=EventNewRange,title="Min"
 	SetVariable rangeMin,limits={1,4096,1},value= root:Camera:RANGE[1]
-	
+	Button setBGSub,pos={35,288},size={100,30},proc=BGSet,title="Set BG"
+	Button remBGSub,pos={153,288},size={100,30},proc=BGSet,title="Remove BG"
+	SetVariable bglvl,pos={263,294},size={79,18},bodyWidth=48,title="Level"
+	SetVariable bglvl,limits={1,4096,1},value= root:Camera:BG_LVL
 	ToolsGrid snap=1,visible=1
 EndMacro
 
@@ -94,21 +77,46 @@ Function Initialize()
 	
 	Variable/G COC_RUNNING = 0
 	
+	Variable/G BG_LVL = 0
+	
 	Make/O/N=1 FPS
 	Make/O/N=2 RANGE = {1,0,4096} // 0 for hold, 1 for auto, max camera range
 End
 
 // this thread must be threadsafe!! it runs concurrently with the GUI.
 
-ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, LineFFT, RANGE)
-	Wave temp, temp_Hist, FPS, Lineplot, LineFFT, RANGE
+ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot,LineplotStDev, LineFFT, RANGE)
+	Wave temp, temp_Hist, FPS, Lineplot, LineplotStDev, LineFFT, RANGE
 	
 	Make/N=51/O FFT_local
 	Make/N=4096/O temp_Hist_thread
+	
+	Variable bglvl = 0
+	Variable bgsub = 0
+	
+	Duplicate/O temp, buf
 
 	do
 		Variable timeEl = ticks
-		PCOCamExecCOC temp
+		PCOCamExecCOC buf
+		
+		DFREF dfr = ThreadGroupGetDFR(0,0)
+		if (DataFolderRefStatus(dfr) != 0)
+			SetDataFolder dfr
+			NVAR BG_SUB_OUT
+		 	NVAR BG_LVL_OUT
+			Duplicate/O buf, bg
+			bgsub = BG_SUB_OUT
+			bglvl = BG_LVL_OUT
+			SetDataFolder root
+			print bgsub
+		endif
+		
+		if(bgsub == 1)
+			temp = buf - bg + bglvl
+		else
+			temp = buf
+		endif
 
 		// if auto ranging, update fields. this way we can grab the current range when the user wants to hold range
 
@@ -122,19 +130,21 @@ ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, LineFFT, RANGE)
 		temp_Hist = temp_Hist_thread[p]
 		
 		variable totalPhotons = 0
+		variable totalPhotonsStDev = 0
 		variable i
 		for( i = 0;i<4096;i+= 1)	// count the total number of photons from the histogram. bit faster.
-			totalPhotons += temp_Hist_thread[i] * i									
+			totalPhotons += temp_Hist_thread[i] * i
+			totalPhotonsStDev=totalPhotons								
 		endfor	
-		
+		totalPhotons/=(1024*1280)
+		totalPhotonsStDev/=(1024*1280)
 		Lineplot = Lineplot[p+1]
 		Lineplot[99] = totalPhotons
-													
+		LineplotStDev=	LineplotStDev[p+1]
+		LineplotStDev[99]	= Variance(Lineplot)						
  
  		FFT/OUT=3/DEST=FFT_local Lineplot
  		LineFFT = FFT_local[p]
- 		
- 		
  		
 		FPS[0] = round((FPS[0] + 10 * 60/(ticks-timeEl))/11) // weighted average
 	while (1)
@@ -166,14 +176,16 @@ Function StartExposureThread()
 	PCOCamSendCOC/M=(MODE)/T=0/B={BINS[0],BINS[1]}/R={ROI[0][0],ROI[1][0],ROI[0][1],ROI[1][1]} exposureString
 	Variable xDim = 32 * (ROI[1][0]-ROI[0][0]+1) / BINS[0]
 	Variable yDim = 32 * (ROI[1][1]-ROI[0][1]+1) / BINS[1]
-	Make/O/N=(xDim,yDim)/W/U temp
+	Make/O/N=(xDim,yDim)/W temp
 	DoWindow/K camView
 	NewImage/N=camView/K=1 temp
-	SetAxis/A left
+	SetAxis/A/R left
+	ModifyImage temp log=1
+	ModifyImage temp ctab= {*,*,VioletOrangeYellow,0}
 	
 	Make/N=4096/O temp_Hist
 	DoWindow/K camHist
-	Display/K=1/W=(1000,300,1400,450)/N=camHist temp_Hist
+	Display/K=1/W=(1000,150,1400,300)/N=camHist temp_Hist
 	ModifyGraph mode=6 // sets the graph to cityscape. better way to represent histogram
 	ModifyGraph log(left)=1
 	HoldUpdate(0)
@@ -183,14 +195,17 @@ Function StartExposureThread()
 	Make/O/N=100 Lineplot
 	DoWindow/K totalPhotons
 	Make/O/N=2 coords
-	Display/K=1/W=(1000,450,1400,600)/N=totalPhotons Lineplot //[lineplotLowerPointer,lineplotPointer]
+	Display/K=1/W=(1000,300,1400,450)/N=totalPhotons Lineplot //[lineplotLowerPointer,lineplotPointer]
+	Make/O/N=100 LineplotStDev
+	DoWindow/K totalPhotonsStDev
+	Display/K=1/W=(1000,450,1400,600)/N=totalPhotonsStDev LineplotStDev //[lineplotLowerPointer,lineplotPointer]
 	Make/O/N=51 LineFFT
 	DoWindow/K totalPhotonFFT
 	Display/K=1/W=(1000,600,1400,750)/N=totalPhotonFFT LineFFT[10,51] //[lineplotLowerPointer,lineplotPointer]
 	ModifyGraph mode=6
 	
 	Variable/G mt = ThreadGroupCreate(1)
-	ThreadStart mt, 0, GetCamData(temp, temp_Hist, FPS,Lineplot, LineFFT, RANGE) // Start thread
+	ThreadStart mt, 0, GetCamData(temp, temp_Hist, FPS,Lineplot,LineplotStDev, LineFFT, RANGE) // Start thread
 End
 
 
@@ -268,6 +283,35 @@ Function EventOpenCamera(ba) : ButtonControl
 	return 0
 End
 
+// BG Subtraction stuff
+
+Function BGSet(ba) : ButtonControl
+	STRUCT WMButtonAction &ba
+	SetDataFolder root:Camera
+	
+	NVAR BG_LVL
+	NVAR mt
+	WAVE temp
+	
+	switch( ba.eventCode )
+		case 2: // mouse up
+			NewDataFolder/S/O forThread
+			Variable/G BG_SUB_OUT, BG_LVL_OUT
+			if(ba.ctrlName[0]==char2num("s"))
+				BG_SUB_OUT = 1
+				BG_LVL_OUT = BG_LVL
+			else
+				BG_SUB_OUT = 0
+			endif
+			ThreadGroupPutDF mt,:
+			break
+		case -1: // control being killed
+			break
+	endswitch
+
+	return 0
+End
+
 // flip flopping the ranging style, auto or held. note that when holding, we hold to the lastest auto exposure values
 
 Function EventRangeSet(ba) : ButtonControl
@@ -292,11 +336,11 @@ Wave temp,RANGE
 
 if((RANGE[0] == 1 && switching ==1 )|| (RANGE[0] ==0 && switching ==0))
 				Button rangeCont title="Auto Range"
-				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],Grays,0}
+				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],VioletOrangeYellow,0}
 				RANGE[0] = 0
 			else
 				Button rangeCont title="Hold Range"
-				ModifyImage/W=camView temp ctab= {*,*,Grays,0}
+				ModifyImage/W=camView temp ctab= {*,*,VioletOrangeYellow,0}
 				RANGE[0] = 1
 			endif
 End
@@ -388,7 +432,7 @@ Function EventNewRange(sva) : SetVariableControl
 		case 3: // Live update
 			if(RANGE[0] == 0)
 				Button rangeCont title="Auto Range"
-				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],Grays,0}
+				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],VioletOrangeYellow,0}
 			endif
 			break
 		case -1: // control being killed
@@ -433,10 +477,10 @@ Function MarqueeSetROI()
 	printf format, V_flag, left,top,right,bottom
 	ROI[0][0] = left
 	ROI[1][0] = right
-	ROI[0][1] = bottom
+	ROI[0][1] = top
 	//print bottom
-	//print ROI[0][1]
-	ROI[1][1] = top
+	print ROI[0][1] - ROI[1][1]
+	ROI[1][1] = bottom
 	CamUpdate()
 End
 
