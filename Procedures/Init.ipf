@@ -341,12 +341,15 @@ Function LoadDCWaveMatricies() // Loads all voltage matricies
 		for(j=1; j<DimSize(t,1);j+=1)
 			FindValue/TEXT=GetDimLabel(t,1,j) HARDWARE_MAP // Look for electrode, stores into V_Value
 			// pos = HARDWARE_MAP[V_value][0]
-			Variable col, row
-			col=floor(V_value/DimSize(HARDWARE_MAP, 0))
-			row=V_value-col*DimSize(HARDWARE_MAP, 0)
-			for(k=0; k<DimSize(t,0);k+=1)
-				out[k][row+1] = t[k][j]
-			endfor
+			do
+				Variable col, row
+				col=floor(V_value/DimSize(HARDWARE_MAP, 0))
+				row=V_value-col*DimSize(HARDWARE_MAP, 0)
+				for(k=0; k<DimSize(t,0);k+=1)
+					out[k][row+1] = t[k][j]
+				endfor
+				FindValue/S=(V_value+1)/TEXT=GetDimLabel(t,1,j) HARDWARE_MAP
+			while (V_value > -1)
 		endfor
 		SetDataFolder root:DCVolt		
 		print "There are " + num2str(NUM_ELECT) + " electrodes."		
