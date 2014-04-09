@@ -195,6 +195,7 @@ function updateVoltages()
 	For(i=0; i<6;i+=1)  // There are 6 different waveforms
 		WAVE tmat = $("mat" + num2str(i))
 		if(!WaveExists(tmat))
+			FIELDS[][i] = 0
 			continue
 		endif
 		// A temporary array to store the individual columns of tmat, minus the position column
@@ -231,12 +232,14 @@ End
 Function sendVoltageGroup(RAW_VOLTAGES)
 	WAVE		RAW_VOLTAGES
 	WAVE/T		HARDWARE_MAP	=	root:ExpParams:HARDWARE_MAP	
-	WAVE		OUT_VOLTAGES	
+	WAVE		OUT_VOLTAGES
 	WAVE/T		CMDS	
 	
 	NVAR		NUM_ELECT			
 	
 	Variable 		i
+	
+	OUT_VOLTAGES = 0
 	
 	For(i=0;i<12;i+=1)
 		CMDS[i]=""
@@ -246,7 +249,7 @@ Function sendVoltageGroup(RAW_VOLTAGES)
 		FindValue/TEXT=num2str(i+1)/TXOP=4 HARDWARE_MAP
 		if(V_Value < NUM_ELECT)
 			OUT_VOLTAGES[i] = RAW_VOLTAGES[V_Value]
-		EndIf
+		endif
 	EndFor
 	
 	overVoltWarning(OUT_VOLTAGES)
