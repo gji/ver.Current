@@ -1,4 +1,5 @@
 Pin,Name: MUSIQC genIII
+12,GenIII_00
 58,GenIII_03
 64,GenIII_04
 13,GenIII_05
@@ -39,7 +40,6 @@ Pin,Name: MUSIQC genIII
 76,GenIII_40
 52,GenIII_41
 67,GenIII_42
-70,GenIII_42
 54,GenIII_43
 68,GenIII_44
 55,GenIII_45
@@ -57,12 +57,12 @@ Pin,Name: MUSIQC genIII
 83,GenIII_57
 87,GenIII_58
 94,GenIII_59
-14,GenIII_Shield
+70,GenIII_60
 1,
 2,
 3,
 9,
-12,
+14,
 15,
 21,
 23,
@@ -78,7 +78,6 @@ Pin,Name: MUSIQC genIII
 49,
 50,
 51,
-52,
 57,
 59,
 60,
