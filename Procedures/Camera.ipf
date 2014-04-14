@@ -55,6 +55,9 @@ Window CamControl() : Panel
 	Button remBGSub,pos={153,288},size={100,30},proc=BGSet,title="Remove BG"
 	SetVariable bglvl,pos={263,294},size={79,18},bodyWidth=48,title="Level"
 	SetVariable bglvl,limits={1,4096,1},value= root:Camera:BG_LVL
+	
+	Button capImg,pos={256,252},size={100,30},proc=Capture,title="Capture"
+	
 	ToolsGrid snap=1,visible=1
 EndMacro
 
@@ -94,6 +97,10 @@ ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot,LineplotStDev, Line
 	Variable bglvl = 0
 	Variable bgsub = 0
 	
+	Variable imgCap = 0
+	Make/O old1, old2, old3, old4, old5
+	DFREF threadRoot = GetDataFolderDFR()
+	
 	Duplicate/O temp, buf
 
 	do
@@ -103,13 +110,46 @@ ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot,LineplotStDev, Line
 		DFREF dfr = ThreadGroupGetDFR(0,0)
 		if (DataFolderRefStatus(dfr) != 0)
 			SetDataFolder dfr
-			NVAR BG_SUB_OUT
-		 	NVAR BG_LVL_OUT
-			Duplicate/O buf, bg
-			bgsub = BG_SUB_OUT
-			bglvl = BG_LVL_OUT
-			SetDataFolder root
-			print bgsub
+			NVAR/Z BG_SUB_OUT
+			NVAR/Z BG_LVL_OUT
+			if(NVAR_Exists(BG_SUB_OUT))
+				Duplicate/O buf, bg
+				bgsub = BG_SUB_OUT
+				bglvl = BG_LVL_OUT
+			else
+				imgCap = 1
+			endif
+			SetDataFolder threadRoot
+		endif
+		
+		KillWaves/Z old5
+		Duplicate/O old4, old5
+		Duplicate/O old3, old4
+		Duplicate/O old2, old3
+		Duplicate/O old1, old2
+		Duplicate/O temp, old1
+		
+		if(imgCap == 1)
+			imgCap = 0
+			String foldername = "outDF"+num2istr(DateTime)
+			SetDataFolder threadRoot
+			Wave old1, old2, old3, old4, old5
+			NewDataFolder/S/O $foldername
+			MoveWave threadRoot:old5, :
+			MoveWave threadRoot:old4, :
+			MoveWave threadRoot:old3, :
+			MoveWave threadRoot:old2, :
+			MoveWave threadRoot:old1, :
+			// IGOR PRO example does this. refs need to be cleared to prevent changes to them later, which is illegal
+			// since we're passing permissions to the main thread
+			WAVEClear old1
+			WAVEClear old2
+			WAVEClear old3
+			WAVEClear old4
+			WAVEClear old5
+			print "capture!"
+			ThreadGroupPutDF 0,:
+			Make/O :old1, :old2, :old3, :old4, :old5
 		endif
 		
 		if(bgsub == 1)
@@ -283,6 +323,34 @@ Function EventOpenCamera(ba) : ButtonControl
 	return 0
 End
 
+// Image Capture
+
+Function Capture(ba) : ButtonControl
+	STRUCT WMButtonAction &ba
+	
+	NVAR mt = root:Camera:mt
+	NVAR CAMERA_INIT
+	
+	switch( ba.eventCode )
+		case 2: // mouse up
+			NewDataFolder/S/O forThread
+			ThreadGroupPutDF mt,:
+			DFREF dfr= ThreadGroupGetDFR(mt,1500)
+			if (DataFolderRefStatus(dfr) != 0)
+				MoveDataFolder dfr, root:Camera:
+			else
+				print "couldn't capture!"
+			endif
+			
+			break
+		case -1: // control being killed
+			break
+	endswitch
+	
+	return 0
+End
+
+
 // BG Subtraction stuff
 
 Function BGSet(ba) : ButtonControl
@@ -443,6 +511,7 @@ Function EventNewRange(sva) : SetVariableControl
 End
 
 Function MarqueeSetROI()
+	SetDataFolder root:Camera
 	Wave ROI
 	String format
 	GetMarquee/K/W=camView left, top
@@ -489,6 +558,7 @@ End
 //END
 
 Function MarqueeExpandROI()
+	SetDataFolder root:Camera
 	Wave ROI
 	ROI[0][0] = 1
 	ROI[1][0] = 40

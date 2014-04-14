@@ -342,7 +342,7 @@ Function LoadDCWaveMatricies() // Loads all voltage matricies
 			FindValue/TEXT=GetDimLabel(t,1,j) HARDWARE_MAP // Look for electrode, stores into V_Value
 			// pos = HARDWARE_MAP[V_value][0]
 			if(V_Value <= -1)
-				break
+				continue
 			endif
 			do
 				Variable col, row

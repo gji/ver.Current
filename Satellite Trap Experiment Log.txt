@@ -11,3 +11,11 @@ z: 1.46, Z:Experiment:ver.Current:waveforms:Satellite:satellite_load_20130122_co
 x: 1, Z:Experiment:ver.Current:waveforms:Satellite:satellite_load_20130122_Quad45.csv
 y: -1.4, Z:Experiment:ver.Current:waveforms:Satellite:satellite_load_20130122_compEy14.csv
 harm: 1.5, Z:Experiment:ver.Current:waveforms:Satellite:satellite_load_20130122_harmonic.csv
+
+
+Y field -0.5
+Harmonic 1
+Ion Position -431
+935.187470
+398.910750
+811.292645

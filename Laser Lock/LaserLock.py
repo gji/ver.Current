@@ -11,6 +11,7 @@ import atexit
 import requests
 import re
 import os
+import wx
 
 def getChannels():    
     const= [0 for i in range(16)]
@@ -26,18 +27,22 @@ def getChannels():
     return Channels
 
 def getSetpoints():
-    Channels = getChannels()
-    setPoints= [0 for i in range(Channels)]
-    with open('setpoints.csv','r+') as csvfile:
-        reader = csv.reader(csvfile, delimiter=' ')
-        i=0
-        for row in reader:
-            setPoints[i] = row[2]
-            setPoints[i] = float(setPoints[i])
-            i+=1
-            if i== Channels:
-                break
-    return setPoints
+    cur.execute("SELECT * FROM `wavemeter`.`setpoint`")
+    rows = cur.fetchall()
+    if(len(rows) > 0): return rows[0]
+    else: return None
+    # Channels = getChannels()
+    # setPoints= [0 for i in range(Channels)]
+    # with open('setpoints.csv','r+') as csvfile:
+    #     reader = csv.reader(csvfile, delimiter=' ')
+    #     i=0
+    #     for row in reader:
+    #         setPoints[i] = row[2]
+    #         setPoints[i] = float(setPoints[i])
+    #         i+=1
+    #         if i== Channels:
+    #             break
+    # return setPoints
 
 def getFreqs():
     Channels = getChannels()
@@ -83,11 +88,11 @@ def getErrors():
 def Lock(con, cur):
     setPoints = getSetpoints()
 
-    #LaserLock_369 = PID(P=-10, I=-250, D=-5)
-    LaserLock_399 = PID(P=-10, I=-60, D=0)
+    LaserLock_369 = PID(P=-10, I=-250, D=-5)
+    LaserLock_399 = PID(P=-7, I=-60, D=0)
     LaserLock_935 = PID(P=-10, I=-100, D=0)
 
-    #LaserLock_369.setPoint(setPoints[0])
+    LaserLock_369.setPoint(setPoints[0])
     LaserLock_399.setPoint(setPoints[1])
     LaserLock_935.setPoint(setPoints[2]) 
 
@@ -95,24 +100,28 @@ def Lock(con, cur):
     ADDA1.setVoltage(1,0)
     ADDA1.setVoltage(2,0)
 
-    error_369 =0
-
-
     timeFlag_1 = False
     overTime = time.mktime(datetime.datetime.now().timetuple())
 
     errorCount=-1
     while True:
         freq = getFreqs()
+        t = getSetpoints()
+        if(t != None):
+            setPoints = getSetpoints()
+            if(LaserLock_369.set_point != setPoints[0]): LaserLock_369.setPoint(setPoints[0])
+            if(LaserLock_399.set_point != setPoints[1]): LaserLock_399.setPoint(setPoints[1])
+            if(LaserLock_935.set_point != setPoints[2]): LaserLock_935.setPoint(setPoints[2])
+
         for i in range(len(freq)):
             if freq[i]<0:
                 freq[i] = setPoints[i]
                     
-        #error_369 = LaserLock_369.update(freq[0])
+        error_369 = LaserLock_369.update(freq[0])
         error_399 = LaserLock_399.update(freq[1])
         error_935 = LaserLock_935.update(freq[2])
 
-        #ADDA1.setVoltage(0, error_369)
+        ADDA1.setVoltage(0, error_369)
         ADDA1.setVoltage(1, error_399)
         ADDA1.setVoltage(2, error_935)
 
@@ -125,8 +134,9 @@ def Lock(con, cur):
         con.commit() 
 
         print freq
+        print setPoints
         print round(error_369,4), round(error_399,4), round(error_935,4)
-        time.sleep(.01)
+        time.sleep(.3)
         if (error_369>=5) or(error_399>=5) or(error_935>=5):
             winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
             winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
@@ -152,7 +162,7 @@ def Lock(con, cur):
 @atexit.register
 def reset_voltages():
     print "killed!"
-    #ADDA1.setVoltage(0,0)
+    ADDA1.setVoltage(0,0)
     ADDA1.setVoltage(1,0)
     ADDA1.setVoltage(2,0)
 
@@ -162,7 +172,6 @@ con = mdb.connect('192.168.9.2', 'python', 'dTh6xh', 'wavemeter')
 cur = con.cursor()
 cur.execute("TRUNCATE TABLE `error`")
 Lock(con, cur)
-
 
 #some change
 #another change
