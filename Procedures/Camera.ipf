@@ -88,8 +88,8 @@ End
 
 // this thread must be threadsafe!! it runs concurrently with the GUI.
 
-ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot,LineplotStDev, LineFFT, RANGE)
-	Wave temp, temp_Hist, FPS, Lineplot, LineplotStDev, LineFFT, RANGE
+ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, RANGE)
+	Wave temp, temp_Hist, FPS, Lineplot, RANGE
 	
 	Make/N=51/O FFT_local
 	Make/N=4096/O temp_Hist_thread
@@ -142,11 +142,7 @@ ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot,LineplotStDev, Line
 			MoveWave threadRoot:old1, :
 			// IGOR PRO example does this. refs need to be cleared to prevent changes to them later, which is illegal
 			// since we're passing permissions to the main thread
-			WAVEClear old1
-			WAVEClear old2
-			WAVEClear old3
-			WAVEClear old4
-			WAVEClear old5
+			WAVEClear old1, old2, old3, old4, old5
 			print "capture!"
 			ThreadGroupPutDF 0,:
 			Make/O :old1, :old2, :old3, :old4, :old5
@@ -179,13 +175,8 @@ ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot,LineplotStDev, Line
 		totalPhotons/=(1024*1280)
 		totalPhotonsStDev/=(1024*1280)
 		Lineplot = Lineplot[p+1]
-		Lineplot[99] = totalPhotons
-		LineplotStDev=	LineplotStDev[p+1]
-		LineplotStDev[99]	= Variance(Lineplot)						
+		Lineplot[99] = totalPhotons					
  
- 		FFT/OUT=3/DEST=FFT_local Lineplot
- 		LineFFT = FFT_local[p]
- 		
 		FPS[0] = round((FPS[0] + 10 * 60/(ticks-timeEl))/11) // weighted average
 	while (1)
 End
@@ -236,16 +227,10 @@ Function StartExposureThread()
 	DoWindow/K totalPhotons
 	Make/O/N=2 coords
 	Display/K=1/W=(1000,300,1400,450)/N=totalPhotons Lineplot //[lineplotLowerPointer,lineplotPointer]
-	Make/O/N=100 LineplotStDev
-	DoWindow/K totalPhotonsStDev
-	Display/K=1/W=(1000,450,1400,600)/N=totalPhotonsStDev LineplotStDev //[lineplotLowerPointer,lineplotPointer]
-	Make/O/N=51 LineFFT
-	DoWindow/K totalPhotonFFT
-	Display/K=1/W=(1000,600,1400,750)/N=totalPhotonFFT LineFFT[10,51] //[lineplotLowerPointer,lineplotPointer]
 	ModifyGraph mode=6
 	
 	Variable/G mt = ThreadGroupCreate(1)
-	ThreadStart mt, 0, GetCamData(temp, temp_Hist, FPS,Lineplot,LineplotStDev, LineFFT, RANGE) // Start thread
+	ThreadStart mt, 0, GetCamData(temp, temp_Hist, FPS,Lineplot,RANGE) // Start thread
 End
 
 
