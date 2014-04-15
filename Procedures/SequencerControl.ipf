@@ -147,22 +147,6 @@ function/WAVE runSequence(reps, [recmask,tdc])
 	return data
 end
 
-// t is in ms
-function pmtData(t, reps, bins)
-	Variable t
-	Variable reps
-	Variable bins
-	
-	SetDataFolder root:Sequencer:Data
-	Make/O/D pmt = {{0, 0x01000000, 0x00000000}, {5, t*50, 5}}
-	sendSequence(pmt)
-	
-	Wave data = runSequence(reps, recmask = 0x01000000)
-	//SetDataFolder root:Sequencer:Data
-	//Make/N=(bins)/O data_Hist
-	//Histogram/B=1 data,data_Hist
-end
-
 Function seqHist(bins,dataWave)	// Need to be in the Data folder when calling this function
 	Variable bins
 	Wave	dataWave
