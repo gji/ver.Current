@@ -81,7 +81,7 @@ function sendSequence(sequence)
 		VDTWriteBinaryWave2 writeWave
 		VDTClosePort2 $seq_p
 		
-		KillWaves writeWave
+		//KillWaves writeWave
 	endif
 end
 
@@ -122,8 +122,8 @@ function/WAVE runSequence(reps, [recmask,tdc])
 	VDTOperationsPort2 $seq_p
 	VDTWriteBinaryWave2 writeWave	
 	SetDataFolder root:Sequencer:Data
-	Make/B/U/O/n=(numChannels,reps) data
-	VDTReadBinaryWave2/B/TYPE=16/O=5 data
+	Make/Y=(0x50)/U/O/n=(numChannels,reps) data
+	VDTReadBinaryWave2/B/TYPE=(0x50)/O=5 data
 	VDTClosePort2 $seq_p
 	SetDataFolder root:Sequencer
 	
@@ -142,17 +142,31 @@ function/WAVE runSequence(reps, [recmask,tdc])
 		print tdc_data
 	endif
 	
-	KillWaves writeWave
+	//KillWaves writeWave
 
 	return data
+end
+
+// t is in ms
+function pmtData(t, reps, bins)
+	Variable t
+	Variable reps
+	Variable bins
+	
+	SetDataFolder root:Sequencer:Data
+	Make/O/D pmt = {{0, 0x01000000, 0x00000000}, {5, t*50, 5}}
+	sendSequence(pmt)
+	
+	Wave data = runSequence(reps, recmask = 0x01000000)
+	//SetDataFolder root:Sequencer:Data
+	//Make/N=(bins)/O data_Hist
+	//Histogram/B=1 data,data_Hist
 end
 
 Function seqHist(bins,dataWave)	// Need to be in the Data folder when calling this function
 	Variable bins
 	Wave	dataWave
 	SetDataFolder root:Sequencer:Data		
-	
-	
 
 	Make/N=(bins)/O dataWave_Hist
 	//Histogram/B={0,1,100} dataWave,data_Hist
