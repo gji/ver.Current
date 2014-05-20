@@ -74,7 +74,7 @@ function sendSequence(sequence)
 			writeWave[13*i] = {0x6d, gb_seq(i,1),gb_seq(i,0), gb_seq(sequence[i][0],3),gb_seq(sequence[i][0],2),gb_seq(sequence[i][0],1),gb_seq(sequence[i][0],0), gb_seq(sequence[i][1],3),gb_seq(sequence[i][1],2),gb_seq(sequence[i][1],1),gb_seq(sequence[i][1],0),0x0d,0x0a}
 		endfor
 		writeWave[13*i] = {0x72, gb_seq((i-1),1),gb_seq((i-1),0)} //sets max address to run to, counter adds 1 at the end that we need to take out
-		
+			
 		VDT2/P=COM12 baud=230400,stopbits=2,killio
 		VDTOpenPort2 $seq_p
 		VDTOperationsPort2 $seq_p
@@ -113,8 +113,8 @@ function/WAVE runSequence(reps, [recmask,tdc])
 	
 	// If the TDC is enabled, we open it beforehand since the buffer needs to be opened
 	If(TDC)
-		VDT2/P=COM7 baud=230400,stopbits=2,killio
-		VDTOpenPort2 COM7
+		VDT2/P=COM8 baud=230400,stopbits=2,killio
+		VDTOpenPort2 COM8
 	endif
 	
 	VDT2/P=$seq_p baud=230400,stopbits=2,killio
@@ -130,13 +130,13 @@ function/WAVE runSequence(reps, [recmask,tdc])
 	// TDC data comes in as 6 bytes in little endian. The last byte 
 	If(TDC)
 		Variable tdc_points
-		VDTOperationsPort2 COM7
+		VDTOperationsPort2 COM8
 		VDTGetStatus2 0, 0, 0
 		tdc_points = V_VDT
 		
 		Make/o/n=(tdc_points) tdc_data_temp
 		VDTReadBinaryWave2/B/TYPE=0x48/O=1 tdc_data_temp
-		VDTClosePort2 COM7
+		VDTClosePort2 COM8
 		Make/o/n=(tdc_points/6) tdc_data
 		tdc_data = tdc_data_temp[6*p] + tdc_data_temp[6*p+1]*(2^8) + tdc_data_temp[6*p+2]*(2^8)^2 + tdc_data_temp[6*p+3]*(2^8)^3 + tdc_data_temp[6*p+4]*(2^8)^4 + (tdc_data_temp[6*p+5] & 0x1F)*(2^8)^5
 		print tdc_data

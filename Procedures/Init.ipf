@@ -115,22 +115,28 @@ Function Param_Init()
 	Variable/G FLR_DET_AMP				=	100 // Max Amp
 	Variable/G FLR_DET_PHASE			=	0
 	
-	String/G	WAVEa_compRF				=	":waveforms:Satellite:satellite_load_20130122_compRF.csv"
-	String/G	WAVEa_Quad45				=	":waveforms:Satellite:satellite_load_20130122_Quad45.csv"
-	String/G	WAVEa_Ez					=	":waveforms:Satellite:satellite_load_20130122_compEz.csv"
-	String/G	WAVEa_Ex					=	":waveforms:Satellite:satellite_load_20130122_compEx.csv"
-	String/G	WAVEa_Ey					=	":waveforms:Satellite:satellite_load_20130122_compEyTol.csv"
-	String/G	WAVEa_Harm					=	":waveforms:Satellite:satellite_load_20130122_Harmonic.csv"		
-	String/G	WAVEa_Hardware			=	":waveforms:Satellite:Satellite_Hardware.csv"
+	String/G	WAVEa_compRF				=	""
+	String/G	WAVEa_Quad45				=	":waveforms:GenIII:GenIII_Uniform_Quad45.csv"
+	String/G	WAVEa_Ez					=	":waveforms:GenIII:GenIII_Ez_LV.csv"
+	String/G	WAVEa_Ex					=	":waveforms:GenIII:GenIII_Ex_LV.csv"
+	String/G	WAVEa_Ey					=	":waveforms:GenIII:GenIII_Ey_LV.csv"
+	String/G	WAVEa_Harm				=	":waveforms:GenIII:GenIII_Harmonic.csv"		
+	String/G	WAVEa_Hardware			=	":waveforms:GenIII:GenIII_hardware.csv"
 	
-	String/G	WAVEb_compRF				=	":waveforms:Satellite:satellite_slot_20130122_compRF.csv"
-	String/G	WAVEb_Quad45				=	":waveforms:Satellite:satellite_slot_20130122_Quad45.csv"
-	String/G	WAVEb_Ez					=	":waveforms:Satellite:satellite_slot_20130122_compEz.csv"
-	String/G	WAVEb_Ex					=	":waveforms:Satellite:satellite_slot_20130122_compEx.csv"
-	String/G	WAVEb_Ey					=	":waveforms:Satellite:satellite_slot_20130122_compEyTol.csv"
-	String/G	WAVEb_Harm				=	":waveforms:Satellite:satellite_slot_20130122_Harmonic.csv"		
-	String/G	WAVEb_Hardware			=	":waveforms:Satellite:Satellite_Hardware.csv"
+	String/G	WAVEb_compRF				=	""
+	String/G	WAVEb_Quad45				=	":waveforms:GenIII:GenIII_Uniform_Quad45.csv"
+	String/G	WAVEb_Ez					=	""
+	String/G	WAVEb_Ex					=	""
+	String/G	WAVEb_Ey					=	":waveforms:GenIII:GenIII_Uniform_Ey.csv"
+	String/G	WAVEb_Harm				=	":waveforms:GenIII:genIII_chain_10ions.csv"		
+	String/G	WAVEb_Hardware			=	":waveforms:GenIII:GenIII_hardware.csv"
 	
+	String/G	WAVEc_compRF				=	":waveforms:Satellite:satellite_slot_20130122_compRF.csv"
+	String/G	WAVEc_Quad45				=	":waveforms:Satellite:satellite_slot_20130122_Quad45.csv"
+	String/G	WAVEc_Ez					=	":waveforms:Satellite:satellite_slot_20130122_compEz.csv"
+	String/G	WAVEc_Ex					=	":waveforms:Satellite:satellite_slot_20130122_compEx.csv"
+	String/G	WAVEc_Ey					=	":waveforms:Satellite:satellite_slot_20130122_compEyTol.csv"
+	String/G	WAVEc_Harm				=	":waveforms:Satellite:satellite_slot_20130122_Harmonic.csv"		
 	String/G	WAVEc_Hardware			=	":waveforms:Satellite:Satellite_Hardware_q1_flip.csv"
 
 
@@ -212,10 +218,10 @@ Function Param_Init()
 	Variable/G TDC											=0
 
 	Make/O/N=(DDS_Channels,DDS_Params+1) 	DDS_INFO
-	Make/O/N=7 							COMP_INFO		 = {0,0.5,0,-1.0,0,1,1}
-	Make/O/T/N=7 						WAVE_INFOa	 = {WAVEa_compRF, WAVEa_Quad45, WAVEa_Ex, WAVEa_Ey, WAVEa_Ez, WAVEa_Harm, WAVEa_Hardware}
-	Make/O/T/N=7 						WAVE_INFOb	 = {WAVEb_compRF, WAVEb_Quad45, WAVEb_Ex, WAVEb_Ey, WAVEb_Ez, WAVEb_Harm, WAVEb_Hardware}
-	Make/O/T/N=7 						WAVE_INFOc	 = {WAVEa_compRF, WAVEa_Quad45, WAVEa_Ex, WAVEa_Ey, WAVEa_Ez, WAVEa_Harm, WAVEc_Hardware}
+	Make/O/N=7 							COMP_INFO		 = {0.02,-0.36,0.23,0.0,0,.4,1}
+	Make/O/T/N=7 						WAVE_INFOa	 = {WAVEa_Ex, WAVEa_Ey, WAVEa_Quad45, WAVEa_Ez, WAVEa_compRF, WAVEa_Harm, WAVEa_Hardware}
+	Make/O/T/N=7 						WAVE_INFOb	 = {WAVEb_Ex, WAVEb_Ey, WAVEb_Quad45, WAVEb_Ez, WAVEb_compRF, WAVEb_Harm, WAVEb_Hardware}
+	Make/O/T/N=7 						WAVE_INFOc	 = {WAVEc_Ex, WAVEc_Ey, WAVEc_Quad45, WAVEc_Ez, WAVEc_compRF, WAVEc_Harm, WAVEc_Hardware}
 	Duplicate/O WAVE_INFOa, WAVE_INFO
 
 	Variable j,i
@@ -409,15 +415,15 @@ Window DCCtrl() : Panel
 	PauseUpdate; Silent 1		// building window...
 	NewPanel /N=DCCtrl/K=1 /W=(30+0,75+0,30+260,75+260+60) as "Trap DC Voltage Control"
 	ModifyPanel cbRGB=(65534,65534,65534)
-	SetVariable apos,pos={20,17.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="A Field"
+	SetVariable apos,pos={20,17.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Ex"
 	SetVariable apos,limits={-inf,inf,.01},value= root:ExpParams:COMP_INFO[0]
-	SetVariable bpos,pos={20,47.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="B Field"
+	SetVariable bpos,pos={20,47.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Ey"
 	SetVariable bpos,limits={-inf,inf,.01},value= root:ExpParams:COMP_INFO[1]
-	SetVariable cpos,pos={20,77.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="C Field"
+	SetVariable cpos,pos={20,77.5},size={100,20},bodyWidth=60,proc=fieldUpdate,title="45"
 	SetVariable cpos,limits={-inf,inf,.01},value= root:ExpParams:COMP_INFO[2]
-	SetVariable dpos,pos={20,77.5+30},size={100,20},bodyWidth=60,proc=fieldUpdate,title="D Field"
+	SetVariable dpos,pos={20,77.5+30},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Ez"
 	SetVariable dpos,limits={-inf,inf,.01},value= root:ExpParams:COMP_INFO[3]
-	SetVariable epos,pos={20,77.5+60},size={100,20},bodyWidth=60,proc=fieldUpdate,title="E Field"
+	SetVariable epos,pos={20,77.5+60},size={100,20},bodyWidth=60,proc=fieldUpdate,title="RF"
 	SetVariable epos,limits={-inf,inf,.01},value= root:ExpParams:COMP_INFO[4]
 	SetVariable harmScale,pos={20,107.5+60},size={100,20},bodyWidth=60,proc=fieldUpdate,title="Harm. SF"
 	SetVariable harmScale,limits={-inf,inf,.01},value= root:ExpParams:COMP_INFO[5]
@@ -438,15 +444,15 @@ Window DCSettings(l,r,t,b) : Panel
 	ModifyPanel cbRGB=(65534,65534,65534)
 	SetDataFolder root:ExpParams
 	Variable/G DC_BANK_VAL = 1
-	SetVariable afile,pos={34,17},size={261,18},bodyWidth=185,title="A Voltage File"
+	SetVariable afile,pos={34,17},size={261,18},bodyWidth=185,title="A Voltage File Ex"
 	SetVariable afile,value= root:ExpParams:WAVE_INFO[0]
-	SetVariable bfile,pos={35,47},size={260,18},bodyWidth=185,title="B Voltage File"
+	SetVariable bfile,pos={35,47},size={260,18},bodyWidth=185,title="B Voltage File Ey"
 	SetVariable bfile,value= root:ExpParams:WAVE_INFO[1]
-	SetVariable cfile,pos={34,77},size={261,18},bodyWidth=185,title="C Voltage File"
+	SetVariable cfile,pos={34,77},size={261,18},bodyWidth=185,title="C Voltage File 45"
 	SetVariable cfile,value= root:ExpParams:WAVE_INFO[2]
-	SetVariable dfile,pos={34,107},size={261,18},bodyWidth=185,title="D Voltage File"
+	SetVariable dfile,pos={34,107},size={261,18},bodyWidth=185,title="D Voltage File Ez"
 	SetVariable dfile,value= root:ExpParams:WAVE_INFO[3]
-	SetVariable efile,pos={36,137},size={259,18},bodyWidth=185,title="E Voltage File"
+	SetVariable efile,pos={36,137},size={259,18},bodyWidth=185,title="E Voltage File RF"
 	SetVariable efile,value= root:ExpParams:WAVE_INFO[4]
 	SetVariable hfile,pos={9,167},size={286,18},bodyWidth=185,title="Harm. Voltage File"
 	SetVariable hfile,value= root:ExpParams:WAVE_INFO[5]
@@ -623,7 +629,8 @@ Window OverrideVariables() : Panel
 		Execute TTLOverride
 		i+=1
 	While (i<=8)
-
+	
+	TitleBox TTLtitle8 title="399 Closed", size={80,20}, pos={2, (position-20)}
 	MoveWindow/W=OverrideVariables 30,75,235,(position+130)*72/ScreenResolution
 EndMacro
 

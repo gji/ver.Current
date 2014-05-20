@@ -32,7 +32,8 @@ class ADDA:
 		self.xem.ActivateTriggerIn(0x40, 0)
 
 
-ADDA1 = ADDA()
-ADDA1.setVoltage(0,0)
-ADDA1.setVoltage(1,0)
-ADDA1.setVoltage(2,0)
+# ADDA1 = ADDA()
+# ADDA1.setVoltage(0,0)
+# ADDA1.setVoltage(1,0)
+# ADDA1.setVoltage(2,0)
+# ADDA1.setVoltage(3,0)

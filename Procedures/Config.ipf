@@ -1,6 +1,6 @@
 #pragma rtGlobals=1		// Use modern global access method.
 
-Constant LOAD_POS			= -440
+Constant LOAD_POS			= 219
 Constant DDS_Channels		= 6
 Constant DDS_Params		= 3
 Constant COOL_CNL			= 0 	
