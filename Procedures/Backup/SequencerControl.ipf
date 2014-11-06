@@ -45,15 +45,18 @@ function sendSequence(sequence)
 		endfor
 		writeWave[13*i] = {0x72, gb_seq((i-1),1),gb_seq((i-1),0)} //sets max address to run to, counter adds 1 at the end that we need to take out
 		
-		//print seq_p
-		//print writeWave
-		
 //		VDT2/P=$seq_p killio
 //		VDTOpenPort2 $seq_p
-		VDTOperationsPort2 $seq_p
-		VDTWriteBinaryWave2/O=20 writeWave
-		KillWaves writeWave
+//		VDTOperationsPort2 $seq_p
+//		if(ComCheck()==0)
+//		else
+//			print "Error Writing to "+seq_p
+//			return -1
+//		endif
+		VDTWriteBinaryWave2 writeWave
 //		VDTClosePort2 $seq_p
+		
+		KillWaves writeWave
 	endif
 end
 
@@ -95,22 +98,45 @@ function/WAVE runSequence(reps, [recmask,tdc])
 	
 	// If the TDC is enabled, we open it beforehand since the buffer needs to be opened
 //	If(TDC)
-//		//VDT2/P=$tdc_p baud=230400,stopbits=2,killio
-////		VDTOpenPort2 $tdc_p
-////	endif
-//	VDT2/P=$seq_p baud=230400,stopbits=2,killio
-//	//VDT2/P=$seq_p killio
+		//VDT2/P=$tdc_p baud=230400,stopbits=2,killio
+//		VDTOpenPort2 $tdc_p
+//	endif
+	
+//	VDT2/P=$seq_p killio
 //	VDTOpenPort2 $seq_p
 //	VDTOperationsPort2 $seq_p
-	VDTWriteBinaryWave2/O=20 writeWave
-	
+//	if(ComCheck()==0)
+//		else
+//			print "Error Writing to "+seq_p
+//			wave error
+//			error =-1
+//			return error
+//	endif
+	VDTWriteBinaryWave2 writeWave	
 	SetDataFolder root:Sequencer:Data
-	Make/B/U/O/N=(numChannels,reps) data
-	KillWaves writeWave
+	Make/B/U/O/n=(numChannels,reps) data
+	VDTReadBinaryWave2/B/TYPE=16/O=15 data
+//	VDTClosePort2 $seq_p
+	SetDataFolder root:Sequencer
 	
-//	VDTReadBinaryWave2/B/TYPE=16/O=20 data
+	// TDC data comes in as 6 bytes in little endian. The last byte 
+	If(TDC)
+		Variable tdc_points
+		VDTOperationsPort2 $tdc_p
+		VDTGetStatus2 0, 0, 0
+		tdc_points = V_VDT
+		
+		Make/o/n=(tdc_points) tdc_data_temp
+		VDTReadBinaryWave2/B/TYPE=0x48/O=1 tdc_data_temp
+		VDTClosePort2 $tdc_p
+		Make/o/n=(tdc_points/6) tdc_data
+		tdc_data = tdc_data_temp[6*p] + tdc_data_temp[6*p+1]*(2^8) + tdc_data_temp[6*p+2]*(2^8)^2 + tdc_data_temp[6*p+3]*(2^8)^3 + tdc_data_temp[6*p+4]*(2^8)^4 + (tdc_data_temp[6*p+5] & 0x1F)*(2^8)^5
+		print tdc_data
+	endif
+	
+	KillWaves writeWave
+
 	return data
-	//VDTClosePort2 $seq_p
 end
 
 //_____________________________________________________________________________

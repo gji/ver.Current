@@ -27,13 +27,17 @@ Macro Exp_Init()
 	If(V_FLag)
 		KillWindow Pulse
 	Endif
-	doWindow/HIDE=? DCCtrl
+	doWindow/HIDE=? DCCtrlPanel
 	If(V_FLag)
-		KillWindow DCCtrl
+		KillWindow DCCtrlPanel
 	Endif
-	doWindow/HIDE=? DataLoader
+		doWindow/HIDE=? DataLoader
 	If(V_FLag)
 		KillWindow DataLoader
+	If(V_FLag)
+		KillWindow PTS control
+	Endif
+		doWindow/HIDE=? PTS control
 	Endif
 	
 	// Creates Windows	
@@ -115,16 +119,15 @@ Function Param_Init()
 	Variable/G LIVE_UP					= 	0			// Sets live update state for DC voltage control
 	Variable/G CUR_POS					= 	LOAD_POS		
 		
-	Variable/G DELAY						=	TTL_00|TTL_09
-	Variable/G COOL						=	TTL_04|TTL_09
-	Variable/G REPUMP					=	TTL_03|TTL_09
-	Variable/G STATE_DET				=	TTL_01|DI_01|TTL_09
-	Variable/G FLR_DET					=	TTL_04|TTL_02|DI_01|TTL_09
-	Variable/G PUMP						=	TTL_01|TTL_05|TTL_09
-	Variable/G LOAD_SHTR				=	TTL_08|TTL_09
-	Variable/G MICROWAVE				=	TTL_10
-	Variable/G AWG_TRIG					= 	TTL_10|TTL_11|TTL_09
-	Variable/G PMT						=	DI_01|TTL_09	// PMT might be gated, might need to add a TTL pulse here
+	Variable/G DELAY						=	TTL_00	
+	Variable/G COOL						=	TTL_04
+	Variable/G REPUMP					=	TTL_03
+	Variable/G STATE_DET				=	TTL_01|DI_01
+	Variable/G FLR_DET					=	TTL_04|TTL_02|DI_01
+	Variable/G PUMP						=	TTL_01|TTL_05
+	Variable/G LOAD_SHTR				=	TTL_08
+	Variable/G MICROWAVE				=	TTL_06
+	Variable/G PMT						=	DI_01	// PMT might be gated, might need to add a TTL pulse here
 	
 	Variable/G COOL_FREQ				= 	290 // MHz
 	Variable/G COOL_AMP					=	100 // Max Amp
@@ -145,18 +148,6 @@ Function Param_Init()
 	Variable/G MIN_POSITION = 0			// Lowest ion position index (voltage set specification)
 	Variable/G MAX_POSITION = 10		// Highest ion position index (voltage set specification)
 	Variable/G DEFAULT_POSITION = 0	// Default ion position index (voltage set specification)
-
-	Variable/G VAR_TTL_01				=	TTL_01
-	Variable/G VAR_TTL_02				=	TTL_02
-	Variable/G VAR_TTL_03				=	TTL_03
-	Variable/G VAR_TTL_04				=	TTL_04
-	Variable/G VAR_TTL_05				=	TTL_05
-	Variable/G VAR_TTL_06				=	TTL_06
-	Variable/G VAR_TTL_08				=	TTL_08	
-	Variable/G VAR_TTL_09				=	TTL_09
-	Variable/G VAR_TTL_010				=	TTL_10
-	Variable/G VAR_TTL_011				=	TTL_11	
-	Variable/G VAR_TTL_016				=	TTL_16
 
 
 	String/G	WAVEb_compRF				=	""
@@ -195,8 +186,8 @@ Function Param_Init()
 	Variable/G VerticalLoopPosition                  =  16
 	Variable/G GroupNumber                           =  0
 	Variable/G GroupError                            =  0
-	Make/D/O/N=8 NameWave                            =  {DELAY,COOL,STATE_DET,FLR_DET,PUMP,LOAD_SHTR,PMT,MICROWAVE,AWG_TRIG,AWG_TRIG}
-	Make/O/T/N=8 TTLNames                            =  {"Delay","Cool", "State Detection","Flourescence Detection","Pump", "LoadShutter","PMT","Microwave","AWGRotation","SBCooling"}
+	Make/D/O/N=8 NameWave                              =  {DELAY,COOL,STATE_DET,FLR_DET,PUMP,LOAD_SHTR,PMT,MICROWAVE}
+	Make/O/T/N=8 TTLNames                            =  {"Delay","Cool", "State Detection","Flourescence Detection","Pump", "LoadShutter","PMT","Microwave"}
 	// The following should be matched up, in order, with TTLNames. The indexes denote the scan types labeled in SCAN_TITLES.
 	// For example, 0 is for Delay, 0123 is for Cooling. 
 	String/G 	 TTL_PARAMS			                   	=	"0;012345;0123;012345;012345;0;0;0;"
@@ -222,15 +213,25 @@ Function Param_Init()
 	Variable/G GroupMultiplier							=	1
 	Make/O/N=(1024,2) PulseSequence
 	Make/O/N=1024 TimeSequence
+	Variable/G DDS1Counter,DDS2Counter,DDS3Counter	=	0
+	Variable/G DDS7Counter,DDS8Counter,DDSCounted		=	0
+	Variable/G DDS10Counter							 	=	0
 	Make/O/N=(5120,6) Settings							=	0
 	Variable/G SettingsCheckOut							=	0
+	Make/O/N=(3,4) DDSsetPoints							=	{{COOL_FREQ,COOL_PHASE,COOL_AMP},{STATE_DET_FREQ,STATE_DET_PHASE,STATE_DET_AMP},{FLR_DET_FREQ,FLR_DET_PHASE,FLR_DET_AMP}}
+	Make/O/N=(2,3) EOSetPoints							=	{{1,2105,100},{2,7374,100}}
 	Variable/G SendCounter									=	0
 	Make/O/N=(7*1024,6) ScanParams=0
 	String/G LoadingScreen
+	String/G Test1
+	String/G Test2
+	String/G Test3
+	String/G Test4
 	Variable/G DDSnum										=	3
 	Variable/G EOnum											=	3
 
-	Make/O/N=(16,3) OverrideWave							=	0
+	Make/O/N=(8,3) OverrideWave							=	0
+	Make/O/N=(3,4) EO_INFO									=	{{0,1,2},{2105,7374,3060},{100,100,100},{0,0,0}}	
 	Variable/G Mask											=	0
 	
 	
@@ -251,22 +252,7 @@ Function Param_Init()
 		fileIndex += 1
 	while(1)
 	
-	Variable/G TDC												=0
-	
-	Variable/G PMT_01											=DI_01
-	Variable/G PMT_02											=DI_02
-	Variable/G PMT_03											=DI_03
-	Variable/G PMT_04											=DI_04
-	Variable/G PMT_05											=DI_05
-	Variable/G PMT_06											=DI_06
-	Variable/G PMT_07											=DI_07
-	Variable/G PMT_08											=DI_08
-	
-	Make/O/N=9 PMT_wave
-	
-	Variable/G SAVE_01											=1
-	Variable/G SAVE_02											=1
-	Variable/G SAVE_03											=1
+	Variable/G TDC											=0
 
 	Make/O/N=(DDS_Channels,DDS_Params+1) 	DDS_INFO
 	Make/O/N=7 							COMP_INFO		 = {0.02,-0.36,0.23,0.0,0,.4,1}
@@ -428,6 +414,11 @@ Function LoadDCWaveMatrices()
 	endfor		
 End
 
+//_____________________________________________________________________________
+//
+//
+//_____________________________________________________________________________
+//
 Function/WAVE LoadDCWaveMatrixHelper(filename, outname) //Loads single voltage matrix
 	String filename
 	String outname
@@ -439,6 +430,12 @@ Function/WAVE LoadDCWaveMatrixHelper(filename, outname) //Loads single voltage m
 	
 	return $matname
 EndMacro
+
+//_____________________________________________________________________________
+//
+//
+//_____________________________________________________________________________
+//
 
 Function PulseCreator_Init(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
@@ -457,6 +454,13 @@ Function PulseCreator_Init(ba) : ButtonControl
 	Return 0
 End
 
+
+//_____________________________________________________________________________
+//
+//
+//_____________________________________________________________________________
+//
+
 Function Pulse_Init(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
 	 Switch (ba.eventCode)
@@ -474,6 +478,13 @@ Function Pulse_Init(ba) : ButtonControl
 	Return 0
 End
 
+
+//_____________________________________________________________________________
+//
+//
+//_____________________________________________________________________________
+//
+
 Function DC_ctrl_Init(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
 	 Switch (ba.eventCode)
@@ -490,6 +501,11 @@ Function DC_ctrl_Init(ba) : ButtonControl
 
 	Return 0
 End
+//_____________________________________________________________________________
+//
+//
+//_____________________________________________________________________________
+//
 
 Function DataFrameInit(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
@@ -503,6 +519,11 @@ Function DataFrameInit(ba) : ButtonControl
 
 	Return 0
 End
+//_____________________________________________________________________________
+//
+//
+//_____________________________________________________________________________
+//
 
 Function SeqInit(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
@@ -516,234 +537,80 @@ Function SeqInit(ba) : ButtonControl
 
 	Return 0
 End
-
+//_____________________________________________________________________________
+//
+//
+//_____________________________________________________________________________
+//
 Function Seq_init()
 	NewDataFolder/O/S root:DDS	
 	NewDataFolder/O/S root:Sequencer
-	SetDataFolder root:Sequencer
-	variable/G DiscPoint = 2
-	NewDataFolder/O :AlignmentSweeper
+	SetDataFolder root:Sequencer	
 	NewDataFolder/O/S :Data
 	
-	Data_Init()
-	Alignment_Init()
-end
-
-Function Data_Init()
+	Make/O PulseProgram
+	Make/B/U/O/n=0 WriteWave
+	Make/O/N=50 dataScanVar =	0
+	
+	String/G ScanVarName = ""
+	
 	string name
 	variable i=0
+	
 	SetDataFolder root:Sequencer:Data
-	Variable/G DataSWEEP_POINTS = 10
-	Variable/G DataDisplayFlagAvg		=1
-	Variable/G DataDisplayFlagProb		=0
-	Variable/G DataMaxHist				=50
-	Variable/G BasisPMTinputchannel =1
-	
-	Make/O/N=8 NumIonChanData
-	Make/O PulseProgram
-
-	Make/T/O/n=1 DataAvgPMTchannels
-	Make/T/O/n=1 DataStdPMTchannels	
-	Make/T/O/n=1 DataHistPMTchannels
-	Make/T/O/n=1 DataBiErrPMTchannels
-	Make/T/O/n=1 DataProbPMTchannels
-	Make/T/O/n=1 DataBasisFitchannels
-	Make/T/O/n=1 DataBasisFitErrorchannels
-	Make/T/O/n=1 DataParitychannels	
-	Make/T/O/n=1 DataParityErrorchannels	
-	
-			
-	Make/B/U/O/n=0 WriteWave
-	Make/O/N=50 dataScanVar =	0
-	String/G ScanVarName = ""
 	For(i=1;i!=9;i+=1)
-		name="DataStd_0"+num2str(i)
+		name="dataStd_0"+num2str(i)
 		if(exists(name))
 		else
-			Make/O/N=50 $name =0
+			Make/O/N=50 $name
 		endif
-		name="Data_0"+num2str(i)
+		name="data_0"+num2str(i)
 		if(exists(name))
 		else
-			Make/O/N=50 $name =0
+			Make/O/N=50 $name
 		endif
-		name="DataAvg_0"+num2str(i)
+		name="dataAvg_0"+num2str(i)
 		if(exists(name))
 		else
-			Make/O/N=50 $name =0
+			Make/O/N=50 $name
 		endif
-		name="DataHist_0"+num2str(i)
+		name="dataHist_0"+num2str(i)
 		if(exists(name))
 		else
-			Make/O/N=50 $name =0
+			Make/O/N=50 $name
 		endif
-		name="DataProb_0"+num2str(i)
+		name="dataProb_0"+num2str(i)
 		if(exists(name))
 		else
-			Make/O/N=50 $name =0
+			Make/O/N=50 $name
 		endif
-		name="DataBiErr_0"+num2str(i)
+		name="dataBiErr_0"+num2str(i)
 		if(exists(name))
 		else
-			Make/O/N=50 $name =0
+			Make/O/N=50 $name
 		endif
-		name="DataBasisFit_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=4 $name =0
-		endif
-		name="DataBasisFitError_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=4 $name =0
-		endif
-		name="DataParity_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=4 $name =0
-		endif
-		name="DataParityError_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=4 $name =0
-		endif	
 	endfor
 
 End
 
+//_____________________________________________________________________________
+//
+//
+//_____________________________________________________________________________
+//
+Function PTS_init()
 
-Function Alignment_Init()
-	string name
-	variable i=0
-	SetDataFolder root:Sequencer:AlignmentSweeper
-	Variable/G ALIGNSWEEP_POINTS = 10
-	Variable/G AlignDisplayFlagAvg		=1
-	Variable/G AlignDisplayFlagProb		=0
-	Variable/G AlignMaxHist				=50
-	Variable/G BasisPMTinputchannel =1
-	
-	Make/O/N=8 NumIonChanAlign
-	Make/O PulseProgram
-
-	Make/T/O/n=1 AlignAvgPMTchannels
-	Make/T/O/n=1 AlignStdPMTchannels	
-	Make/T/O/n=1 AlignHistPMTchannels
-	Make/T/O/n=1 AlignBiErrPMTchannels
-	Make/T/O/n=1 AlignProbPMTchannels
-	Make/T/O/n=1 AlignBasisFitchannels
-	Make/T/O/n=1 AlignBasisFitErrorchannels
-	Make/T/O/n=1 AlignParitychannels	
-	Make/T/O/n=1 AlignParityErrorchannels	
-	
-	Make/O/N=50 AlignBasisHistD
-	Make/O/N=50 AlignBasisHistB
-	Make/O/N=50 AlignBasisHistDD
-	Make/O/N=50 AlignBasisHistDB
-	Make/O/N=50 AlignBasisHistBB
-			
-	Make/B/U/O/n=0 WriteWave
-	Make/O/N=50 dataScanVar =	0
-	String/G ScanVarName = ""
-	For(i=1;i!=9;i+=1)
-		name="alignmentStd_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=50 $name =0
-		endif
-		name="alignment_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=50 $name =0
-		endif
-		name="alignmentAvg_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=50 $name =0
-		endif
-		name="alignmentHist_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=50 $name =0
-		endif
-		name="alignmentProb_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=50 $name =0
-		endif
-		name="alignmentBiErr_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=50 $name =0
-		endif
-		name="alignmentBasisFit_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=4 $name =0
-		endif
-		name="alignmentBasisFitError_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=4 $name =0
-		endif
-		name="alignmentParity_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=4 $name =0
-		endif
-		name="alignmentParityError_0"+num2str(i)
-		if(exists(name))
-		else
-			Make/O/N=4 $name =0
-		endif	
-	endfor
+	String coolPTSaddress		= "GPIB0::16::INSTR"
+	String pumpPTSaddress		= "GPIB0::8::INSTR"
+	String detectPTSaddress		= "GPIB0::3::INSTR"
+	Variable coolPTSamplitude 	= 1
+	Variable pumpPTSamplitude	= 1
+	Variable detectPTSamplitude	= 1
+	Variable coolPTSfrequency 	= 2900000000
+	Variable pumpPTSfrequency	= 3000000000
+	Variable detectPTSfrequency	= 3000000000
 
 End
-
-Function AWGInit(ba) : ButtonControl
-	STRUCT WMButtonAction &ba
-	 Switch (ba.eventCode)
-	 	Case 2: //mouse up
-	 		AWG_Init()
-	 		Break
-		Case -1: // control being killed
-			Break
-	 EndSwitch
-
-	Return 0
-End
-
-//_____________________________________________________________________________
-//
-// AWG initaliztion to create waves and variables
-//_____________________________________________________________________________
-Function AWG_init()
-	NewDataFolder/O/S root:AWG
-	Make/O SBCCycles
-	Make/O SBCAmplitudes
-	Make/O SBCFrequencies
-	Make/O SBCTime
-	Make/O SBCWaveform
-	Make/O ExOpDurations
-	Make/T/O ExOpTypes
-	Make/T/O ExOpDevices
-	Make/O ExOpPositions
-	Make/O AWGwaveform
-	Make/O/N=0 uploadwave
-end
-
-//_____________________________________________________________________________
-//
-// DataLoader()
-//_____________________________________________________________________________
-//
-Window Dataloader() : Panel
-	PauseUpdate; Silent 1		// building window...
-	DoWindow /K Dataloader
-	NewPanel /N=Dataloader /K=1 /W=(75,110,408,210) as "Data Loader"
-	ModifyPanel cbRGB=(65534,65534,65534)
-	Checkbox SingleVariable, pos={35,15},size={80,20},proc=SingleVariable_proc,title="Single Variable", mode=1
-	Checkbox VariableCorrelation, pos={165,15},size={80,20},proc=VariableCorrelation_proc,title="Variable Correlation",mode=1,disable=1
-EndMacro
 
 //_____________________________________________________________________________
 //
@@ -752,7 +619,7 @@ EndMacro
 //
 Window DCCtrl() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(24,1090,284,1407) as "Trap DC Voltage Control"
+	NewPanel /K=1 /W=(1189,997,1449,1373) as "Trap DC Voltage Control"
 	ModifyPanel cbRGB=(48896,59904,65280)
 	SetVariable apos,pos={43,17},size={77,18},bodyWidth=60,proc=fieldUpdate,title="Ex"
 	SetVariable apos,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[0]
@@ -778,7 +645,7 @@ EndMacro
 
 Window DCSettings() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(307,1090,682,1354) as "DC Voltage Settings"
+	NewPanel /K=1 /W=(1464,996,1839,1260) as "DC Voltage Settings"
 	ModifyPanel cbRGB=(48896,49152,65280)
 	SetVariable afile,pos={16,17},size={279,18},bodyWidth=185,title="A Voltage File Ex"
 	SetVariable afile,value= root:ExpParams:WAVE_INFO[0]
@@ -809,7 +676,35 @@ Window DCSettings() : Panel
 	CheckBox cbank,pos={345,228},size={27,15},proc=DCBankProc,title="C"
 	CheckBox cbank,value= 0,mode=1
 EndMacro
-
+//_____________________________________________________________________________
+//
+// Create DDS control panel
+//_____________________________________________________________________________
+//
+//Window DDS_Control() : Panel
+//	SetDataFolder root:DDS
+//	PauseUpdate; Silent 1		// building window...
+//	NewPanel /K=1 /W=(30+0,75+298,30+260,75+298+170) as "DDS_Control"
+//	ModifyPanel cbRGB=(65534,65534,65534)
+//	SetVariable DDS1_FREQ_BOX,pos={50,15},size={195,20},bodyWidth=130,proc=DDS_wrapper,title="DDS1 Frequency"
+//	SetVariable DDS1_FREQ_BOX,font="Arial"
+//	SetVariable DDS1_FREQ_BOX,limits={0,400,1},value= root:ExpParams:DDS_INFO[0][0]
+//	SetVariable DDS2_FREQ_BOX,pos={50,35},size={195,20},bodyWidth=130,proc=DDS_wrapper,title="DDS2 Frequency"
+//	SetVariable DDS2_FREQ_BOX,font="Arial"
+//	SetVariable DDS2_FREQ_BOX,limits={0,400,1},value= root:ExpParams:DDS_INFO[1][0]
+//	SetVariable DDS1_PHASE_BOX,pos={50,65},size={195,20},bodyWidth=130,proc=DDS_wrapper,title="DDS1 Amplitude"
+//	SetVariable DDS1_PHASE_BOX,font="Arial"
+//	SetVariable DDS1_PHASE_BOX,limits={0,180,1},value= root:ExpParams:DDS_INFO[0][1]
+//	SetVariable DDS2_PHASE_BOX,pos={50,85},size={195,20},bodyWidth=130,proc=DDS_wrapper,title="DDS2 Amplitude"
+//	SetVariable DDS2_PHASE_BOX,font="Arial"
+//	SetVariable DDS2_PHASE_BOX,limits={0,180,1},value= root:ExpParams:DDS_INFO[1][1]
+//	SetVariable DDS1_AMPL_BOX,pos={50,115},size={195,20},bodyWidth=130,proc=DDS_wrapper,title="DDS1 Phase"
+//	SetVariable DDS1_AMPL_BOX,font="Arial"
+//	SetVariable DDS1_AMPL_BOX,limits={0,1023,1},value= root:ExpParams:DDS_INFO[0][2]
+//	SetVariable DDS2_AMPL_BOX,pos={50,135},size={195,20},bodyWidth=130,proc=DDS_wrapper,title="DDS2 Phase"
+//	SetVariable DDS2_AMPL_BOX,font="Arial"
+//	SetVariable DDS2_AMPL_BOX,limits={0,1023,1},value= root:ExpParams:DDS_INFO[1][2]
+//EndMacro
 
 //_____________________________________________________________________________
 //
@@ -818,10 +713,75 @@ EndMacro
 //
 Window Pulse() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(1217,86,1550,299) as "Pulse Program"
+	NewPanel /K=1 /W=(1890,1346,2757,1725) as "Pulse Program"
 	ModifyPanel cbRGB=(48896,65280,57344)
 	PopupMenu Sequence,pos={61,18},size={209,21},bodyWidth=150,proc=PopMenuProc,title="Sequence"
-	PopupMenu Sequence,mode=1,popvalue=" ",value= #"makepopnames()"
+	PopupMenu Sequence,mode=6,popvalue="PMTTEST",value= #"makepopnames()"
+	TitleBox Step0Title,pos={15,65},size={150,20},title="Cool"
+	TitleBox Step0Title,labelBack=(65535,65535,65535),frame=5,anchor= MC,fixedSize=1
+	SetVariable Step0position,pos={261,67},size={79,18},bodyWidth=30,title="Position"
+	SetVariable Step0position,limits={0,10,1},value= _NUM:0
+	CheckBox Step0Scan0,pos={170,67},size={65,15},proc=ConstructScanControls,title="Duration"
+	CheckBox Step0Scan0,userdata=  "Cool;Duration;",value= 0
+	SetVariable Step0setpoint0,pos={369,67},size={101,18},bodyWidth=50,title="Duration"
+	SetVariable Step0setpoint0,limits={10,1e+08,0.5},value= _NUM:10
+	CheckBox Step0Scan1,pos={170,92},size={73,15},disable=2,proc=ConstructScanControls,title="Amplitude"
+	CheckBox Step0Scan1,userdata=  "Cool;Amplitude;",value= 0
+	SetVariable Step0setpoint1,pos={361,92},size={109,18},bodyWidth=50,title="Amplitude"
+	SetVariable Step0setpoint1,limits={0,1023,1},value= _NUM:1023
+	CheckBox Step0Scan2,pos={170,117},size={75,15},proc=ConstructScanControls,title="Frequency"
+	CheckBox Step0Scan2,userdata=  "Cool;Frequency;",value= 0
+	SetVariable Step0setpoint2,pos={359,117},size={111,18},bodyWidth=50,title="Frequency"
+	SetVariable Step0setpoint2,limits={100,400,0.01},value= _NUM:200
+	TitleBox Step1Title,pos={15,140},size={150,20},title="Flourescence Detect"
+	TitleBox Step1Title,labelBack=(65535,65535,65535),frame=5,anchor= MC,fixedSize=1
+	SetVariable Step1position,pos={261,142},size={79,18},bodyWidth=30,title="Position"
+	SetVariable Step1position,limits={0,10,1},value= _NUM:0
+	CheckBox Step1Scan0,pos={170,142},size={65,15},proc=ConstructScanControls,title="Duration"
+	CheckBox Step1Scan0,userdata=  "Flourescence Detect;Duration;",value= 1
+	SetVariable Step1setpoint0,pos={369,142},size={101,18},bodyWidth=50,title="Duration"
+	SetVariable Step1setpoint0,limits={10,1e+08,0.5},value= _NUM:1000000
+	CheckBox Step1Scan1,pos={170,167},size={73,15},disable=2,proc=ConstructScanControls,title="Amplitude"
+	CheckBox Step1Scan1,userdata=  "Flourescence Detect;Amplitude;",value= 0
+	SetVariable Step1setpoint1,pos={361,167},size={109,18},bodyWidth=50,title="Amplitude"
+	SetVariable Step1setpoint1,limits={0,1023,1},value= _NUM:1023
+	CheckBox Step1Scan2,pos={170,192},size={75,15},proc=ConstructScanControls,title="Frequency"
+	CheckBox Step1Scan2,userdata=  "Flourescence Detect;Frequency;",value= 0
+	SetVariable Step1setpoint2,pos={359,192},size={111,18},bodyWidth=50,title="Frequency"
+	SetVariable Step1setpoint2,limits={100,400,0.01},value= _NUM:200
+	TitleBox Step2Title,pos={15,215},size={150,20},title="Cool"
+	TitleBox Step2Title,labelBack=(65535,65535,65535),frame=5,anchor= MC,fixedSize=1
+	SetVariable Step2position,pos={261,217},size={79,18},bodyWidth=30,title="Position"
+	SetVariable Step2position,limits={0,10,1},value= _NUM:0
+	CheckBox Step2Scan0,pos={170,217},size={65,15},proc=ConstructScanControls,title="Duration"
+	CheckBox Step2Scan0,userdata=  "Cool;Duration;",value= 0
+	SetVariable Step2setpoint0,pos={369,217},size={101,18},bodyWidth=50,title="Duration"
+	SetVariable Step2setpoint0,limits={10,1e+08,0.5},value= _NUM:10
+	CheckBox Step2Scan1,pos={170,242},size={73,15},disable=2,proc=ConstructScanControls,title="Amplitude"
+	CheckBox Step2Scan1,userdata=  "Cool;Amplitude;",value= 0
+	SetVariable Step2setpoint1,pos={361,242},size={109,18},bodyWidth=50,title="Amplitude"
+	SetVariable Step2setpoint1,limits={0,1023,1},value= _NUM:1023
+	CheckBox Step2Scan2,pos={170,267},size={75,15},proc=ConstructScanControls,title="Frequency"
+	CheckBox Step2Scan2,userdata=  "Cool;Frequency;",value= 0
+	SetVariable Step2setpoint2,pos={359,267},size={111,18},bodyWidth=50,title="Frequency"
+	SetVariable Step2setpoint2,limits={100,400,0.01},value= _NUM:200
+	SetVariable Loops,pos={542,290},size={150,18},title="Data Point Loop"
+	SetVariable Loops,limits={0,65535,1},value= _NUM:100
+	SetVariable Times,pos={700,290},size={150,18},title="Experimental Loop"
+	SetVariable Times,limits={0,65536,1},value= _NUM:1
+	Button SaveSettings,pos={15,320},size={100,20},proc=SaveSettingsProc,title="Save Settings"
+	PopupMenu LoadSettings,pos={173,320},size={184,21},bodyWidth=150,proc=LoadSettingsPopMenuProc,title="Load:"
+	PopupMenu LoadSettings,mode=1,value= #"LoadSettingsList()"
+	Button Run,pos={575,320},size={100,20},proc=RunProc,title="Run"
+	CheckBox TDCbox,pos={683,320},size={76,15},title="TDC on/off"
+	CheckBox TDCbox,variable= root:ExpParams:TDC
+	SetVariable Step1Scan0Min,pos={527,142},size={73,18},bodyWidth=50,title="Min"
+	SetVariable Step1Scan0Min,limits={10,1e+08,0.5},value= _NUM:500000
+	SetVariable Step1Scan0Max,pos={625,142},size={75,18},bodyWidth=50,title="Max"
+	SetVariable Step1Scan0Max,limits={10,1e+08,0.5},value= _NUM:5000000
+	SetVariable Step1Scan0Inc,pos={730,142},size={70,18},bodyWidth=50,title="Inc"
+	SetVariable Step1Scan0Inc,limits={0.5,1e+08,0.5},value= _NUM:500000
+	Button DataFrame,pos={14,344},size={100,20},proc=DataFrameInit,title="Data Frame Init"
 	SetWindow kwTopWin,hook(scroll)=ScrollHook
 EndMacro
 
@@ -846,6 +806,38 @@ Function/S makepopnames()
 
 End
 
+//_____________________________________________________________________________
+//
+// makepopnames() scans the stored sequences folder to populate the drop-down menu
+//_____________________________________________________________________________
+//
+//Function/S makepopnamesOLD()
+//	SetDatafolder Root:ExpParams
+//	WAVE/T LoadWaveFiles
+//	
+//	Make/O/N=0/T LoadWaveFiles
+//	Variable fileIndex = 0
+//	
+//	do
+//		String fileName
+//		fileName = IndexedFile(SequencesPath, fileIndex, "????")
+//		if (strlen(fileName) == 0)
+//			break
+//		endif
+//		InsertPoints 0,1,LoadWaveFiles
+//		LoadWaveFiles[0] = fileName
+//		fileIndex += 1
+//	while(1)
+//	
+//	String names=" "
+//	Variable i=0
+//
+//	For(i=0;i<Dimsize(LoadWavefiles,0);i+=1)
+//		names+=";"+LoadWaveFiles[i]
+//	EndFor
+//	Return names
+//
+//End
 
 //_____________________________________________________________________________
 //
@@ -854,13 +846,90 @@ End
 //
 Window PulseCreator() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(341,79,674,129) as "Pulse Creator"
+	NewPanel /K=1 /W=(1189,1412,1522,1751) as "Pulse Creator"
 	ModifyPanel cbRGB=(65280,65280,48896)
 	Button NewItem,pos={15,16},size={80,20},proc=NewItemPressed,title="New Item"
-	Button NewItem,userdata=  "0"
+	Button NewItem,userdata=  "9"
 	Button DeleteItem,pos={117,16},size={80,20},proc=DeleteItemPressed,title="Delete Item"
 	Button SetLoops,pos={219,16},size={80,20},proc=SetLoopsPressed,title="Set Loops"
+	PopupMenu StepType1,pos={15,46},size={94,21},proc=StepTypeChanged,title="Step 1"
+	PopupMenu StepType1,mode=1,popvalue="Delay",value= #"MakeNames()"
+	ValDisplay GroupVal1,pos={285,50},size={20,16},frame=2
+	ValDisplay GroupVal1,limits={0,0,0},barmisc={0,1000}
+	ValDisplay GroupVal1,value= #"root:ExpParams:GroupVals[0]"
+	PopupMenu StepType2,pos={15,76},size={94,21},proc=StepTypeChanged,title="Step 2"
+	PopupMenu StepType2,mode=1,popvalue="Delay",value= #"MakeNames()"
+	CheckBox NewGroup2,pos={200,80},size={80,15},proc=NewGroupChecked,title="New Group"
+	CheckBox NewGroup2,value= 0
+	ValDisplay GroupVal2,pos={285,80},size={20,16},frame=2
+	ValDisplay GroupVal2,limits={0,0,0},barmisc={0,1000}
+	ValDisplay GroupVal2,value= #"root:ExpParams:GroupVals[1]"
+	PopupMenu StepType3,pos={15,106},size={94,21},proc=StepTypeChanged,title="Step 3"
+	PopupMenu StepType3,mode=1,popvalue="Delay",value= #"MakeNames()"
+	CheckBox NewGroup3,pos={200,110},size={80,15},proc=NewGroupChecked,title="New Group"
+	CheckBox NewGroup3,value= 0
+	ValDisplay GroupVal3,pos={285,110},size={20,16},frame=2
+	ValDisplay GroupVal3,limits={0,0,0},barmisc={0,1000}
+	ValDisplay GroupVal3,value= #"root:ExpParams:GroupVals[2]"
+	PopupMenu StepType4,pos={15,136},size={94,21},proc=StepTypeChanged,title="Step 4"
+	PopupMenu StepType4,mode=1,popvalue="Delay",value= #"MakeNames()"
+	CheckBox NewGroup4,pos={200,140},size={80,15},proc=NewGroupChecked,title="New Group"
+	CheckBox NewGroup4,value= 0
+	ValDisplay GroupVal4,pos={285,140},size={20,16},frame=2
+	ValDisplay GroupVal4,limits={0,0,0},barmisc={0,1000}
+	ValDisplay GroupVal4,value= #"root:ExpParams:GroupVals[3]"
+	PopupMenu StepType5,pos={15,166},size={94,21},proc=StepTypeChanged,title="Step 5"
+	PopupMenu StepType5,mode=1,popvalue="Delay",value= #"MakeNames()"
+	CheckBox NewGroup5,pos={200,170},size={80,15},proc=NewGroupChecked,title="New Group"
+	CheckBox NewGroup5,value= 0
+	ValDisplay GroupVal5,pos={285,170},size={20,16},frame=2
+	ValDisplay GroupVal5,limits={0,0,0},barmisc={0,1000}
+	ValDisplay GroupVal5,value= #"root:ExpParams:GroupVals[4]"
+	PopupMenu StepType6,pos={15,196},size={94,21},proc=StepTypeChanged,title="Step 6"
+	PopupMenu StepType6,mode=1,popvalue="Delay",value= #"MakeNames()"
+	CheckBox NewGroup6,pos={200,200},size={80,15},proc=NewGroupChecked,title="New Group"
+	CheckBox NewGroup6,value= 0
+	ValDisplay GroupVal6,pos={285,200},size={20,16},frame=2
+	ValDisplay GroupVal6,limits={0,0,0},barmisc={0,1000}
+	ValDisplay GroupVal6,value= #"root:ExpParams:GroupVals[5]"
+	PopupMenu StepType7,pos={15,226},size={94,21},proc=StepTypeChanged,title="Step 7"
+	PopupMenu StepType7,mode=1,popvalue="Delay",value= #"MakeNames()"
+	CheckBox NewGroup7,pos={200,230},size={80,15},proc=NewGroupChecked,title="New Group"
+	CheckBox NewGroup7,value= 0
+	ValDisplay GroupVal7,pos={285,230},size={20,16},frame=2
+	ValDisplay GroupVal7,limits={0,0,0},barmisc={0,1000}
+	ValDisplay GroupVal7,value= #"root:ExpParams:GroupVals[6]"
+	PopupMenu StepType8,pos={15,256},size={94,21},proc=StepTypeChanged,title="Step 8"
+	PopupMenu StepType8,mode=1,popvalue="Delay",value= #"MakeNames()"
+	CheckBox NewGroup8,pos={200,260},size={80,15},proc=NewGroupChecked,title="New Group"
+	CheckBox NewGroup8,value= 0
+	ValDisplay GroupVal8,pos={285,260},size={20,16},frame=2
+	ValDisplay GroupVal8,limits={0,0,0},barmisc={0,1000}
+	ValDisplay GroupVal8,value= #"root:ExpParams:GroupVals[7]"
+	PopupMenu StepType9,pos={15,286},size={94,21},proc=StepTypeChanged,title="Step 9"
+	PopupMenu StepType9,mode=1,popvalue="Delay",value= #"MakeNames()"
+	CheckBox NewGroup9,pos={200,290},size={80,15},proc=NewGroupChecked,title="New Group"
+	CheckBox NewGroup9,value= 0
+	ValDisplay GroupVal9,pos={285,290},size={20,16},frame=2
+	ValDisplay GroupVal9,limits={0,0,0},barmisc={0,1000}
+	ValDisplay GroupVal9,value= #"root:ExpParams:GroupVals[8]"
 EndMacro
+
+
+//_____________________________________________________________________________
+//
+// DataLoader()
+//_____________________________________________________________________________
+//
+Window Dataloader() : Panel
+	PauseUpdate; Silent 1		// building window...
+	DoWindow /K Dataloader
+	NewPanel /N=Dataloader /K=1 /W=(75,110,408,210) as "Data Loader"
+	ModifyPanel cbRGB=(65534,65534,65534)
+	Checkbox SingleVariable, pos={35,15},size={80,20},proc=SingleVariable_proc,title="Single Variable", mode=1
+	Checkbox VariableCorrelation, pos={165,15},size={80,20},proc=VariableCorrelation_proc,title="Variable Correlation",mode=1,disable=1
+EndMacro
+
 
 //_____________________________________________________________________________
 //
@@ -869,7 +938,7 @@ EndMacro
 //
 Window OverrideVariables() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(24,76,297,1089) as "Override Variables"
+	NewPanel /K=1 /W=(780,1284,1053,2285) as "Override Variables"
 	ModifyPanel cbRGB=(65280,48896,48896)
 	TitleBox DDS1Namebox,pos={50,15},size={150,20},title="DDS #1: State Detection"
 	TitleBox DDS1Namebox,labelBack=(0,0,0),font="Arial",frame=4
@@ -882,7 +951,7 @@ Window OverrideVariables() : Panel
 	SetVariable DDS1_PHASE_BOX,limits={0,180,1},value= root:ExpParams:DDS_INFO[0][2]
 	SetVariable DDS1_AMPL_BOX,pos={20,80},size={225,18},bodyWidth=130,proc=DDS_wrapper,title="DDS1 Amplitude"
 	SetVariable DDS1_AMPL_BOX,font="Arial"
-	SetVariable DDS1_AMPL_BOX,limits={0,100,1},value= root:ExpParams:DDS_INFO[0][1]
+	SetVariable DDS1_AMPL_BOX,limits={0,1023,1},value= root:ExpParams:DDS_INFO[0][1]
 	CheckBox DDS1_Override,pos={50,100},size={103,15},bodyWidth=130,proc=DDS_Overridewrapper,title="DDS 1 Override"
 	CheckBox DDS1_Override,font="Arial",value= 0
 	TitleBox DDS2Namebox,pos={50,140},size={150,20},title="DDS #2: Flourescence Detection"
@@ -896,7 +965,7 @@ Window OverrideVariables() : Panel
 	SetVariable DDS2_PHASE_BOX,limits={0,180,1},value= root:ExpParams:DDS_INFO[1][2]
 	SetVariable DDS2_AMPL_BOX,pos={20,205},size={225,18},bodyWidth=130,proc=DDS_wrapper,title="DDS2 Amplitude"
 	SetVariable DDS2_AMPL_BOX,font="Arial"
-	SetVariable DDS2_AMPL_BOX,limits={0,100,1},value= root:ExpParams:DDS_INFO[1][1]
+	SetVariable DDS2_AMPL_BOX,limits={0,1023,1},value= root:ExpParams:DDS_INFO[1][1]
 	CheckBox DDS2_Override,pos={50,225},size={103,15},bodyWidth=130,proc=DDS_Overridewrapper,title="DDS 2 Override"
 	CheckBox DDS2_Override,font="Arial",value= 0
 	TitleBox DDS3Namebox,pos={50,265},size={150,20},title="DDS #3: Doppler Cooling"
@@ -910,7 +979,7 @@ Window OverrideVariables() : Panel
 	SetVariable DDS3_PHASE_BOX,limits={0,180,1},value= root:ExpParams:DDS_INFO[2][2]
 	SetVariable DDS3_AMPL_BOX,pos={20,330},size={225,18},bodyWidth=130,proc=DDS_wrapper,title="DDS3 Amplitude"
 	SetVariable DDS3_AMPL_BOX,font="Arial"
-	SetVariable DDS3_AMPL_BOX,limits={0,100,1},value= root:ExpParams:DDS_INFO[2][1]
+	SetVariable DDS3_AMPL_BOX,limits={0,1023,1},value= root:ExpParams:DDS_INFO[2][1]
 	CheckBox DDS3_Override,pos={50,350},size={103,15},bodyWidth=130,proc=DDS_Overridewrapper,title="DDS 3 Override"
 	CheckBox DDS3_Override,font="Arial",value= 1
 	TitleBox EO1Namebox,pos={50,390},size={150,20},title="EO #1: Optical Pumping"
@@ -998,38 +1067,17 @@ Window OverrideVariables() : Panel
 	CheckBox TTL7_Switch,font="Arial",value= 0
 	CheckBox TTL7_Override,pos={135,854},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
 	CheckBox TTL7_Override,font="Arial",value= 0
-	TitleBox TTLtitle9,pos={25,870},size={50,20},title="TTL9"
-	TitleBox TTLtitle9,labelBack=(65535,65535,65535),font="Arial",frame=0
-	TitleBox TTLtitle9,anchor= MC,fixedSize=1
-	CheckBox TTL9_Switch,pos={75,874},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
-	CheckBox TTL9_Switch,font="Arial",value= 0
-	CheckBox TTL9_Override,pos={135,874},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL9_Override,font="Arial",value= 0	
-	TitleBox TTLtitle10,pos={25,890},size={50,20},title="TTL10"
-	TitleBox TTLtitle10,labelBack=(65535,65535,65535),font="Arial",frame=0
-	TitleBox TTLtitle10,anchor= MC,fixedSize=1
-	CheckBox TTL10_Switch,pos={75,894},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
-	CheckBox TTL10_Switch,font="Arial",value= 0
-	CheckBox TTL10_Override,pos={135,894},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL10_Override,font="Arial",value= 0
-	TitleBox TTLtitle11,pos={25,910},size={50,20},title="TTL11"
-	TitleBox TTLtitle11,labelBack=(65535,65535,65535),font="Arial",frame=0
-	TitleBox TTLtitle11,anchor= MC,fixedSize=1
-	CheckBox TTL11_Switch,pos={75,914},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
-	CheckBox TTL11_Switch,font="Arial",value= 0
-	CheckBox TTL11_Override,pos={135,914},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL11_Override,font="Arial",value= 0
-	TitleBox TTLtitle16,pos={25,930},size={50,20},title="399 "
-	TitleBox TTLtitle16,labelBack=(65535,65535,65535),font="Arial",frame=0
-	TitleBox TTLtitle16,anchor= MC,fixedSize=1
-	CheckBox TTL16_Switch,pos={75,934},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
-	CheckBox TTL16_Switch,font="Arial",value= 1
-	CheckBox TTL16_Override,pos={135,934},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL16_Override,font="Arial",value= 1
-	Button SeqInit,pos={21,964},size={70,20},proc=Seqinit,title="Seq Init"
-	Button DC_ConInit,pos={95,964},size={70,20},proc=DC_ctrl_Init,title="DC Init"
-	Button PulserInit,pos={169,964},size={70,20},proc=Pulse_Init,title="Pulser Init"
-	Button PulseCreator_init,pos={21,986},size={70,20},proc=PulseCreator_Init,title="Creat Init"
+	TitleBox TTLtitle8,pos={25,870},size={50,20},title="399 "
+	TitleBox TTLtitle8,labelBack=(65535,65535,65535),font="Arial",frame=0
+	TitleBox TTLtitle8,anchor= MC,fixedSize=1
+	CheckBox TTL8_Switch,pos={75,874},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL8_Switch,font="Arial",value= 1
+	CheckBox TTL8_Override,pos={135,874},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL8_Override,font="Arial",value= 1
+	Button SeqInit,pos={21,904},size={70,20},proc=Seqinit,title="Seq Init"
+	Button DC_ConInit,pos={95,904},size={70,20},proc=DC_ctrl_Init,title="DC Init"
+	Button PulserInit,pos={169,904},size={70,20},proc=Pulse_Init,title="Pulser Init"
+	Button PulseCreator_init,pos={21,926},size={70,20},proc=PulseCreator_Init,title="Creat Init"
 EndMacro
 
 //_____________________________________________________________________________

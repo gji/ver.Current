@@ -47,14 +47,16 @@ def getSetpoints():
 def getFreqs():
     Channels = getChannels()
     name = "WavemeterData.exe "
-    name = name+str(1)
+    name = name+str(2)
     with open(os.devnull, "w") as fnull:
         test = subprocess.call(name, stdout = fnull)
     waveOut = str(subprocess.check_output(name))
     waveOut = waveOut.split(" ")
     test = waveOut   
     freq = [0,0,0]
-    freq[0] = float(waveOut[0])
+    freq[0] = float(waveOut[1])
+    #print waveOut
+    freq[1] = float(waveOut[0])
     j=0
 
     headers = {'content-type': 'application/json'}
@@ -65,9 +67,10 @@ def getFreqs():
 
     result = re.match(r"\/\/OK\[(.+)\]", r.text)
     wavelengths = result.groups()[0].split(',')
-
-    freq[1] = float(wavelengths[306])
-    freq[2] = float(wavelengths[117])
+    # print wavelengths
+    # print wavelengths[118]
+   # freq[1] = float(wavelengths[306])
+    freq[2] = float(wavelengths[118])
 
     return freq
    
@@ -88,9 +91,9 @@ def getErrors():
 def Lock(con, cur):
     setPoints = getSetpoints()
 
-    LaserLock_369 = PID(P=-10, I=-250, D=-5)
-    LaserLock_399 = PID(P=-7, I=-60, D=0)
-    LaserLock_935 = PID(P=-10, I=-100, D=0)
+    LaserLock_369 = PID(P=-10, I=-50, D=-5)
+    LaserLock_399 = PID(P=15, I=10, D=0)
+    LaserLock_935 = PID(P=-1, I=-20, D=0)
 
     LaserLock_369.setPoint(setPoints[0])
     LaserLock_399.setPoint(setPoints[1])
@@ -116,26 +119,15 @@ def Lock(con, cur):
         for i in range(len(freq)):
             if freq[i]<0:
                 freq[i] = setPoints[i]
-                    
-        error_369 = LaserLock_369.update(freq[0])
-        error_399 = LaserLock_399.update(freq[1])
-        error_935 = LaserLock_935.update(freq[2])
-
-        ADDA1.setVoltage(0, error_369)
-        ADDA1.setVoltage(1, error_399)
-        ADDA1.setVoltage(2, error_935)
-
-        cTime = time.mktime(datetime.datetime.now().timetuple())*1e3 + datetime.datetime.now().microsecond/1e3
-
-        #cur.execute("INSERT INTO `wavemeter`.`error`( `index`, `time`, `739`, `935`, `739w`, `935w`) VALUES (NULL, \'%s\',\'%s\',\'%s\',\'%s\',\'%s\');",(cTime,error_2,error_1, freq[1], freq[0]))
-        #con.commit()
-
-        cur.execute("INSERT INTO `wavemeter`.`error` VALUES (NULL, \'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\');",(cTime,round(error_369,4), round(error_399,4), round(error_935,4), freq[0], freq[1], freq[2]))
-        con.commit() 
+            
+            #freq[0] = setPoints[0]
+            error_369 = LaserLock_369.update(freq[0])
+            error_399 = LaserLock_399.update(freq[1])
+            error_935 = LaserLock_935.update(freq[2])
 
         print freq
         print setPoints
-        print round(error_369,4), round(error_399,4), round(error_935,4)
+        # print round(error_369,4), round(error_399,4), round(error_935,4)
         time.sleep(.3)
         if (error_369>=5) or(error_399>=5) or(error_935>=5):
             winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
@@ -152,11 +144,24 @@ def Lock(con, cur):
             winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
             winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
             winsound.PlaySound("SystemQuestion", winsound.SND_ALIAS)
-            #ADDA1.setVoltage(0,0)
+            ADDA1.setVoltage(0,0)
             ADDA1.setVoltage(1,0)
             ADDA1.setVoltage(2,0)
-            print "Lock Broken!"
+            print "Lock Broken!" 
             break
+        print round(error_369,4), round(error_399,4), round(error_935,4)       
+        ADDA1.setVoltage(0, error_369)
+        ADDA1.setVoltage(1, error_399)
+        ADDA1.setVoltage(2, error_935)
+
+        cTime = time.mktime(datetime.datetime.now().timetuple())*1e3 + datetime.datetime.now().microsecond/1e3
+
+        #cur.execute("INSERT INTO `wavemeter`.`error`( `index`, `time`, `739`, `935`, `739w`, `935w`) VALUES (NULL, \'%s\',\'%s\',\'%s\',\'%s\',\'%s\');",(cTime,error_2,error_1, freq[1], freq[0]))
+        #con.commit()
+
+        cur.execute("INSERT INTO `wavemeter`.`error` (time, `369`, `399`, `935`, 369w, 399w, 935w) VALUES (\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\');",(cTime,round(error_369,4), round(error_399,4), round(error_935,4), freq[0], freq[1], freq[2]))
+        con.commit() 
+        # break
 
 
 @atexit.register

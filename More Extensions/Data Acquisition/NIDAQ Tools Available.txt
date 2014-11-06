@@ -1,9 +1,0 @@
-The IGOR NIDAQ Tools MX package adds support for data acquisition directly into IGOR Pro. 
-The NIDAQ Tools MX package supports most multi-function DAQ devices made by National Instruments.
-
-For further information on the IGOR NIDAQ Tools MX package, check out our web site:
-    http://www.wavemetrics.com/products/nidaqtools/nidaqtools.htm
-or send email to
-    sales@wavemetrics.com
-
-
