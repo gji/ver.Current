@@ -1,0 +1,158 @@
+#pragma rtGlobals=1	
+
+#include ":Procedures:Camera"
+#include ":Procedures:Config"
+#include ":Procedures:DDS_CMD"
+#include ":Procedures:TrapVoltageControl"
+#include ":Procedures:ExperimentConstructor"
+#include ":Procedures:Init"
+#include ":Procedures:SetPoints"
+#include ":Procedures:PulseGUI"
+#include ":Procedures:SequencerControl"
+#include ":Procedures:DataHandling"
+#include ":Procedures:AWGControl"
+#include ":Procedures:Test"
+#include <FilterDialog> menus=0
+
+Window Table0() : Table
+	PauseUpdate; Silent 1		// building window...
+	String fldrSav0= GetDataFolder(1)
+	SetDataFolder root:PTS_Parameters:
+	Edit/W=(5.25,42.5,510,236.75) PTS_Param
+	ModifyTable format(Point)=1
+	SetDataFolder fldrSav0
+EndMacro
+
+
+Window Table2() : Table
+	PauseUpdate; Silent 1		// building window...
+	String fldrSav0= GetDataFolder(1)
+	SetDataFolder root:ExpParams:
+	Edit/W=(5.25,42.5,510,236.75) Sequence
+	ModifyTable format(Point)=1
+	SetDataFolder fldrSav0
+EndMacro
+
+Window Table12() : Table
+	PauseUpdate; Silent 1		// building window...
+	String fldrSav0= GetDataFolder(1)
+	SetDataFolder root:ExpParams:
+	Edit/W=(5.25,42.5,510,236.75) ReturnWaveVALS
+	ModifyTable format(Point)=1
+	SetDataFolder fldrSav0
+EndMacro
+
+Window Table9() : Table
+	PauseUpdate; Silent 1		// building window...
+	String fldrSav0= GetDataFolder(1)
+	SetDataFolder root:ExpParams:
+	Edit/W=(5.25,42.5,510,236.75) TTLNames
+	ModifyTable format(Point)=1
+	SetDataFolder fldrSav0
+EndMacro
+
+Window Table11() : Table
+	PauseUpdate; Silent 1		// building window...
+	String fldrSav0= GetDataFolder(1)
+	SetDataFolder root:ExpParams:
+	Edit/W=(632.25,200.75,1137,395) DDS_INFO
+	ModifyTable format(Point)=1
+	SetDataFolder fldrSav0
+EndMacro
+
+Window Table14() : Table
+	PauseUpdate; Silent 1		// building window...
+	String fldrSav0= GetDataFolder(1)
+	SetDataFolder root:ExpParams:
+	Edit/W=(5.25,42.5,510,236.75) WAVE_INFO
+	ModifyTable format(Point)=1
+	SetDataFolder fldrSav0
+EndMacro
+
+Window PressKey2Abort() : Panel
+	PauseUpdate; Silent 1		// building window...
+	NewPanel /W=(150,77,408,130) as "Press Alt, Ctrl, or Esc To Abort"
+	SetDrawLayer UserBack
+	DrawRRect 8,9,225,33
+	DrawText 17,28,"Press Alt, Ctrl, or Esc To Abort"
+EndMacro
+
+
+Function HistOneIon(w,x) : FitFunc
+	Wave w
+	Variable x
+
+	//CurveFitDialog/ These comments were created by the Curve Fitting dialog. Altering them will
+	//CurveFitDialog/ make the function less convenient to work with in the Curve Fitting dialog.
+	//CurveFitDialog/ Equation:
+	//CurveFitDialog/ WAVE B = root:sequencer:AlignmentSweeper:AlignBasisHistB
+	//CurveFitDialog/ WAVE D = root:sequencer:AlignmentSweeper:AlignBasisHistB
+	//CurveFitDialog/ f(x) = a*B[x]+c*D[x]
+	//CurveFitDialog/ End of Equation
+	//CurveFitDialog/ Independent Variables 1
+	//CurveFitDialog/ x
+	//CurveFitDialog/ Coefficients 2
+	//CurveFitDialog/ w[0] = b
+	//CurveFitDialog/ w[1] = d
+	WAVE B = root:sequencer:AlignmentSweeper:AlignBasisHistB
+	WAVE D = root:sequencer:AlignmentSweeper:AlignBasisHistD
+	return w[0]*D[x]+w[1]*B[x]
+End
+
+Function HistTwoIon(w,x) : FitFunc
+	Wave w
+	Variable x
+
+	//CurveFitDialog/ These comments were created by the Curve Fitting dialog. Altering them will
+	//CurveFitDialog/ make the function less convenient to work with in the Curve Fitting dialog.
+	//CurveFitDialog/ Equation:
+	//CurveFitDialog/ WAVE B = root:sequencer:AlignmentSweeper:AlignBasisHistB
+	//CurveFitDialog/ WAVE D = root:sequencer:AlignmentSweeper:AlignBasisHistB
+	//CurveFitDialog/ f(x) = a*B[x]+c*D[x]
+	//CurveFitDialog/ End of Equation
+	//CurveFitDialog/ Independent Variables 1
+	//CurveFitDialog/ x
+	//CurveFitDialog/ Coefficients 2
+	//CurveFitDialog/ w[0] = b
+	//CurveFitDialog/ w[1] = d
+	WAVE BB = root:sequencer:AlignmentSweeper:AlignBasisHistBB
+	WAVE DB = root:sequencer:AlignmentSweeper:AlignBasisHistDB
+	WAVE DD = root:sequencer:AlignmentSweeper:AlignBasisHistDD
+
+	return w[0]*DD[x]+w[1]*DB[x]+w[2]*BB[x]
+End
+Window SaveBasisHistogram_2() : Panel
+	PauseUpdate; Silent 1		// building window...
+	NewPanel /W=(309,458,837,646) as "SaveBasisHistogram"
+	ModifyPanel cbRGB=(48896,65280,57344)
+	SetDrawLayer UserBack
+	DrawText 23,32,"Channel to read"
+	DrawText 160,32,"Save As?"
+	CheckBox PMT1box,pos={23,44},size={58,15},proc=BasisChannelInputProc,title="Chan 1"
+	CheckBox PMT1box,value= 0
+	CheckBox PMT2box,pos={86,44},size={58,15},proc=BasisChannelInputProc,title="Chan 2"
+	CheckBox PMT2box,value= 0
+	CheckBox PMT3box,pos={23,74},size={58,15},proc=BasisChannelInputProc,title="Chan 3"
+	CheckBox PMT3box,value= 0
+	CheckBox PMT4box,pos={87,74},size={58,15},proc=BasisChannelInputProc,title="Chan 4"
+	CheckBox PMT4box,value= 0
+	CheckBox PMT6box,pos={87,104},size={58,15},proc=BasisChannelInputProc,title="Chan 6"
+	CheckBox PMT6box,value= 0
+	CheckBox PMT7box,pos={24,134},size={58,15},proc=BasisChannelInputProc,title="Chan 7"
+	CheckBox PMT7box,value= 0
+	CheckBox PMT8box,pos={87,135},size={58,15},proc=BasisChannelInputProc,title="Chan 8"
+	CheckBox PMT8box,value= 0
+	CheckBox PMT5box,pos={24,105},size={58,15},proc=BasisChannelInputProc,title="Chan 5"
+	CheckBox PMT5box,value= 0
+	CheckBox D,pos={160,44},size={44,15},proc=SaveHistogramCheckedProc,title="Dark"
+	CheckBox D,value= 0,mode=1
+	CheckBox B,pos={160,64},size={50,15},proc=SaveHistogramCheckedProc,title="Bright"
+	CheckBox B,value= 0,mode=1
+	CheckBox DD,pos={160,84},size={74,15},proc=SaveHistogramCheckedProc,title="Dark-Dark"
+	CheckBox DD,value= 0,mode=1
+	CheckBox DB,pos={160,104},size={80,15},proc=SaveHistogramCheckedProc,title="Dark-Bright"
+	CheckBox DB,value= 0,mode=1
+	CheckBox BB,pos={160,124},size={86,15},proc=SaveHistogramCheckedProc,title="Bright-Bright"
+	CheckBox BB,value= 0,mode=1
+	Button DoNotSave,pos={300,44},size={100,20},proc=CloseWindowProc,title="Do Not Save"
+EndMacro
