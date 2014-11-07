@@ -121,7 +121,7 @@ def Lock(con, cur):
                 freq[i] = setPoints[i]
             
             #freq[0] = setPoints[0]
-            error_369 = LaserLock_369.update(freq[0])
+            error_369 = 0#LaserLock_369.update(freq[0])
             error_399 = LaserLock_399.update(freq[1])
             error_935 = LaserLock_935.update(freq[2])
 

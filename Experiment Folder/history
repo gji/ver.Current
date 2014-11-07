@@ -153427,3 +153427,410 @@ Override TTL1 OFF
   Override TTL1 OFF
   Override TTL4 OFF
   Override TTL16 OFF
+•InitializeCamera()
+  Found camera: DICAM PRO
+
+Override TTL1 ON
+  Override TTL4 OFF
+  Override TTL16 OFF
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 OFF
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 ON
+•print 120/130
+  0.923077
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 OFF
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 ON
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 OFF
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 ON
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 OFF
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 ON
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 OFF
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 ON
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 OFF
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 ON
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 OFF
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 ON
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 OFF
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 ON
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 OFF
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 ON
+  Override TTL1 OFF
+  Override TTL4 ON
+  Override TTL16 ON
+  Override TTL1 OFF
+  Override TTL4 OFF
+  Override TTL16 ON
+  Override TTL1 ON
+  Override TTL4 OFF
+  Override TTL16 ON
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 ON
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 OFF
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 ON
+  Override TTL1 ON
+  Override TTL4 ON
+  Override TTL16 OFF
+•ModifyGraph mode=2
+•ModifyGraph mode=4,marker=19,msize=1
+•ModifyGraph mrkThick=0.1
+•ModifyGraph mode=3,mrkThick=0.05
+•ModifyGraph mrkThick=0.07
+•ModifyGraph mrkThick=0.1
+•ModifyGraph mrkThick=0.5
+•ModifyGraph mode=8
+•Edit/K=0 'SBCWaveform';DelayUpdate
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  Scan Complete
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+•Display  root:AWG:uploadwave
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+•ShowTools/A arrow
+•HideTools/A
+•ShowTools/A arrow
+•HideTools/A
+•ShowTools/A arrow
+•HideTools/A
+•Edit  root:AWG:uploadwave
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+•Edit/K=0 'AWGwaveform';DelayUpdate
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+•Edit/K=0 'AWGwaveform';DelayUpdate
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+•Edit/K=0 'AWGwaveform';DelayUpdate
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+

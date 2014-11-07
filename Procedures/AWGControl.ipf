@@ -133,24 +133,24 @@ function ConstructAWGWaveform(expt)
 	if(Dimsize(UploadWave,0)<7)
 		Redimension/N=(DimSize(AWGwave,0)+7) Uploadwave
 		UploadWave[0] 	=	0; // SegmentNum
-		UploadWave[1]	=	DimSize(awgwave, 0); // NumPoints
+		UploadWave[1]	=	DimSize(AWGwave, 0); // NumPoints
 		UploadWave[2]	=	0; // NumLoops
 		UploadWave[3]	=	2047; // BeginPadVal
 		UploadWave[4]	=	2047; // EndingPadVal
 		UploadWave[5]	=	1; // TrigEn
 		UploadWave[6]	=	1; // NextSegNum
-		Uploadwave[7,]	=	awgwave
+		Uploadwave[7,]	=	AWGwave
 		
 	else
-		Seg_num 			+=	1
+		seg_num 			+=	1
 		Redimension/N=(Dimsize(uploadwave,0)+Dimsize(awgwave,0)+7) Uploadwave
-		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-7] 	=	Seg_num; // SegmentNum
+		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-7] 	=	seg_num; // SegmentNum
 		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-6]	=	DimSize(awgwave, 0); // NumPoints
 		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-5]	=	0; // NumLoops
 		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-4]	=	2047; // BeginPadVal
 		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-3]	=	2047; // EndingPadVal
 		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-2]	=	1; // TrigEn
-		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-1]	=	Seg_num+1; // NextSegNum
+		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-1]	=	seg_num+1; // NextSegNum
 		Uploadwave[Dimsize(uploadwave,0)-Dimsize(awgwave,0),]	=	awgwave
 		
 	endif
@@ -227,7 +227,7 @@ function ConstructAWGSegment(expt)
 	
 	Variable dur = round(totalDuration)			// This is in nanoseconds
 
-	Variable numPoints = (64)*(ceil(dur/64)+1)	// Add padding so that waveform length is multiple of 64
+	Variable numPoints = (64)*(ceil(dur/64))	// Add padding so that waveform length is multiple of 64
 	// Initialize AWG waveform to zero
 	
 	WAVE AWGwaveform
