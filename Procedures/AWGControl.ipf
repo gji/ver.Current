@@ -10,20 +10,13 @@
 Function AWGUploadWaveform()
 	SetDataFolder root:AWG
 	wave uploadwave		=	root:awg:uploadwave
-//	Make/O/N=(DimSize(root:AWG:AWGwaveform, 0)+7) UploadWave
-//	wave awgwave		=	 root:awg:awgwaveform
-//	UploadWave[0] = 0; // SegmentNum
-//	UploadWave[1] = DimSize(awgwave, 0); // NumPoints
-//	UploadWave[2] = 0; // NumLoops
-//	UploadWave[3] = 2047; // BeginPadVal
-//	UploadWave[4] = 2047; // EndingPadVal
-//	UploadWave[5] = 1; // TrigEn
-//	UploadWave[6]= 1; // NextSegNum
-//	UploadWave[] = (p<7)?(UploadWave[p]):(awgwave[p-7])
-//	AWGclear					// Clear AWG memory and stop output
+	NVAR curSegNo = root:awg:curSegNo
+	NVAR curSegLen = root:awg:curSegLen
+	uploadwave[Dimsize(uploadwave,0)-1-curSegLen] = 0
+	AWGclear					// Clear AWG memory and stop output
 //	Print  UploadWave
-//	AWGupload/N=1 UploadWave	// Upload the waveform to AWG memory
-//	AWGactivate 2	  		// Set trigger mode to external	
+	AWGupload/N=(curSegNo+1) UploadWave	// Upload the waveform to AWG memory
+	AWGactivate 2	  		// Set trigger mode to external	
 End
 
 //_____________________________________________________________________________
@@ -32,27 +25,16 @@ End
 //	for each of the mode frequencies
 //_____________________________________________________________________________
 //
-function CalculateSBCWaveform(expt)
+function CalculateSBCWaveform(expt, SBCIdx, awgTTLs)
 	STRUCT Experiment &expt
+	Variable SBCIdx
+	Wave awgTTLs
+	
 	SetDataFolder root:AWG
-	Variable k, j, ExOpIdx = 0
-	Variable SBCIdx = 0
+	Variable k, j = 0
 	Variable durationIdx
-	Variable pumpTime = 5	// Default pumping time in us
-	for (ExOpIdx = 0; ExOpIdx < expt.numExOps; ExOpIdx +=1)
-		if (cmpstr(expt.ExOps[ExOpIdx].name, "Pump") == 0)
-			durationIdx = WhichListItem("Duration", expt.ExOps[ExOpIdx].ControlParameters)
-			pumpTime = str2num(StringFromList(durationIdx, expt.ExOps[ExOpIdx].Values))
-			break
-		endif
-	endfor
-	for (ExOpIdx = 0; ExOpIdx < expt.numExOps; ExOpIdx +=1)
-		if (cmpstr(expt.ExOps[ExOpIdx].name, "SBCooling") == 0)
-			SBCIdx = ExOpIdx
-			break
-		endif
-	endfor
-	expt.ExOps[SBCIdx].SBCPumpingTime = pumpTime
+
+	expt.ExOps[SBCIdx].SBCPumpingTime = 5 // Default pumping time in us
 	Variable numModes = ItemsInList(expt.ExOps[SBCIdx].SBCFrequencies)
 	Variable totalPumpingDuration, numPumpingCycles, maxCycle = 0
 	
@@ -89,26 +71,42 @@ function CalculateSBCWaveform(expt)
 	Variable SBCTotalTime = sum(SBCTime) + totalPumpingDuration
 	expt.ExOps[SBCIdx].SBCTotalTime = SBCTotalTime
 	
-	WAVE SBCWaveform	=	root:AWG:SBCWaveform
+	Redimension/N=(numPumpingCycles*2,2) awgTTLs
 	
-	Redimension/N=(SBCTotalTime*1000) SBCWaveform		
+	WAVE SBCWaveform	=	root:AWG:SBCWaveform
+	Redimension/N=(SBCTotalTime*1000) SBCWaveform
 	SBCWaveform[]	=	2048
 	//SBCTimesTranspose = SBCTimes
 	//MatrixTranspose SBCTimesTranspose
 	//Reverse/DIM=1 SBCTimes
-	Variable t, tk
+	
+	WAVE TTLNames = root:ExpParams:TTLNames
+	WAVE NameWave = root:ExpParams:NameWave
+	FindValue/TEXT="Pump" TTLNames
+	Variable pump_ttl = NameWave[V_Value]
+	FindValue/TEXT="SBCooling" TTLNames
+	Variable sb_ttl = NameWave[V_Value]
+	
+	Variable t, tk, seq_id
 	t = 0
+	seq_id = 0
 	for (k=0; k< numModes; k+=1)
 		for (j=SBCCycles[k] - 1; j >=0 ; j-=1)
 			if (SBCTime[k][j] != 0)
-				tk = t
+				tk = t 
 				for (t =  tk; t< tk + 1000*round(SBCTime[k][j]); t+=1) 
 					SBCWaveform[t]=AWGWaveformPoint_SBCooling(t, SBCAmplitudes[k], SBCFrequencies[k])
 				endfor
+				awgTTLs[seq_id][0] = sb_ttl
+				awgTTLs[seq_id][1] = round(SBCTime[k][j])*49.622
+				seq_id = seq_id + 1
 				tk = t
 				for (t =  tk; t<  tk + 1000*round(expt.ExOps[SBCIdx].SBCPumpingTime); t+=1) 
 					SBCWaveform[t]=AWGWaveformPoint(t, SBCIdx, "Pumping", expt)
 				endfor
+				awgTTLs[seq_id][0] = sb_ttl | pump_ttl
+				awgTTLs[seq_id][1] = expt.ExOps[SBCIdx].SBCPumpingTime*49.622
+				seq_id = seq_id + 1
 			endif
 		endfor
 	endfor
@@ -120,15 +118,17 @@ end
 //_____________________________________________________________________________
 //
 
-function ConstructAWGWaveform(expt)
+function/WAVE ConstructAWGWaveform(expt, seg_num)
 	STRUCT Experiment &expt
+	variable seg_num
 	
 	WAVE awgwave			=root:awg:awgwaveform
 	WAVE UploadWave		=root:awg:uploadwave
 	
-	variable seg_num		=0
-	
-	ConstructAWGSegment(expt)
+	NVAR curSegNo = root:awg:curSegNo
+	NVAR curSegLen = root:awg:curSegLen
+		
+	ConstructAWGSegment(expt, seg_num)
 	
 	if(Dimsize(UploadWave,0)<7)
 		Redimension/N=(DimSize(AWGwave,0)+7) Uploadwave
@@ -140,20 +140,24 @@ function ConstructAWGWaveform(expt)
 		UploadWave[5]	=	1; // TrigEn
 		UploadWave[6]	=	1; // NextSegNum
 		Uploadwave[7,]	=	AWGwave
-		
+		curSegNo = 0
 	else
-		seg_num 			+=	1
+		curSegNo += 1
 		Redimension/N=(Dimsize(uploadwave,0)+Dimsize(awgwave,0)+7) Uploadwave
-		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-7] 	=	seg_num; // SegmentNum
+		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-7] 	=	curSegNo; // SegmentNum
 		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-6]	=	DimSize(awgwave, 0); // NumPoints
 		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-5]	=	0; // NumLoops
 		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-4]	=	2047; // BeginPadVal
 		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-3]	=	2047; // EndingPadVal
 		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-2]	=	1; // TrigEn
-		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-1]	=	seg_num+1; // NextSegNum
-		Uploadwave[Dimsize(uploadwave,0)-Dimsize(awgwave,0),]	=	awgwave
-		
+		UploadWave[Dimsize(uploadwave,0)-Dimsize(awgwave,0)-1]	=	curSegNo+1; // NextSegNum
+		variable start = Dimsize(uploadwave,0)-Dimsize(awgwave,0)
+		UploadWave[start,]	=	awgwave[p-start]; // NextSegNum
 	endif
+	
+	curSegLen = Dimsize(AWGwave, 0)
+	
+	return root:awg:awgTTLs
 end
 
 //_____________________________________________________________________________
@@ -162,9 +166,10 @@ end
 // storing it as a global wave. Construction is based on the input Experiment structure expt.
 //_____________________________________________________________________________
 //
-function ConstructAWGSegment(expt)
+function ConstructAWGSegment(expt, ExOpIdx)
 
 	STRUCT Experiment &expt
+	variable ExOpIdx
 	NVAR shuttleDuration = root:ExpParams:SHUTTLE_DURATION
 	Variable shuttleDur = 1000*round(shuttleDuration) // in nano seconds
 	SetDataFolder root:AWG
@@ -173,94 +178,50 @@ function ConstructAWGSegment(expt)
 	WAVE/T ExOpTypes
 	WAVE/T ExOpDevices
 	WAVE ExOpPositions
-	Variable t, tk, k, ExOpIdx = 0
-	Variable durationIdx = 0				// Which control parameter in the ExOp definition is the duration
-	Variable totalDuration = 0				// AWG waveform total duration
-	Variable beginAWGWaveformFlag = 0	// Has AWG ExOp been found yet?
-	Variable firstAWGExOp = 0			// Index of first AWG ExOp
-	Variable lastAWGExOp = 0			// Index of last AWG ExOp
-
+	Variable t, tk, k
+	Variable duration = 0
 	
-	Redimension/N=( expt.numExOps,1) ExOpDurations	// WAVE to store ExOp durations
-	Redimension/N=( expt.numExOps,1) ExOpTypes		// WAVE to store ExOp types
-	Redimension/N=( expt.numExOps,1) ExOpDevices	// WAVE to store ExOp devices
-	Redimension/N=( expt.numExOps,1) ExOpPositions	// WAVE to store ExOp positions
+	// copy & pasted from PulseGUI - RunExpValues
+	Make/D/O/N=(1,2)/I/U awgTTLs // unsigned 32-bit   ; we have 2 columns and rows equal to number of exops
+	WAVE TTLNames = root:ExpParams:TTLNames
+	WAVE NameWave = root:ExpParams:NameWave
+	FindValue/TEXT="SBCooling" TTLNames
+	Variable sb_ttl = NameWave[V_Value]
 	
-	// Scan through ExOps and extract the necessary parameters
-	for (ExOpIdx = 0; ExOpIdx < expt.numExOps; ExOpIdx +=1)
-		ExOpTypes[ExOpIdx] = expt.ExOps[ExOpIdx].name
-		durationIdx = WhichListItem("Duration", expt.ExOps[ExOpIdx].ControlParameters)
-		if ( durationIdx == -1 && cmpstr(ExOpTypes[ExOpIdx], "SBCooling") != 0) 
-			Abort "Experimental operation has no defined Duration control"
-		else
-			if (cmpstr(expt.ExOps[ExOpIdx].name, "SBCooling") == 0)
-				CalculateSBCWaveform(expt)
-				ExOpDurations[ExOpIdx] = 1000*expt.ExOps[ExOpIdx].SBCTotalTime
-			else
-				ExOpDurations[ExOpIdx] = 1000*str2num(StringFromList(durationIdx, expt.ExOps[ExOpIdx].Values))
-			endif
-			ExOpDevices[ExOpIdx] = expt.ExOps[ExOpIdx].device			
-			ExOpPositions[ExOpIdx] = expt.ExOps[ExOpIdx].position
-			
-			// Find the first AWG chapter and only begin counting duration then
-			if (cmpstr(ExOpDevices[ExOpIdx], "AWG") == 0||beginAWGWaveformFlag)
-				if (beginAWGWaveformFlag == 1)		// This check must come first!
-					totalDuration += ExOpDurations[ExOpIdx]
-					if (expt.ExOps[ExOpIdx].Shuttled == 1)
-						totalDuration += shuttleDur
-					endif
-				endif	
-				if ( beginAWGWaveformFlag == 0 )		// This check must come second!
-					firstAWGExOp = ExOpIdx
-					totalDuration += ExOpDurations[ExOpIdx] // this is already in nano seconds
-					if (expt.ExOps[ExOpIdx].Shuttled == 1)
-						totalDuration += shuttleDur
-					endif
-				//	beginAWGWaveformFlag = 1
-				endif
-				lastAWGExOp = ExOpIdx
-				beginAWGWaveformFlag = 1
-			endif
-			//lastAWGExOp = ExOpIdx		
-		endif		
-	endfor
+	if (cmpstr(expt.ExOps[ExOpIdx].name, "SBCooling") == 0)
+		CalculateSBCWaveform(expt, ExOpIdx, awgTTLs)
+		duration = 1000*expt.ExOps[ExOpIdx].SBCTotalTime
+	else
+		duration = 1000*str2num(StringFromList(WhichListItem("Duration", expt.ExOps[ExOpIdx].ControlParameters), expt.ExOps[ExOpIdx].Values))
+		awgTTLs[0][0] = sb_ttl
+		awgTTLs[0][1] = duration*(50/1000)
+	endif
 	
-	Variable dur = round(totalDuration)			// This is in nanoseconds
-
-	Variable numPoints = (64)*(ceil(dur/64))	// Add padding so that waveform length is multiple of 64
+	Variable numPoints = (64)*(ceil(round(duration)/64))	// Add padding so that waveform length is multiple of 64
 	// Initialize AWG waveform to zero
 	
 	WAVE AWGwaveform
 	Redimension/N=(numPoints,1) AWGwaveform
+	AWGwaveform[] = 2048
+		
+	if(cmpstr(expt.ExOps[ExOpIdx].name, "SBCooling") == 0)
+		AWGwaveform[] = SBCWaveform[p];
+	else
+		for(t=0; t<duration; t+=1)
+			AWGwaveform[t] = AWGWaveformPoint(t, ExOpIdx, expt.ExOps[ExOpIdx].name, expt)
+		endfor
+	endif
 	
-	for (t = 0; t < numPoints; t+=1)
-		AWGwaveform[t] = 2048
-	endfor
+	if(expt.ExOps[ExOpIdx].Shuttled == 1)
+		InsertPoints 0,1,awgTTLs
+		awgTTLs[0][0] = TTL_09
+		awgTTLs[0][1] = shuttleDur*50
+	endif
 	
-	// Iterate through the ExOps starting with the first AWG ExOp, constructing the waveform one point at a time
-	Variable sbcIdx = 0
-	t = 0
-	for (ExOpIdx = firstAWGExOp; ExOpIdx < lastAWGExOp+1; ExOpIdx +=1)
-		tk = t
-		// If the ExOp is shuttled, add the shuttling duration
-		if (expt.ExOps[ExOpIdx].Shuttled == 1)
-			for (t =  tk; t< tk + shuttleDur; t+=1) 
-				AWGwaveform[t]=AWGWaveformPoint(t, ExOpIdx, "Shuttled", expt)
-			endfor
-			tk = t
-		endif
-		if (cmpstr(expt.ExOps[ExOpIdx].name, "SBCooling") == 0)
-			for (t =  tk; t< tk + ExOpDurations[ExOpIdx]; t+=1) 
-				AWGwaveform[t]=SBCWaveform[sbcIdx]
-				sbcIdx += 1
-			endfor
-		else
-			for (t =  tk; t< tk + ExOpDurations[ExOpIdx]; t+=1) 
-				AWGwaveform[t]=AWGWaveformPoint(t, ExOpIdx, ExOpTypes[ExOpIdx], expt)
-			endfor
-		endif
-			tk=t
-	endfor
+	Redimension/N=(Dimsize(awgTTLs,0)+1,2) awgTTLs
+	awgTTLs[Dimsize(awgTTLs,0)][0] = TTL_09
+	awgTTLs[Dimsize(awgTTLs,0)][1] = 10
+	
 end
 
 //_____________________________________________________________________________

@@ -1037,7 +1037,7 @@ Function AlignmentProc(ba) : ButtonControl
 			GetExperiment(expt)
 			// Load the control and scan parameters into the Experiment structure
 			GetExperimentParameters(expt)
-			ConstructAWGWaveform(expt)
+//			ConstructAWGWaveform(expt)
 //			AWGopen
 //			AWGUploadWaveform()
 			// Export Experiment structure
@@ -1323,13 +1323,14 @@ Function/WAVE RunExpValues(expt)
 
 	Make/D/O/N=(expt.numExOps,2)/I/U fpgaSeq // unsigned 32-bit   ; we have 2 columns and rows equal to number of exops
 	STRUCT ExOp cOp;
+	variable cur_ttl = 0; // this keeps track of the actual number of ttl pulses, as opposed to the chapter
 	for (i=0;i<expt.numExOps;i+=1)
 		cOp = expt.ExOps[i]
 		
 		FindValue/TEXT=cOp.name TTLNames  // which one of the TTL name you are choosing
 		Variable ttlNo = V_value // the number that can correspond to a TTL name
-		fpgaSeq[i][0] = (NameWave[ttlNo] & ~mask) | enable // name wave corresponds to the actual TTLs corresponding to indices
-		fpgaSeq[i][1] = str2num(StringFromList(0, cOp.Values)) *50  // take the duration from the values in us and convert it to clock cycles (20ns)
+		fpgaSeq[cur_ttl][0] = (NameWave[ttlNo] & ~mask) | enable // name wave corresponds to the actual TTLs corresponding to indices
+		fpgaSeq[cur_ttl][1] = str2num(StringFromList(0, cOp.Values)) *50  // take the duration from the values in us and convert it to clock cycles (20ns)
 		strswitch(cOp.device[0,2])
 			case "DDS":  // in case of DDS the frequency of a certain DDS gets overwritten
 				Variable ddsNo = str2num(cOp.device[3,strlen(cOp.device)-1])
@@ -1344,16 +1345,16 @@ Function/WAVE RunExpValues(expt)
 				endif
 			case "AWG":
 				awgupdate=1
-				if(stringmatch(cOp.name,"SBCooling"))
-					ConstructAWGWaveform(expt)
-					fpgaSeq[n][1]		= Dimsize(awgwave,0)/1000*50
-					Redimension/N=0 AWGwave
-				else
-					ConstructAWGWaveform(expt)
-					Redimension/N=0 AWGwave
-				endif
+				wave ttls = ConstructAWGWaveform(expt, i)
+				variable num_ttls = dimsize(ttls, 0)
+				InsertPoints/M=0 cur_ttl, num_ttls-1, fpgaSeq
+				fpgaSeq[cur_ttl,cur_ttl+num_ttls][0] = (ttls[p-cur_ttl][0]  & ~mask) | enable
+				fpgaSeq[cur_ttl,cur_ttl+num_ttls][1] = (ttls[p-cur_ttl][1]  & ~mask) | enable
+				Redimension/N=0 AWGwave
+				cur_ttl += num_ttls - 1;
 			break
 		endswitch
+		cur_ttl += 1
 	endfor
 	if (AWGupdate)
 		AWGUploadWaveform()

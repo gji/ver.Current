@@ -153834,3 +153834,2991 @@ Override TTL1 ON
   DA12000 Closed Successfully for CardNum=1.
 
 
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Device 1 Not Found. Code=3.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Device 1 Not Found. Code=3.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Device 1 Not Found. Code=3.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgTTLs[0][1] = 2
+病wgTTLs[0][0] = 2
+頻rint awgTTLs
+  awgTTLs[0][0]= {2,273,1792,273,1792,273,1792,273,1792,273,1792,273,1792,0,0,0,0,0,0,0}
+awgTTLs[0][1]= {2,1600,1650,1650,1750,1750,1900,1900,2050,2050,2250,2250,2500,0,0,0,0,0,0,0}
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Device 1 Not Found. Code=3.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Device 1 Not Found. Code=3.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Device 1 Not Found. Code=3.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  Device Not Found. Code=5.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  Device Not Found. Code=5.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+髭xp_Init()
+  There are 49 electrodes.
+  There are 49 electrodes.
+  There are 49 electrodes.
+  There are 49 electrodes.
+  Skipping voltage file 4
+  There are 49 electrodes.
+  DCSettings(16,292,1059.7,1414.7)
+  DCSettings(16,292,1059.7,1414.7)
+  ** LoadWave gave error: the specified directory can not be found
+姫athInfo home
+頻rint S_path
+  Z:Experiment:ver.Current:Experiment Folder:
+髭xp_Init()
+  Delimited text load from "Hardware_BGA.csv"
+  Matrix size: (96,2), wave: HARDWARE_MAP
+  Delimited text load from "BGA_20140502_uniform_compEx.csv"
+  Matrix size: (20,50), wave: matWave0
+  There are 49 electrodes.
+  Delimited text load from "BGA_20140502_uniform_compEy.csv"
+  Matrix size: (20,50), wave: matWave1
+  There are 49 electrodes.
+  Delimited text load from "BGA_20140502_Quad45.csv"
+  Matrix size: (305,48), wave: matWave2
+  There are 49 electrodes.
+  Delimited text load from "BGA_20140502_compEz.csv"
+  Matrix size: (305,48), wave: matWave3
+  There are 49 electrodes.
+  Skipping voltage file 4
+  Delimited text load from "BGA_20140502_harmonic.csv"
+  Matrix size: (305,48), wave: matWave5
+  There are 49 electrodes.
+  Device 1 Not Found. Code=3.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  Device Not Found. Code=5.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wg_init()
+  Device 1 Not Found. Code=3.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  Device 1 Not Found. Code=3.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  Device Not Found. Code=5.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+髭dit/K=0 'awgTTLs';DelayUpdate
+髭dit/K=0 'fpgaSeq';DelayUpdate
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  Device Not Found. Code=5.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+頻rint ttl_04 | ttl_09
+  264
+  Device 1 Not Found. Code=3.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(1, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+病wg_init()
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+病wgclose
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+  DA12000 Opened Successfully for CardNum=1.
+
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  AWG initialized.
+  da12000_CreateSegments(2, 1, 1, SegmentsList);
+
+  da12000_SetTriggerMode(1,2,0);
+
+  Success!
+  AWG initialized.
+  DA12000 Closed Successfully for CardNum=1.
+
+
+必illWindow SaveBasisHistogram_24
+必illWindow SaveBasisHistogram_22
+必illWindow SaveBasisHistogram_21
+必illWindow SaveBasisHistogram_20
+必illWindow SaveBasisHistogram_19
+必illWindow SaveBasisHistogram_18
+必illWindow SaveBasisHistogram_17
+必illWindow SaveBasisHistogram_16
+必illWindow SaveBasisHistogram_15
+必illWindow SaveBasisHistogram_14
+必illWindow SaveBasisHistogram_13
+必illWindow SaveBasisHistogram_12
+必illWindow SaveBasisHistogram_11
+必illWindow SaveBasisHistogram_10
+必illWindow SaveBasisHistogram_9
+必illWindow SaveBasisHistogram_8
+必illWindow SaveBasisHistogram_7
+必illWindow SaveBasisHistogram_6
+必illWindow SaveBasisHistogram_5
+必illWindow SaveBasisHistogram_4
+必illWindow SaveBasisHistogram_3
+必illWindow SaveBasisHistogram_2
+必illWindow SaveBasisHistogram_1

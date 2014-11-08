@@ -160,28 +160,28 @@ Function Param_Init()
 
 
 	String/G	WAVEb_compRF				=	""
-	String/G	WAVEb_Quad45				=	":waveforms:GenIII:GenIII_Uniform_Quad45.csv"
-	String/G	WAVEb_Ez					=	":waveforms:GenIII:GenIII_Ez_LV.csv"
-	String/G	WAVEb_Ex					=	":waveforms:GenIII:GenIII_Ex_LV.csv"
-	String/G	WAVEb_Ey					=	":waveforms:GenIII:GenIII_Ey_LV.csv"
-	String/G	WAVEb_Harm				=	":waveforms:GenIII:GenIII_Harmonic.csv"		
-	String/G	WAVEb_Hardware			=	":waveforms:GenIII:GenIII_hardware.csv"
+	String/G	WAVEb_Quad45				=	"::waveforms:GenIII:GenIII_Uniform_Quad45.csv"
+	String/G	WAVEb_Ez					=	"::waveforms:GenIII:GenIII_Ez_LV.csv"
+	String/G	WAVEb_Ex					=	"::waveforms:GenIII:GenIII_Ex_LV.csv"
+	String/G	WAVEb_Ey					=	"::waveforms:GenIII:GenIII_Ey_LV.csv"
+	String/G	WAVEb_Harm				=	"::waveforms:GenIII:GenIII_Harmonic.csv"		
+	String/G	WAVEb_Hardware			=	"::waveforms:GenIII:GenIII_hardware.csv"
 	
 	String/G	WAVEc_compRF				=	""
-	String/G	WAVEc_Quad45				=	":waveforms:GenIII:GenIII_Uniform_Quad45.csv"
+	String/G	WAVEc_Quad45				=	"::waveforms:GenIII:GenIII_Uniform_Quad45.csv"
 	String/G	WAVEc_Ez					=	""
 	String/G	WAVEc_Ex					=	""
-	String/G	WAVEc_Ey					=	":waveforms:GenIII:GenIII_Uniform_Ey.csv"
-	String/G	WAVEc_Harm				=	":waveforms:GenIII:genIII_chain_10ions.csv"		
-	String/G	WAVEc_Hardware			=	":waveforms:GenIII:GenIII_hardware.csv"
+	String/G	WAVEc_Ey					=	"::waveforms:GenIII:GenIII_Uniform_Ey.csv"
+	String/G	WAVEc_Harm				=	"::waveforms:GenIII:genIII_chain_10ions.csv"		
+	String/G	WAVEc_Hardware			=	"::waveforms:GenIII:GenIII_hardware.csv"
 	
 	String/G	WAVEa_compRF				=	""
-	String/G	WAVEa_Quad45				=	":waveforms:BGA:BGA_20140502_Quad45.csv"
-	String/G	WAVEa_Ez					=	":waveforms:BGA:BGA_20140502_compEz.csv"
-	String/G	WAVEa_Ex					=	":waveforms:BGA:BGA_20140502_uniform_compEx.csv"
-	String/G	WAVEa_Ey					=	":waveforms:BGA:BGA_20140502_uniform_compEy.csv"
-	String/G	WAVEa_Harm				=	":waveforms:BGA:BGA_20140502_harmonic.csv"		
-	String/G	WAVEa_Hardware			=	":waveforms:BGA:Hardware_BGA.csv"
+	String/G	WAVEa_Quad45				=	"::waveforms:BGA:BGA_20140502_Quad45.csv"
+	String/G	WAVEa_Ez					=	"::waveforms:BGA:BGA_20140502_compEz.csv"
+	String/G	WAVEa_Ex					=	"::waveforms:BGA:BGA_20140502_uniform_compEx.csv"
+	String/G	WAVEa_Ey					=	"::waveforms:BGA:BGA_20140502_uniform_compEy.csv"
+	String/G	WAVEa_Harm				=	"::waveforms:BGA:BGA_20140502_harmonic.csv"		
+	String/G	WAVEa_Hardware			=	"::waveforms:BGA:Hardware_BGA.csv"
 
 
 	//Variables for Pulse Program
@@ -723,12 +723,12 @@ Function AWG_init()
 	Make/O SBCFrequencies
 	Make/O SBCTime
 	Make/O SBCWaveform
-	Make/O ExOpDurations
-	Make/T/O ExOpTypes
-	Make/T/O ExOpDevices
-	Make/O ExOpPositions
+
 	Make/O AWGwaveform
 	Make/O/N=0 uploadwave
+	
+	Variable/G curSegNo = 0
+	Variable/G curSegLen = 0
 end
 
 //_____________________________________________________________________________
