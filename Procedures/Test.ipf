@@ -105,3 +105,4 @@ Function SplitDataString(subject)
 	variable num=str2num(channel)
 	return num
 End
+

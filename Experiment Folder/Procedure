@@ -156,3 +156,80 @@ Window SaveBasisHistogram_2() : Panel
 	CheckBox BB,value= 0,mode=1
 	Button DoNotSave,pos={300,44},size={100,20},proc=CloseWindowProc,title="Do Not Save"
 EndMacro
+MMCInit
+Function LorLineShape(w,x) : FitFunc
+	Wave w
+	Variable x
+
+	//CurveFitDialog/ These comments were created by the Curve Fitting dialog. Altering them will
+	//CurveFitDialog/ make the function less convenient to work with in the Curve Fitting dialog.
+	//CurveFitDialog/ Equation:
+	//CurveFitDialog/ f(x) = 1/4*A*w^2/((x-x0)^2+(1/2*w)^2)
+	//CurveFitDialog/ End of Equation
+	//CurveFitDialog/ Independent Variables 1
+	//CurveFitDialog/ x
+	//CurveFitDialog/ Coefficients 3
+	//CurveFitDialog/ w[0] = A
+	//CurveFitDialog/ w[1] = w
+	//CurveFitDialog/ w[2] = x0
+
+	return 1/4*w[0]*w[1]^2/((x-w[2])^2+(1/2*w[1])^2)
+End
+
+Window SaveBasisHistogram_10() : Panel
+	PauseUpdate; Silent 1		// building window...
+	NewPanel /W=(309,458,837,646) as "SaveBasisHistogram"
+	ModifyPanel cbRGB=(48896,65280,57344)
+	SetDrawLayer UserBack
+	DrawText 23,32,"Channel to read"
+	DrawText 160,32,"Save As?"
+	CheckBox PMT1box,pos={23,44},size={58,15},proc=BasisChannelInputProc,title="Chan 1"
+	CheckBox PMT1box,value= 0
+	CheckBox PMT2box,pos={86,44},size={58,15},proc=BasisChannelInputProc,title="Chan 2"
+	CheckBox PMT2box,value= 0
+	CheckBox PMT3box,pos={23,74},size={58,15},proc=BasisChannelInputProc,title="Chan 3"
+	CheckBox PMT3box,value= 0
+	CheckBox PMT4box,pos={87,74},size={58,15},proc=BasisChannelInputProc,title="Chan 4"
+	CheckBox PMT4box,value= 0
+	CheckBox PMT6box,pos={87,104},size={58,15},proc=BasisChannelInputProc,title="Chan 6"
+	CheckBox PMT6box,value= 0
+	CheckBox PMT7box,pos={24,134},size={58,15},proc=BasisChannelInputProc,title="Chan 7"
+	CheckBox PMT7box,value= 0
+	CheckBox PMT8box,pos={87,135},size={58,15},proc=BasisChannelInputProc,title="Chan 8"
+	CheckBox PMT8box,value= 0
+	CheckBox PMT5box,pos={24,105},size={58,15},proc=BasisChannelInputProc,title="Chan 5"
+	CheckBox PMT5box,value= 0
+	CheckBox D,pos={160,44},size={44,15},proc=SaveHistogramCheckedProc,title="Dark"
+	CheckBox D,value= 0,mode=1
+	CheckBox B,pos={160,64},size={50,15},proc=SaveHistogramCheckedProc,title="Bright"
+	CheckBox B,value= 0,mode=1
+	CheckBox DD,pos={160,84},size={74,15},proc=SaveHistogramCheckedProc,title="Dark-Dark"
+	CheckBox DD,value= 0,mode=1
+	CheckBox DB,pos={160,104},size={80,15},proc=SaveHistogramCheckedProc,title="Dark-Bright"
+	CheckBox DB,value= 0,mode=1
+	CheckBox BB,pos={160,124},size={86,15},proc=SaveHistogramCheckedProc,title="Bright-Bright"
+	CheckBox BB,value= 0,mode=1
+	Button DoNotSave,pos={300,44},size={100,20},proc=CloseWindowProc,title="Do Not Save"
+EndMacro
+
+Window Panel0() : Panel
+	PauseUpdate; Silent 1		// building window...
+	NewPanel /W=(1744,419,2044,619)
+	SetDrawLayer UserBack
+	DrawRect 86,68,145,98
+	DrawRect 21,126,74,144
+	DrawRect 160,132,248,149
+	DrawRect 228,61,88,-8
+	DrawRect 206,86,250,105
+	DrawRect 134,131,63,162
+	DrawRect 85,181,164,179
+	DrawRect 48,81,11,54
+	DrawRect 31,28,86,66
+	DrawRect 97,92,168,137
+	DrawRect 210,121,198,85
+	DrawRect 248,54,278,49
+	DrawRect 293,94,295,131
+	DrawRect 272,137,256,129
+EndMacro
+
+

@@ -3,6 +3,11 @@
 function setDDS(dds, frequency, phase, amplitude) // frequency in hertz!!
 	Variable dds, frequency, phase, amplitude
 	
+	if(!(phase>=0))
+		phase = 0
+	endif
+	//print dds, frequency, phase, amplitude
+	
 	SetDataFolder root:ExpParams
 	SVAR DDS_PORT
 	String dds_p = DDS_PORT

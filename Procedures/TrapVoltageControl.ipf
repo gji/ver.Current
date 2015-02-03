@@ -117,6 +117,86 @@ Function LiveUpCheck(cba) : CheckBoxControl
 	Return 0
 End
 
+Function HoldUpCheck(cba) : CheckBoxControl
+	STRUCT WMCheckboxAction &cba
+	SetDataFolder root:ExpParams
+
+	NVAR HOLD_UP
+
+	Switch( cba.eventCode )
+		Case 2: // mouse up
+			//Variable checked = cba.checked
+			If(cba.checked)
+				SetVariable apos_1,disable=0
+				SetVariable bpos_1,disable=0
+				SetVariable cpos_1,disable=0
+				SetVariable dpos_1,disable=0
+				SetVariable epos_1,disable=0
+				SetVariable harmScale_1,disable=0
+				SetVariable globScale_1,disable=0
+				SetVariable posIon_1,disable=0
+				Button MergeToHold,disable=0	
+				HOLD_UP = 1
+			Else
+				SetVariable apos_1,disable=2
+				SetVariable bpos_1,disable=2
+				SetVariable cpos_1,disable=2
+				SetVariable dpos_1,disable=2
+				SetVariable epos_1,disable=2
+				SetVariable harmScale_1,disable=2
+				SetVariable globScale_1,disable=2
+				SetVariable posIon_1,disable=2
+				Button MergeToHold,disable=2		
+				HOLD_UP = 0
+			EndIf
+			Break
+		Case -1: // control being killed
+			Break
+	EndSwitch
+
+	Return 0
+End
+
+Function LoadUpCheck(cba) : CheckBoxControl
+	STRUCT WMCheckboxAction &cba
+	SetDataFolder root:ExpParams
+
+	NVAR LOAD_UP
+
+	Switch( cba.eventCode )
+		Case 2: // mouse up
+			//Variable checked = cba.checked
+			If(cba.checked)
+				SetVariable apos_2,disable=0
+				SetVariable bpos_2,disable=0
+				SetVariable cpos_2,disable=0
+				SetVariable dpos_2,disable=0
+				SetVariable epos_2,disable=0
+				SetVariable harmScale_2,disable=0
+				SetVariable globScale_2,disable=0
+				SetVariable posIon_2,disable=0
+				Button MergeToLoad,disable=0					
+				LOAD_UP = 1
+			Else
+				SetVariable apos_2,disable=2
+				SetVariable bpos_2,disable=2
+				SetVariable cpos_2,disable=2
+				SetVariable dpos_2,disable=2
+				SetVariable epos_2,disable=2
+				SetVariable harmScale_2,disable=2
+				SetVariable globScale_2,disable=2
+				SetVariable posIon_2,disable=2
+				Button MergeToLoad,disable=2					
+				LOAD_UP = 0
+			EndIf
+			Break
+		Case -1: // control being killed
+			Break
+	EndSwitch
+
+	Return 0
+End
+
 // Manual update button
 Function Update(ba) : ButtonControl
 	STRUCT WMButtonAction &ba
@@ -126,6 +206,38 @@ Function Update(ba) : ButtonControl
 	Switch( ba.eventCode )
 		Case 2: // mouse up
 			updateVoltages()
+			Break
+		Case -1: // control being killed
+			Break
+	EndSwitch
+
+	Return 0
+End
+
+Function MergeToHold(ba) : ButtonControl
+	STRUCT WMButtonAction &ba
+	
+	SetDataFolder root:DCVolt
+
+	Switch( ba.eventCode )
+		Case 2: // mouse up
+			mergeToHoldVoltages()
+			Break
+		Case -1: // control being killed
+			Break
+	EndSwitch
+
+	Return 0
+End
+
+Function MergeToLoad(ba) : ButtonControl
+	STRUCT WMButtonAction &ba
+	
+	SetDataFolder root:DCVolt
+
+	Switch( ba.eventCode )
+		Case 2: // mouse up
+			mergeToLoadVoltages()
 			Break
 		Case -1: // control being killed
 			Break
@@ -187,12 +299,152 @@ function updateVoltages()
 	WAVE COMP_INFO		=	root:ExpParams:COMP_INFO
 	WAVE FIELDS
 	WAVE RAW_VOLTAGES
+	WAVE HOLD_VOLTAGES
+	WAVE LOAD_VOLTAGES
+	WAVE MOVE_VOLTAGES
+	
 	
 	NVAR CUR_POS			=	root:ExpParams:CUR_POS
+	NVAR MOV_POS		=	root:ExpParams:MOV_POS	
+	NVAR HOLD_UP			=	root:ExpParams:HOLD_UP
+	NVAR LOAD_UP			=	root:ExpParams:LOAD_UP	
 	NVAR NUM_ELECT
-	Variable i	
+	Variable i
+	Variable j
 	
-	RAW_VOLTAGES		= 0
+	HOLD_VOLTAGES=0
+	LOAD_VOLTAGES=0
+//	if(HOLD_UP)
+//		holdVoltages()
+//	else
+//		HOLD_VOLTAGES=0
+//	endif
+//	if(LOAD_UP)
+//		loadVoltages()
+//	else
+//		LOAD_VOLTAGES=0
+//	endif
+	MOVE_VOLTAGES		= 0
+	if((abs(mov_pos-cur_pos)<50)||HOLD_UP)
+		For(i=0; i<6;i+=1)  // There are 6 different waveforms
+			WAVE tmat = $("mat" + num2str(i))
+			if(!WaveExists(tmat))
+				FIELDS[][i] = 0
+				continue
+			endif
+			// A temporary array to store the individual columns of tmat, minus the position column
+			Make/O/N=(Dimsize(tmat,0)) temp
+			FindLevel/Q tmat, MOV_POS
+			if(V_LevelX >= Dimsize(tmat,0) || V_LevelX < 0)
+				print "DC Update Error!"
+				print "Could not find level \""+ num2str(MOV_POS) + "\", got \"" + num2str(V_LevelX) + "\""
+				return -1
+			else
+				For(j=1; j<Dimsize(tmat,1);j+=1) // Start at second column since first column is position
+					temp[] = tmat[p][j] // Fill temp with the right column
+					// The index below is corrected for the position column
+					FIELDS[j-1][i] = temp(V_LevelX) // Igor will automatically interpolate a 1D wave.
+				EndFor
+			endif
+			KillWaves temp
+			
+			MOVE_VOLTAGES[]	+= COMP_INFO[i][0] * FIELDS[p][i]
+		EndFor
+		CUR_POS=MOV_POS
+		MOVE_VOLTAGES		*= COMP_INFO[6][0]
+		RAW_VOLTAGES		= HOLD_VOLTAGES+LOAD_VOLTAGES+MOVE_VOLTAGES		
+		sendVoltageGroup(RAW_VOLTAGES)
+		MOVE_VOLTAGES=0
+		RAW_VOLTAGES		= HOLD_VOLTAGES+LOAD_VOLTAGES
+	else
+		if(cur_pos>mov_pos)
+			do
+				For(i=0; i<6;i+=1)  // There are 6 different waveforms
+					WAVE tmat = $("mat" + num2str(i))
+					if(!WaveExists(tmat))
+						FIELDS[][i] = 0
+						continue
+					endif
+					// A temporary array to store the individual columns of tmat, minus the position column
+					Make/O/N=(Dimsize(tmat,0)) temp
+					FindLevel/Q tmat, CUR_POS
+					if(V_LevelX >= Dimsize(tmat,0) || V_LevelX < 0)
+						print "DC Update Error!"
+						print "Could not find level \""+ num2str(CUR_POS) + "\", got \"" + num2str(V_LevelX) + "\""
+						return -1
+					else
+						For(j=1; j<Dimsize(tmat,1);j+=1) // Start at second column since first column is position
+							temp[] = tmat[p][j] // Fill temp with the right column
+							// The index below is corrected for the position column
+							FIELDS[j-1][i] = temp(V_LevelX) // Igor will automatically interpolate a 1D wave.
+						EndFor
+					endif
+					KillWaves temp
+					
+					MOVE_VOLTAGES[]	+= COMP_INFO[i][0] * FIELDS[p][i]
+				EndFor	
+				MOVE_VOLTAGES		*= COMP_INFO[6][0]
+				RAW_VOLTAGES		= HOLD_VOLTAGES+LOAD_VOLTAGES+MOVE_VOLTAGES			
+				sendVoltageGroup(RAW_VOLTAGES)
+				MOVE_VOLTAGES		=	0	
+				cur_pos-=1
+				//sleep/s 0.1
+				RAW_VOLTAGES		= HOLD_VOLTAGES+LOAD_VOLTAGES
+			while(CUR_POS!=MOV_POS)
+		elseif(cur_pos<mov_pos)
+			do
+				For(i=0; i<6;i+=1)  // There are 6 different waveforms
+					WAVE tmat = $("mat" + num2str(i))
+					if(!WaveExists(tmat))
+						FIELDS[][i] = 0
+						continue
+					endif
+					// A temporary array to store the individual columns of tmat, minus the position column
+					Make/O/N=(Dimsize(tmat,0)) temp
+					FindLevel/Q tmat, CUR_POS
+					if(V_LevelX >= Dimsize(tmat,0) || V_LevelX < 0)
+						print "DC Update Error!"
+						print "Could not find level \""+ num2str(CUR_POS) + "\", got \"" + num2str(V_LevelX) + "\""
+						return -1
+					else
+						For(j=1; j<Dimsize(tmat,1);j+=1) // Start at second column since first column is position
+							temp[] = tmat[p][j] // Fill temp with the right column
+							// The index below is corrected for the position column
+							FIELDS[j-1][i] = temp(V_LevelX) // Igor will automatically interpolate a 1D wave.
+						EndFor
+					endif
+					KillWaves temp
+					
+				MOVE_VOLTAGES[]	+= COMP_INFO[i][0] * FIELDS[p][i]
+				EndFor	
+				MOVE_VOLTAGES		*= COMP_INFO[6][0]
+				RAW_VOLTAGES		= HOLD_VOLTAGES+LOAD_VOLTAGES+MOVE_VOLTAGES				
+				sendVoltageGroup(RAW_VOLTAGES)
+				MOVE_VOLTAGES		=	0
+				cur_pos+=1
+				//sleep/s 0.1
+				RAW_VOLTAGES		= HOLD_VOLTAGES+LOAD_VOLTAGES
+			while(CUR_POS!=MOV_POS)
+		endif
+	endif	
+End
+
+function holdVoltages()
+
+	SetDataFolder root:DCVolt
+	
+	WAVE COMP_INFO		=	root:ExpParams:COMP_INFO
+	WAVE FIELDS
+	WAVE RAW_VOLTAGES
+	WAVE HOLD_VOLTAGES
+	
+	NVAR CUR_POS			=	root:ExpParams:CUR_POS
+	NVAR HOLD_POS		=	root:ExpParams:HOLD_POS	
+	NVAR HOLD_UP			=	root:ExpParams:HOLD_UP
+	NVAR NUM_ELECT
+	Variable i
+	Variable j
+	HOLD_VOLTAGES =0
 	For(i=0; i<6;i+=1)  // There are 6 different waveforms
 		WAVE tmat = $("mat" + num2str(i))
 		if(!WaveExists(tmat))
@@ -201,13 +453,12 @@ function updateVoltages()
 		endif
 		// A temporary array to store the individual columns of tmat, minus the position column
 		Make/O/N=(Dimsize(tmat,0)) temp
-		FindLevel/Q tmat, CUR_POS
+		FindLevel/Q tmat, HOLD_POS
 		if(V_LevelX >= Dimsize(tmat,0) || V_LevelX < 0)
 			print "DC Update Error!"
-			print "Could not find level \""+ num2str(CUR_POS) + "\", got \"" + num2str(V_LevelX) + "\""
+			print "Could not find level \""+ num2str(HOLD_POS) + "\", got \"" + num2str(V_LevelX) + "\""
 			return -1
 		else
-			Variable j
 			For(j=1; j<Dimsize(tmat,1);j+=1) // Start at second column since first column is position
 				temp[] = tmat[p][j] // Fill temp with the right column
 				// The index below is corrected for the position column
@@ -216,12 +467,254 @@ function updateVoltages()
 		endif
 		KillWaves temp
 		
-		RAW_VOLTAGES[]	+= COMP_INFO[i] * FIELDS[p][i]
+		HOLD_VOLTAGES	+= COMP_INFO[i][1] * FIELDS[p][i]
 	EndFor
+	HOLD_VOLTAGES		*= COMP_INFO[6][1]
+end
+
+function loadVoltages()
+
+	SetDataFolder root:DCVolt
 	
-	RAW_VOLTAGES		*= COMP_INFO[6]
+	WAVE COMP_INFO		=	root:ExpParams:COMP_INFO
+	WAVE FIELDS
+	WAVE RAW_VOLTAGES
+	WAVE LOAD_VOLTAGES
 	
-	sendVoltageGroup(RAW_VOLTAGES)
+	NVAR CUR_POS			=	root:ExpParams:CUR_POS
+	NVAR LOAD_POS		=	root:ExpParams:LOAD_POS	
+	NVAR HOLD_POS		=	root:ExpParams:HOLD_POS	
+	NVAR HOLD_UP			=	root:ExpParams:HOLD_UP
+	NVAR NUM_ELECT
+	Variable i
+	Variable j
+	LOAD_VOLTAGES =0
+	For(i=0; i<6;i+=1)  // There are 6 different waveforms
+		WAVE tmat = $("mat" + num2str(i))
+		if(!WaveExists(tmat))
+			FIELDS[][i] = 0
+			continue
+		endif
+		// A temporary array to store the individual columns of tmat, minus the position column
+		Make/O/N=(Dimsize(tmat,0)) temp
+		FindLevel/Q tmat,LOAD_POS
+		if(V_LevelX >= Dimsize(tmat,0) || V_LevelX < 0)
+			print "DC Update Error!"
+			print "Could not find level \""+ num2str(LOAD_POS) + "\", got \"" + num2str(V_LevelX) + "\""
+			return -1
+		else
+			For(j=1; j<Dimsize(tmat,1);j+=1) // Start at second column since first column is position
+				temp[] = tmat[p][j] // Fill temp with the right column
+				// The index below is corrected for the position column
+				FIELDS[j-1][i] = temp(V_LevelX) // Igor will automatically interpolate a 1D wave.
+			EndFor
+		endif
+		KillWaves temp
+		
+		LOAD_VOLTAGES	+= COMP_INFO[i][2] * FIELDS[p][i]
+	EndFor
+	LOAD_VOLTAGES		*= COMP_INFO[6][2]
+end
+
+
+function mergeToHOLDVoltages()
+	SetDataFolder root:DCVolt
+	
+	WAVE COMP_INFO		=	root:ExpParams:COMP_INFO
+	WAVE FIELDS
+	WAVE RAW_VOLTAGES
+	WAVE MOVE_VOLTAGES
+	WAVE HOLD_VOLTAGES
+	WAVE LOAD_VOLTAGES
+	
+	NVAR CUR_POS			=	root:ExpParams:CUR_POS
+	NVAR MOV_POS		=	root:ExpParams:MOV_POS
+	NVAR HOLD_POS		=	root:ExpParams:HOLD_POS
+	NVAR LOAD_POS		=	root:ExpParams:LOAD_POS		
+	NVAR HOLD_UP			=	root:ExpParams:HOLD_UP
+	NVAR LOAD_UP			=	root:ExpParams:LOAD_UP			
+	
+	NVAR NUM_ELECT
+	Variable i	
+	Variable j
+	if(HOLD_UP)
+		holdVoltages()
+	else
+		HOLD_VOLTAGES=0
+	endif
+	if(LOAD_UP)
+		loadVoltages()
+	else
+		LOAD_VOLTAGES=0
+	endif
+	RAW_VOLTAGES = LOAD_VOLTAGES+HOLD_VOLTAGES
+	MOVE_VOLTAGES=0
+	if(CUR_POS>HOLD_POS)
+		do
+//			For(i=0; i<6;i+=1)  // There are 6 different waveforms
+				WAVE tmat = $("mat" + num2str(i))
+				if(!WaveExists(tmat))
+					FIELDS[][i] = 0
+					continue
+				endif
+				// A temporary array to store the individual columns of tmat, minus the position column
+				Make/O/N=(Dimsize(tmat,0)) temp
+				FindLevel/Q tmat, CUR_POS
+				if(V_LevelX >= Dimsize(tmat,0) || V_LevelX < 0)
+					print "DC Update Error!"
+					print "Could not find level \""+ num2str(CUR_POS) + "\", got \"" + num2str(V_LevelX) + "\""
+					return -1
+				else
+					For(j=1; j<Dimsize(tmat,1);j+=1) // Start at second column since first column is position
+						temp[] = tmat[p][j] // Fill temp with the right column
+						// The index below is corrected for the position column
+						FIELDS[j-1][6] = temp(V_LevelX) // Igor will automatically interpolate a 1D wave.
+					EndFor
+				endif
+				KillWaves temp
+				
+				MOVE_VOLTAGES[]	+=  FIELDS[p][6]
+//			EndFor	
+//			RAW_VOLTAGES		*= COMP_INFO[6]
+			sendVoltageGroup(MOVE_VOLTAGES)
+			cur_pos-=1
+			MOVE_VOLTAGES=0
+		while(CUR_POS!=HOLD_POS)
+	elseif(CUR_POS<HOLD_POS)
+		do
+//			For(i=0; i<6;i+=1)  // There are 6 different waveforms
+				WAVE tmat = $("mat" + num2str(6))
+				if(!WaveExists(tmat))
+					FIELDS[][6] = 0
+					continue
+				endif
+				// A temporary array to store the individual columns of tmat, minus the position column
+				Make/O/N=(Dimsize(tmat,0)) temp
+				FindLevel/Q tmat, CUR_POS
+				if(V_LevelX >= Dimsize(tmat,0) || V_LevelX < 0)
+					print "DC Update Error!"
+					print "Could not find level \""+ num2str(CUR_POS) + "\", got \"" + num2str(V_LevelX) + "\""
+					return -1
+				else
+					For(j=1; j<Dimsize(tmat,1);j+=1) // Start at second column since first column is position
+						temp[] = tmat[p][j] // Fill temp with the right column
+						// The index below is corrected for the position column
+						FIELDS[j-1][6] = temp(V_LevelX) // Igor will automatically interpolate a 1D wave.
+					EndFor
+				endif
+				KillWaves temp
+				
+				MOVE_VOLTAGES[]	+=  FIELDS[p][6]
+//			EndFor	
+//			RAW_VOLTAGES		*= COMP_INFO[6]
+			sendVoltageGroup(MOVE_VOLTAGES)
+			cur_pos+=1
+			MOVE_VOLTAGES=0
+		while(CUR_POS!=HOLD_POS)
+	elseif(CUR_POS == HOLD_POS)
+		sendVoltageGroup(RAW_VOLTAGES)
+		RAW_VOLTAGES = 0	
+	endif
+End
+
+function mergeToLoadVoltages()
+	SetDataFolder root:DCVolt
+	
+	WAVE COMP_INFO		=	root:ExpParams:COMP_INFO
+	WAVE FIELDS
+	WAVE RAW_VOLTAGES
+	WAVE MOVE_VOLTAGES
+	WAVE HOLD_VOLTAGES
+	WAVE LOAD_VOLTAGES
+	
+	NVAR CUR_POS			=	root:ExpParams:CUR_POS
+	NVAR MOV_POS		=	root:ExpParams:MOV_POS
+	NVAR HOLD_POS		=	root:ExpParams:HOLD_POS	
+	NVAR LOAD_POS		=	root:ExpParams:LOAD_POS	
+	NVAR HOLD_UP			=	root:ExpParams:HOLD_UP
+	NVAR LOAD_UP			=	root:ExpParams:LOAD_UP			
+	
+	NVAR NUM_ELECT
+	Variable i	
+	Variable j
+	if(HOLD_UP)
+		holdVoltages()
+	else
+		HOLD_VOLTAGES=0
+	endif
+	if(LOAD_UP)
+		loadVoltages()
+	else
+		LOAD_VOLTAGES=0
+	endif
+	RAW_VOLTAGES = LOAD_VOLTAGES+HOLD_VOLTAGES
+	MOVE_VOLTAGES=0
+	if(CUR_POS>LOAD_POS)
+		do
+//			For(i=0; i<6;i+=1)  // There are 6 different waveforms
+				WAVE tmat = $("mat" + num2str(i))
+				if(!WaveExists(tmat))
+					FIELDS[][i] = 0
+					continue
+				endif
+				// A temporary array to store the individual columns of tmat, minus the position column
+				Make/O/N=(Dimsize(tmat,0)) temp
+				FindLevel/Q tmat, CUR_POS
+				if(V_LevelX >= Dimsize(tmat,0) || V_LevelX < 0)
+					print "DC Update Error!"
+					print "Could not find level \""+ num2str(CUR_POS) + "\", got \"" + num2str(V_LevelX) + "\""
+					return -1
+				else
+					For(j=1; j<Dimsize(tmat,1);j+=1) // Start at second column since first column is position
+						temp[] = tmat[p][j] // Fill temp with the right column
+						// The index below is corrected for the position column
+						FIELDS[j-1][6] = temp(V_LevelX) // Igor will automatically interpolate a 1D wave.
+					EndFor
+				endif
+				KillWaves temp
+				
+				MOVE_VOLTAGES[]	+=  FIELDS[p][6]
+//			EndFor	
+//			RAW_VOLTAGES		*= COMP_INFO[6]
+			sendVoltageGroup(MOVE_VOLTAGES)
+			cur_pos-=1
+			MOVE_VOLTAGES=0
+		while(CUR_POS!=LOAD_POS)
+	elseif(CUR_POS<LOAD_POS)
+		do
+//			For(i=0; i<6;i+=1)  // There are 6 different waveforms
+				WAVE tmat = $("mat" + num2str(6))
+				if(!WaveExists(tmat))
+					FIELDS[][6] = 0
+					continue
+				endif
+				// A temporary array to store the individual columns of tmat, minus the position column
+				Make/O/N=(Dimsize(tmat,0)) temp
+				FindLevel/Q tmat, CUR_POS
+				if(V_LevelX >= Dimsize(tmat,0) || V_LevelX < 0)
+					print "DC Update Error!"
+					print "Could not find level \""+ num2str(CUR_POS) + "\", got \"" + num2str(V_LevelX) + "\""
+					return -1
+				else
+					For(j=1; j<Dimsize(tmat,1);j+=1) // Start at second column since first column is position
+						temp[] = tmat[p][j] // Fill temp with the right column
+						// The index below is corrected for the position column
+						FIELDS[j-1][6] = temp(V_LevelX) // Igor will automatically interpolate a 1D wave.
+					EndFor
+				endif
+				KillWaves temp
+				
+				MOVE_VOLTAGES[]	+=  FIELDS[p][6]
+//			EndFor	
+//			RAW_VOLTAGES		*= COMP_INFO[6]
+			sendVoltageGroup(MOVE_VOLTAGES)
+			cur_pos+=1
+			MOVE_VOLTAGES=0
+		while(CUR_POS!=LOAD_POS)
+	elseif(CUR_POS == LOAD_POS)
+		sendVoltageGroup(RAW_VOLTAGES)
+		RAW_VOLTAGES = 0	
+	endif
 End
 
 //--------------------------------------------------------------

@@ -41,6 +41,10 @@ function sendSequence(sequence)
 		Make/B/U/O/n=0 writeWave
 		Variable i
 		for(i=0; i<DimSize(sequence,0); i+=1)
+			if(sequence[i][1] < 2)
+				//sequence[i][1]=2
+				//print "Warning: Sequence contains time steps less than 40ns. Rounding up."
+			endif
 			writeWave[13*i] = {0x6d, gb_seq(i,1),gb_seq(i,0), gb_seq(sequence[i][0],3),gb_seq(sequence[i][0],2),gb_seq(sequence[i][0],1),gb_seq(sequence[i][0],0), gb_seq(sequence[i][1],3),gb_seq(sequence[i][1],2),gb_seq(sequence[i][1],1),gb_seq(sequence[i][1],0),0x0d,0x0a}
 		endfor
 		writeWave[13*i] = {0x72, gb_seq((i-1),1),gb_seq((i-1),0)} //sets max address to run to, counter adds 1 at the end that we need to take out
@@ -52,6 +56,7 @@ function sendSequence(sequence)
 //		VDTOpenPort2 $seq_p
 		VDTOperationsPort2 $seq_p
 		VDTWriteBinaryWave2/O=20 writeWave
+//		print writeWave
 		KillWaves writeWave
 //		VDTClosePort2 $seq_p
 	endif
@@ -108,7 +113,7 @@ function/WAVE runSequence(reps, [recmask,tdc])
 	Make/B/U/O/N=(numChannels,reps) data
 	KillWaves writeWave
 	
-//	VDTReadBinaryWave2/B/TYPE=16/O=20 data
+	VDTReadBinaryWave2/B/TYPE=16/O=20 data
 	return data
 	//VDTClosePort2 $seq_p
 end

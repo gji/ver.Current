@@ -42,6 +42,8 @@ Macro Exp_Init()
 	Pulse()			// For Running Pulse Sequence
 	DCCtrl() 			// For Setting DC Bias on Trap
 	OverrideVariables()
+	
+	openCOM()
 EndMacro
 
 //_____________________________________________________________________________
@@ -113,33 +115,38 @@ Function Param_Init()
 	endfor
 	
 	Variable/G LIVE_UP					= 	0			// Sets live update state for DC voltage control
-	Variable/G CUR_POS					= 	LOAD_POS		
+	Variable/G HOLD_UP					= 	0
+	Variable/G LOAD_UP					= 	0
+	Variable/G LOAD_POS				= 	53
+	Variable/G CUR_POS					= 	LOAD_POS
+	Variable/G MOV_POS				= 	CUR_POS
+	Variable/G HOLD_POS				= 	250		
 		
-	Variable/G DELAY						=	TTL_00|TTL_09
-	Variable/G COOL						=	TTL_04|TTL_09
-	Variable/G REPUMP					=	TTL_03|TTL_09
-	Variable/G STATE_DET				=	TTL_01|DI_01|TTL_09
-	Variable/G FLR_DET					=	TTL_04|TTL_02|DI_01|TTL_09
-	Variable/G PUMP						=	TTL_01|TTL_05|TTL_09
-	Variable/G LOAD_SHTR				=	TTL_08|TTL_09
-	Variable/G MICROWAVE				=	TTL_10
-	Variable/G AWG_TRIG					= 	TTL_10|TTL_11|TTL_09
-	Variable/G PMT						=	DI_01|TTL_09	// PMT might be gated, might need to add a TTL pulse here
+	Variable/G DELAY					=	TTL_00|TTL_06|TTL_16
+	Variable/G COOL						=	TTL_04|TTL_06|TTL_16
+	Variable/G REPUMP					=	TTL_03|TTL_06|TTL_16
+	Variable/G STATE_DET				=	TTL_01|DI_01|TTL_06|TTL_16
+	Variable/G FLR_DET					=	TTL_04|TTL_02|DI_01|TTL_06|TTL_16
+	Variable/G PUMP						=	TTL_01|TTL_05|TTL_06|TTL_16
+	Variable/G LOAD_SHTR				=	TTL_08|TTL_06|TTL_16
+	Variable/G MICROWAVE				=	TTL_10|TTL_16
+	Variable/G AWG_TRIG				= 	TTL_10|TTL_11|TTL_06|TTL_16
+	Variable/G PMT						=	DI_01|TTL_06|TTL_16	// PMT might be gated, might need to add a TTL pulse here
 	
-	Variable/G COOL_FREQ				= 	290 // MHz
-	Variable/G COOL_AMP					=	100 // Max Amp
+	Variable/G COOL_FREQ				= 	195 // MHz
+	Variable/G COOL_AMP				=	20 // Max Amp
 	Variable/G COOL_PHASE				=	0 	
 	
 	Variable/G PUMP_FREQ				= 	300 // MHz
-	Variable/G PUMP_AMP					=	100 // Max Amp
+	Variable/G PUMP_AMP				=	100 // Max Amp
 	Variable/G PUMP_PHASE				=	0 	
 	
-	Variable/G STATE_DET_FREQ			=	220 // MHz
-	Variable/G STATE_DET_AMP			=	100 // Max Amp
+	Variable/G STATE_DET_FREQ			=	200 // MHz
+	Variable/G STATE_DET_AMP			=	35 // Max Amp
 	Variable/G STATE_DET_PHASE		=	0	
 	
-	Variable/G FLR_DET_FREQ			=	220 // MHz
-	Variable/G FLR_DET_AMP				=	100 // Max Amp
+	Variable/G FLR_DET_FREQ			=	200 // MHz
+	Variable/G FLR_DET_AMP			=	20 // Max Amp
 	Variable/G FLR_DET_PHASE			=	0
 
 	Variable/G MIN_POSITION = 0			// Lowest ion position index (voltage set specification)
@@ -152,6 +159,7 @@ Function Param_Init()
 	Variable/G VAR_TTL_04				=	TTL_04
 	Variable/G VAR_TTL_05				=	TTL_05
 	Variable/G VAR_TTL_06				=	TTL_06
+	Variable/G VAR_TTL_07				=	TTL_07
 	Variable/G VAR_TTL_08				=	TTL_08	
 	Variable/G VAR_TTL_09				=	TTL_09
 	Variable/G VAR_TTL_010				=	TTL_10
@@ -159,13 +167,14 @@ Function Param_Init()
 	Variable/G VAR_TTL_016				=	TTL_16
 
 
-	String/G	WAVEb_compRF				=	""
-	String/G	WAVEb_Quad45				=	"::waveforms:GenIII:GenIII_Uniform_Quad45.csv"
-	String/G	WAVEb_Ez					=	"::waveforms:GenIII:GenIII_Ez_LV.csv"
-	String/G	WAVEb_Ex					=	"::waveforms:GenIII:GenIII_Ex_LV.csv"
-	String/G	WAVEb_Ey					=	"::waveforms:GenIII:GenIII_Ey_LV.csv"
-	String/G	WAVEb_Harm				=	"::waveforms:GenIII:GenIII_Harmonic.csv"		
-	String/G	WAVEb_Hardware			=	"::waveforms:GenIII:GenIII_hardware.csv"
+	String/G	WAVEb_compRF				=	"::waveforms:BGA:BGA_20140502_uniform_compEy.csv"
+	String/G	WAVEb_Quad45				=	"::waveforms:BGA:BGA_20140502_Quad45.csv"
+	String/G	WAVEb_Ez					=	"::waveforms:BGA:BGA_20140502_compEz.csv"
+	String/G	WAVEb_Ex					=	"::waveforms:BGA:BGA_20140502_compEx.csv"
+	String/G	WAVEb_Ey					=	"::waveforms:BGA:BGA_20140502_compEy.csv"
+	String/G	WAVEb_Harm				=	"::waveforms:BGA:BGA_string_20141219_mod34.csv"		
+	String/G	WAVEb_Hardware			=	"::waveforms:BGA:Hardware_BGA.csv"
+	String/G	WAVEb_Transport			=	"::waveforms:BGA:merge_BGA_20150113a_smooth.csv"
 	
 	String/G	WAVEc_compRF				=	""
 	String/G	WAVEc_Quad45				=	"::waveforms:GenIII:GenIII_Uniform_Quad45.csv"
@@ -174,14 +183,16 @@ Function Param_Init()
 	String/G	WAVEc_Ey					=	"::waveforms:GenIII:GenIII_Uniform_Ey.csv"
 	String/G	WAVEc_Harm				=	"::waveforms:GenIII:genIII_chain_10ions.csv"		
 	String/G	WAVEc_Hardware			=	"::waveforms:GenIII:GenIII_hardware.csv"
+	String/G	WAVEc_Transport			=	"::waveforms:BGA:Hardware_BGA.csv"
 	
-	String/G	WAVEa_compRF				=	""
+	String/G	WAVEa_compRF				=	"::waveforms:BGA:BGA_20140502_uniform_compEy.csv"
 	String/G	WAVEa_Quad45				=	"::waveforms:BGA:BGA_20140502_Quad45.csv"
 	String/G	WAVEa_Ez					=	"::waveforms:BGA:BGA_20140502_compEz.csv"
-	String/G	WAVEa_Ex					=	"::waveforms:BGA:BGA_20140502_uniform_compEx.csv"
-	String/G	WAVEa_Ey					=	"::waveforms:BGA:BGA_20140502_uniform_compEy.csv"
+	String/G	WAVEa_Ex					=	"::waveforms:BGA:BGA_20140502_compEx.csv"
+	String/G	WAVEa_Ey					=	"::waveforms:BGA:BGA_20140502_compEy.csv"
 	String/G	WAVEa_Harm				=	"::waveforms:BGA:BGA_20140502_harmonic.csv"		
 	String/G	WAVEa_Hardware			=	"::waveforms:BGA:Hardware_BGA.csv"
+	String/G	WAVEa_Transport			=	"::waveforms:BGA:merge_BGA_20150113a_smooth.csv"
 
 
 	//Variables for Pulse Program
@@ -193,22 +204,22 @@ Function Param_Init()
 	Variable/G SequenceCurrent                       =  0
 	Variable/G VerticalButtonPosition                =  16
 	Variable/G VerticalLoopPosition                  =  16
-	Variable/G GroupNumber                           =  0
-	Variable/G GroupError                            =  0
+	Variable/G GroupNumber                         	 =  0
+	Variable/G GroupError                           	 =  0
 	Make/D/O/N=8 NameWave                            =  {DELAY,COOL,STATE_DET,FLR_DET,PUMP,LOAD_SHTR,PMT,MICROWAVE,AWG_TRIG,AWG_TRIG}
 	Make/O/T/N=8 TTLNames                            =  {"Delay","Cool", "State Detection","Flourescence Detection","Pump", "LoadShutter","PMT","Microwave","AWGRotation","SBCooling"}
 	// The following should be matched up, in order, with TTLNames. The indexes denote the scan types labeled in SCAN_TITLES.
 	// For example, 0 is for Delay, 0123 is for Cooling. 
-	String/G 	 TTL_PARAMS			                   	=	"0;012345;0123;012345;012345;0;0;0;"
-	String/G	 SCAN_TITLES 				             = "Duration;AO Frequency;AO Amplitude;AO Phase;EO Frequency;EO Power;Rotation Amplitude;Rotation Frequency;Rotation Phase"
-	Make/O/T/N=3 DDSNames                         	=	{"State Detection","Flourescence Detection", "Doppler Cooling"}
+	String/G 	 TTL_PARAMS			                  		 	=	"0;012345;0123;012345;012345;0;0;0;"
+	String/G	 SCAN_TITLES 				          				= 	"Duration;AO Frequency;AO Amplitude;AO Phase;EO Frequency;EO Power;Rotation Amplitude;Rotation Frequency;Rotation Phase"
+	Make/O/T/N=3 DDSNames                      				   	=	{"State Detection","Flourescence Detection", "Doppler Cooling"}
 	Make/O/T/N=4 DDSScans									=	{"Duration","Frequency","Amplitude","Phase"}
 	Make/O/T/N=3 EONames									=	{"Optical Pumping", "Cooling", "Repump"}
 	Make/O/T/N=1 EONotDDSNames							=	{"935 EO"}
 	Make/O/T/N=3 EONOTDDSSCans							=	{"Duration","EO Frequency","EO Amplitude"}
 	Make/O/T/N=6 EOScans									=	{"Duration","AO Frequency","AO Amplitude","AO Phase","EO Frequency","EO Amplitude"}
 	Make/O/N=(1024,3)	PulseCreatorWave					=	0
-	Make/O/N=(1024,3) dataloaderwave						=	0
+	Make/O/N=(1024,3) dataloaderwave							=	0
 	Variable/G TooLong										=	0
 
 	PathInfo home				// Save home folder of unpacked experiment folder to S_path
@@ -219,19 +230,19 @@ Function Param_Init()
 
 	Variable/G TotalScan									=	0
 	Variable/G FixScanOrder								=	0
-	Variable/G GroupMultiplier							=	1
+	Variable/G GroupMultiplier								=	1
 	Make/O/N=(1024,2) PulseSequence
 	Make/O/N=1024 TimeSequence
 	Make/O/N=(5120,6) Settings							=	0
 	Variable/G SettingsCheckOut							=	0
-	Variable/G SendCounter									=	0
-	Make/O/N=(7*1024,6) ScanParams=0
+	Variable/G SendCounter								=	0
+	Make/O/N=(7*1024,6) ScanParams						=	0
 	String/G LoadingScreen
-	Variable/G DDSnum										=	3
-	Variable/G EOnum											=	3
+	Variable/G DDSnum									=	3
+	Variable/G EOnum									=	3
 
-	Make/O/N=(16,3) OverrideWave							=	0
-	Variable/G Mask											=	0
+	Make/O/N=(16,3) OverrideWave						=	0
+	Variable/G Mask										=	0
 	
 	
 	Make/O/N=0/T SavedSequences
@@ -251,28 +262,28 @@ Function Param_Init()
 		fileIndex += 1
 	while(1)
 	
-	Variable/G TDC												=0
+	Variable/G TDC											=	0
 	
-	Variable/G PMT_01											=DI_01
-	Variable/G PMT_02											=DI_02
-	Variable/G PMT_03											=DI_03
-	Variable/G PMT_04											=DI_04
-	Variable/G PMT_05											=DI_05
-	Variable/G PMT_06											=DI_06
-	Variable/G PMT_07											=DI_07
-	Variable/G PMT_08											=DI_08
+	Variable/G PMT_01										=	DI_01
+	Variable/G PMT_02										=	DI_02
+	Variable/G PMT_03										=	DI_03
+	Variable/G PMT_04										=	DI_04
+	Variable/G PMT_05										=	DI_05
+	Variable/G PMT_06										=	DI_06
+	Variable/G PMT_07										=	DI_07
+	Variable/G PMT_08										=	DI_08
 	
 	Make/O/N=9 PMT_wave
 	
-	Variable/G SAVE_01											=1
-	Variable/G SAVE_02											=1
-	Variable/G SAVE_03											=1
+	Variable/G SAVE_01										=	1
+	Variable/G SAVE_02										=	1
+	Variable/G SAVE_03										=	1
 
 	Make/O/N=(DDS_Channels,DDS_Params+1) 	DDS_INFO
-	Make/O/N=7 							COMP_INFO		 = {0.02,-0.36,0.23,0.0,0,.4,1}
-	Make/O/T/N=7 						WAVE_INFOa	 = {WAVEa_Ex, WAVEa_Ey, WAVEa_Quad45, WAVEa_Ez, WAVEa_compRF, WAVEa_Harm, WAVEa_Hardware}
-	Make/O/T/N=7 						WAVE_INFOb	 = {WAVEb_Ex, WAVEb_Ey, WAVEb_Quad45, WAVEb_Ez, WAVEb_compRF, WAVEb_Harm, WAVEb_Hardware}
-	Make/O/T/N=7 						WAVE_INFOc	 = {WAVEc_Ex, WAVEc_Ey, WAVEc_Quad45, WAVEc_Ez, WAVEc_compRF, WAVEc_Harm, WAVEc_Hardware}
+	Make/O/N=7 							COMP_INFO		 =   {{0.00,-0.5,0.5,0.0,-1,1,1},{0.00,-0.5,0.5,0.0,-1,1,1},{0.00,-0.5,0.5,0.0,-1,1,1}}
+	Make/O/T/N=7 						WAVE_INFOa		 =	{WAVEa_Ex, WAVEa_Ey, WAVEa_Quad45, WAVEa_Ez, WAVEa_compRF, WAVEa_Harm,WAVEa_Transport, WAVEa_Hardware}
+	Make/O/T/N=7 						WAVE_INFOb		 =	{WAVEb_Ex, WAVEb_Ey, WAVEb_Quad45, WAVEb_Ez, WAVEb_compRF, WAVEb_Harm,WAVEb_Transport, WAVEb_Hardware}
+	Make/O/T/N=7 						WAVE_INFOc	 	 =	{WAVEc_Ex, WAVEc_Ey, WAVEc_Quad45, WAVEc_Ez, WAVEc_compRF, WAVEc_Harm,WAVEc_Transport, WAVEc_Hardware}
 	Duplicate/O WAVE_INFOa, WAVE_INFO
 	
 	Variable j,i
@@ -366,7 +377,7 @@ Function LoadDCWaveMatrices()
 	
 	// Store the hardware map in ExpParams
 	SetDataFolder root:ExpParams
-	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_INFO[6]
+	LoadWave/M/K=2/U={0,0,1,0}/O/B="N=HARDWARE_MAP;" /J/P=home WAVE_INFO[7]
 	SetDataFolder root:DCVolt
 	WAVE/T HARDWARE_MAP	=	root:ExpParams:HARDWARE_MAP
 	
@@ -380,12 +391,15 @@ Function LoadDCWaveMatrices()
 	Variable/G NUM_ELECT 	= m;
 	NVAR CUR_POS				= root:ExpParams:CUR_POS
 	
-	Make/O/N=(NUM_ELECT,6)	FIELDS
+	Make/O/N=(NUM_ELECT,7)	FIELDS
 	Make/O/N=(NUM_ELECT) RAW_VOLTAGES
+	Make/O/N=(NUM_ELECT) move_VOLTAGES
+	Make/O/N=(NUM_ELECT) LOAD_VOLTAGES	
+	Make/O/N=(NUM_ELECT) HOLD_VOLTAGES	
 	Make/O/N=96  OUT_VOLTAGES
 	Make/T/O/N=12 CMDS	
 	
-	for(i=0; i<6; i+=1) // There are 6 possible waveforms
+	for(i=0; i<7; i+=1) // There are 6 possible waveforms
 		SetDataFolder root:DCVolt:temp
 		if(StringMatch(WAVE_INFO[i],""))
 			Wave t = $("root:DCVolt:mat"+num2str(i))
@@ -529,6 +543,44 @@ Function Seq_init()
 	Alignment_Init()
 end
 
+Function GPIB_init()
+	// Create global variables
+	NewDataFolder/O/S root:GPIBparams
+	SetDataFolder root:GPIBparams
+	
+	Variable/G gGPIBBoardRef = 0
+	Variable/G OvenRef = 0
+	Variable/G TrapRFRef = 0
+	
+	// Get board descriptor
+	NVAR gGPIBBoardRef = root:GPIBparams:gGPIBBoardRef
+	NI4882 ibfind={"gpib0"}; gGPIBBoardRef = V_flag
+	GPIB2 board = gGPIBBoardRef	// Tell NIGPIB2 which board to communicate with
+
+	// Get device descriptor for device at GPIB address 8 Oven
+	NVAR OvenRef = root:GPIBparams:OvenRef
+	NI4882 ibdev={0,8,0,13,1,0}; OvenRef = V_flag
+	
+	Variable/G OvenOutputFlag = 1
+	Variable/G OvenCurrent = 0
+	Variable/G OvenVoltage = 0
+	
+	// Get device descriptor for device at GPIB address 19 Trap RF
+	NVAR TrapRFRef = root:GPIBparams:TrapRFRef
+	NI4882 ibdev={0,19,0,13,1,0}; TrapRFRef = V_flag
+
+	Variable/G TrapRFamplitude = -18.5
+	Variable/G TrapRFfrequency = 20.655
+	Variable/G TrapRFoffset = 0
+
+	string windows= WinList("GPIBCtrl"," ; ","")
+	if	(strlen(windows)>0)
+	else
+		Execute "GPIBCtrl()"
+	endif
+End
+
+
 Function Data_Init()
 	string name
 	variable i=0
@@ -550,11 +602,13 @@ Function Data_Init()
 	Make/T/O/n=1 DataBasisFitchannels
 	Make/T/O/n=1 DataBasisFitErrorchannels
 	Make/T/O/n=1 DataParitychannels	
-	Make/T/O/n=1 DataParityErrorchannels	
+	Make/T/O/n=1 DataParityErrorchannels
+	Make/T/O/n=1 DataPopchannels	
+	Make/T/O/n=1 DataPopErrorchannels	
 	
 			
 	Make/B/U/O/n=0 WriteWave
-	Make/O/N=50 dataScanVar =	0
+	Make/D/O/N=50 dataScanVar =	0
 	String/G ScanVarName = ""
 	For(i=1;i!=9;i+=1)
 		name="DataStd_0"+num2str(i)
@@ -606,6 +660,16 @@ Function Data_Init()
 		if(exists(name))
 		else
 			Make/O/N=4 $name =0
+		endif
+		name="DataPop_0"+num2str(i)
+		if(exists(name))
+		else
+			Make/O/N=4 $name =0
+		endif
+		name="DataPopError_0"+num2str(i)
+		if(exists(name))
+		else
+			Make/O/N=4 $name =0
 		endif	
 	endfor
 
@@ -619,6 +683,7 @@ Function Alignment_Init()
 	Variable/G ALIGNSWEEP_POINTS = 10
 	Variable/G AlignDisplayFlagAvg		=1
 	Variable/G AlignDisplayFlagProb		=0
+	Variable/G AlignDisplayFlagTDC		=0	
 	Variable/G AlignMaxHist				=50
 	Variable/G BasisPMTinputchannel =1
 	
@@ -634,6 +699,9 @@ Function Alignment_Init()
 	Make/T/O/n=1 AlignBasisFitErrorchannels
 	Make/T/O/n=1 AlignParitychannels	
 	Make/T/O/n=1 AlignParityErrorchannels	
+	Make/T/O/n=1 AlignPopchannels	
+	Make/T/O/n=1 AlignPopErrorchannels	
+	
 	
 	Make/O/N=50 AlignBasisHistD
 	Make/O/N=50 AlignBasisHistB
@@ -694,7 +762,17 @@ Function Alignment_Init()
 		if(exists(name))
 		else
 			Make/O/N=4 $name =0
-		endif	
+		endif
+		name="AlignmentPop_0"+num2str(i)
+		if(exists(name))
+		else
+			Make/O/N=4 $name =0
+		endif
+		name="AlignmentPopError_0"+num2str(i)
+		if(exists(name))
+		else
+			Make/O/N=4 $name =0
+		endif			
 	endfor
 
 End
@@ -752,7 +830,7 @@ EndMacro
 //
 Window DCCtrl() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(24,1090,284,1407) as "Trap DC Voltage Control"
+	NewPanel /K=1 /W=(24,1090,539,1371) as "Trap DC Voltage Control"
 	ModifyPanel cbRGB=(48896,59904,65280)
 	SetVariable apos,pos={43,17},size={77,18},bodyWidth=60,proc=fieldUpdate,title="Ex"
 	SetVariable apos,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[0]
@@ -769,16 +847,54 @@ Window DCCtrl() : Panel
 	SetVariable globScale,pos={9,197},size={111,18},bodyWidth=60,proc=fieldUpdate,title="Glob. SF"
 	SetVariable globScale,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[6]
 	SetVariable posIon,pos={11,227},size={109,18},bodyWidth=60,proc=fieldUpdate,title="Ion Pos."
-	SetVariable posIon,limits={-440,inf,1},value= root:ExpParams:CUR_POS
-	Button update,pos={135,255},size={110,20},proc=Update,title="Update"
-	Button settings,pos={135,285},size={110,20},proc=openSettings,title="Settings"
-	CheckBox liveupdate,pos={39,258},size={83,15},proc=LiveUpCheck,title="Live Update"
+	SetVariable posIon,limits={-440,inf,1},value= root:ExpParams:MOV_POS
+	CheckBox liveupdate,pos={39,254},size={83,15},proc=LiveUpCheck,title="Live Update"
 	CheckBox liveupdate,value= 0,side= 1
+	SetVariable apos_1,pos={174,17},size={77,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Ex"
+	SetVariable apos_1,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[0][1]
+	SetVariable bpos_1,pos={174,47},size={77,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Ey"
+	SetVariable bpos_1,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[1][1]
+	SetVariable cpos_1,pos={174,77},size={78,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="45"
+	SetVariable cpos_1,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[2][1]
+	SetVariable dpos_1,pos={174,107},size={77,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Ez"
+	SetVariable dpos_1,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[3][1]
+	SetVariable epos_1,pos={171,137},size={80,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="RF"
+	SetVariable epos_1,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[4][1]
+	SetVariable harmScale_1,pos={135,167},size={116,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Harm. SF"
+	SetVariable harmScale_1,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[5][1]
+	SetVariable globScale_1,pos={140,197},size={111,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Glob. SF"
+	SetVariable globScale_1,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[6][1]
+	SetVariable posIon_1,pos={133,226},size={118,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Hold Pos."
+	SetVariable posIon_1,limits={-440,inf,1},value= root:ExpParams:HOLD_POS
+	CheckBox holdupdate,pos={167,254},size={87,15},proc=HoldUpCheck,title="Hold Ion Loc"
+	CheckBox holdupdate,value= 0,side= 1
+	SetVariable apos_2,pos={305,17},size={77,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Ex"
+	SetVariable apos_2,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[0][2]
+	SetVariable bpos_2,pos={305,47},size={77,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Ey"
+	SetVariable bpos_2,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[1][2]
+	SetVariable cpos_2,pos={305,77},size={78,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="45"
+	SetVariable cpos_2,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[2][2]
+	SetVariable dpos_2,pos={305,107},size={77,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Ez"
+	SetVariable dpos_2,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[3][2]
+	SetVariable epos_2,pos={302,137},size={80,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="RF"
+	SetVariable epos_2,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[4][2]
+	SetVariable harmScale_2,pos={266,167},size={116,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Harm. SF"
+	SetVariable harmScale_2,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[5][2]
+	SetVariable globScale_2,pos={271,197},size={111,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Glob. SF"
+	SetVariable globScale_2,limits={-inf,inf,0.01},value= root:ExpParams:COMP_INFO[6][2]
+	SetVariable posIon_2,pos={262,225},size={120,18},bodyWidth=60,disable=2,proc=fieldUpdate,title="Load Pos."
+	SetVariable posIon_2,limits={-440,inf,1},value= root:ExpParams:LOAD_POS
+	CheckBox loadupdate,pos={294,255},size={89,15},proc=LoadUpCheck,title="Load Ion Loc"
+	CheckBox loadupdate,value= 0,side= 1
+	Button update,pos={399,17},size={110,20},proc=Update,title="Update"
+	Button settings,pos={399,47},size={110,20},proc=openSettings,title="Settings"
+	Button mergeToHold,pos={399,77},size={110,20},disable=2,proc=MergeToHold,title="Merge to Hold"
+	Button mergeToLoad,pos={399,107},size={110,20},disable=2,proc=MergeToLoad,title="Merge to Load"
 EndMacro
 
 Window DCSettings() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(307,1090,682,1354) as "DC Voltage Settings"
+	NewPanel /K=1 /W=(307,1090,682,1384) as "DC Voltage Settings"
 	ModifyPanel cbRGB=(48896,49152,65280)
 	SetVariable afile,pos={16,17},size={279,18},bodyWidth=185,title="A Voltage File Ex"
 	SetVariable afile,value= root:ExpParams:WAVE_INFO[0]
@@ -792,8 +908,10 @@ Window DCSettings() : Panel
 	SetVariable efile,value= root:ExpParams:WAVE_INFO[4]
 	SetVariable hfile,pos={5,167},size={290,18},bodyWidth=185,title="Harm. Voltage File"
 	SetVariable hfile,value= root:ExpParams:WAVE_INFO[5]
-	SetVariable wfile,pos={3,197},size={292,18},bodyWidth=185,title="Hardware Map File"
-	SetVariable wfile,value= root:ExpParams:WAVE_INFO[6]
+	SetVariable wfile,pos={3,227},size={292,18},bodyWidth=185,title="Hardware Map File"
+	SetVariable wfile,value= root:ExpParams:WAVE_INFO[7]
+	SetVariable tfile,pos={3,197},size={292,18},bodyWidth=185,title="Transport File"
+	SetVariable tfile,value= root:ExpParams:WAVE_INFO[6]	
 	Button aopen,pos={300,15},size={50,20},proc=OpenWaveFile,title="Open"
 	Button bopen,pos={300,45},size={50,20},proc=OpenWaveFile,title="Open"
 	Button copen,pos={300,75},size={50,20},proc=OpenWaveFile,title="Open"
@@ -801,12 +919,13 @@ Window DCSettings() : Panel
 	Button eopen,pos={300,135},size={50,20},proc=OpenWaveFile,title="Open"
 	Button hopen,pos={300,165},size={50,20},proc=OpenWaveFile,title="Open"
 	Button wopen,pos={300,195},size={50,20},proc=OpenWaveFile,title="Open"
-	Button updateFields,pos={137,225},size={135,20},proc=OpenWaveFile,title="Update Field Waves"
-	CheckBox abank,pos={285,228},size={25,15},proc=DCBankProc,title="A"
+	Button topen,pos={300,225},size={50,20},proc=OpenWaveFile,title="Open"	
+	Button updateFields,pos={137,255},size={135,20},proc=OpenWaveFile,title="Update Field Waves"
+	CheckBox abank,pos={285,258},size={25,15},proc=DCBankProc,title="A"
 	CheckBox abank,value= 1,mode=1
-	CheckBox bbank,pos={315,228},size={26,15},proc=DCBankProc,title="B"
+	CheckBox bbank,pos={315,258},size={26,15},proc=DCBankProc,title="B"
 	CheckBox bbank,value= 0,mode=1
-	CheckBox cbank,pos={345,228},size={27,15},proc=DCBankProc,title="C"
+	CheckBox cbank,pos={345,258},size={27,15},proc=DCBankProc,title="C"
 	CheckBox cbank,value= 0,mode=1
 EndMacro
 
@@ -923,7 +1042,7 @@ Window OverrideVariables() : Panel
 	SetVariable EO1_AMPL_BOX,font="Arial"
 	SetVariable EO1_AMPL_BOX,limits={0,1023,1},value= root:ExpParams:EO_INFO[0][2]
 	CheckBox EO1_Override,pos={50,455},size={94,15},bodyWidth=130,proc=EO_Overridewrapper,title="EO 1 Override"
-	CheckBox EO1_Override,font="Arial",value= 0
+	CheckBox EO1_Override,font="Arial",value= 1
 	TitleBox EO2Namebox,pos={50,495},size={150,20},title="EO #2: Cooling"
 	TitleBox EO2Namebox,labelBack=(0,0,0),font="Arial",frame=4
 	TitleBox EO2Namebox,fColor=(65535,65535,65535),anchor= MC,fixedSize=1
@@ -934,7 +1053,7 @@ Window OverrideVariables() : Panel
 	SetVariable EO2_AMPL_BOX,font="Arial"
 	SetVariable EO2_AMPL_BOX,limits={0,1023,1},value= root:ExpParams:EO_INFO[1][2]
 	CheckBox EO2_Override,pos={50,560},size={94,15},bodyWidth=130,proc=EO_Overridewrapper,title="EO 2 Override"
-	CheckBox EO2_Override,font="Arial",value= 0
+	CheckBox EO2_Override,font="Arial",value= 1
 	TitleBox EO3Namebox,pos={50,600},size={150,20},title="EO #3: Repump"
 	TitleBox EO3Namebox,labelBack=(0,0,0),font="Arial",frame=4
 	TitleBox EO3Namebox,fColor=(65535,65535,65535),anchor= MC,fixedSize=1
@@ -945,52 +1064,52 @@ Window OverrideVariables() : Panel
 	SetVariable EO3_AMPL_BOX,font="Arial"
 	SetVariable EO3_AMPL_BOX,limits={0,1023,1},value= root:ExpParams:EO_INFO[2][2]
 	CheckBox EO3_Override,pos={50,665},size={94,15},bodyWidth=130,proc=EO_Overridewrapper,title="EO 3 Override"
-	CheckBox EO3_Override,font="Arial",value= 0
+	CheckBox EO3_Override,font="Arial",value= 1
 	TitleBox TTLtitle,pos={50,705},size={150,20},title="TTL Controls"
 	TitleBox TTLtitle,labelBack=(0,0,0),font="Arial",frame=4
 	TitleBox TTLtitle,fColor=(65535,65535,65535),anchor= MC,fixedSize=1
-	TitleBox TTLtitle1,pos={25,730},size={50,20},title="TTL1"
+	TitleBox TTLtitle1,pos={25,730},size={50,20},title="Detect"
 	TitleBox TTLtitle1,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle1,anchor= MC,fixedSize=1
 	CheckBox TTL1_Switch,pos={75,734},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
-	CheckBox TTL1_Switch,font="Arial",value= 1
+	CheckBox TTL1_Switch,font="Arial",value= 0
 	CheckBox TTL1_Override,pos={135,734},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
 	CheckBox TTL1_Override,font="Arial",value= 0
-	TitleBox TTLtitle2,pos={25,750},size={50,20},title="TTL2"
+	TitleBox TTLtitle2,pos={25,750},size={50,20},title="Fluor"
 	TitleBox TTLtitle2,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle2,anchor= MC,fixedSize=1
 	CheckBox TTL2_Switch,pos={75,754},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL2_Switch,font="Arial",value= 0
 	CheckBox TTL2_Override,pos={135,754},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
 	CheckBox TTL2_Override,font="Arial",value= 0
-	TitleBox TTLtitle3,pos={25,770},size={50,20},title="TTL3"
+	TitleBox TTLtitle3,pos={25,770},size={50,20},title="Repump"
 	TitleBox TTLtitle3,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle3,anchor= MC,fixedSize=1
 	CheckBox TTL3_Switch,pos={75,774},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
-	CheckBox TTL3_Switch,font="Arial",value= 0
+	CheckBox TTL3_Switch,font="Arial",value= 1
 	CheckBox TTL3_Override,pos={135,774},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL3_Override,font="Arial",value= 0
-	TitleBox TTLtitle4,pos={25,790},size={50,20},title="TTL4"
+	CheckBox TTL3_Override,font="Arial",value= 1
+	TitleBox TTLtitle4,pos={25,790},size={50,20},title="Cool"
 	TitleBox TTLtitle4,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle4,anchor= MC,fixedSize=1
 	CheckBox TTL4_Switch,pos={75,794},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL4_Switch,font="Arial",value= 1
 	CheckBox TTL4_Override,pos={135,794},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL4_Override,font="Arial",value= 0
-	TitleBox TTLtitle5,pos={25,810},size={50,20},title="TTL5"
+	CheckBox TTL4_Override,font="Arial",value= 1
+	TitleBox TTLtitle5,pos={25,810},size={50,20},title="Opt"
 	TitleBox TTLtitle5,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle5,anchor= MC,fixedSize=1
 	CheckBox TTL5_Switch,pos={75,814},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL5_Switch,font="Arial",value= 0
 	CheckBox TTL5_Override,pos={135,814},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
 	CheckBox TTL5_Override,font="Arial",value= 0
-	TitleBox TTLtitle6,pos={25,830},size={50,20},title="TTL6"
+	TitleBox TTLtitle6,pos={25,830},size={50,20},title="uWave"
 	TitleBox TTLtitle6,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle6,anchor= MC,fixedSize=1
 	CheckBox TTL6_Switch,pos={75,834},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
-	CheckBox TTL6_Switch,font="Arial",value= 0
+	CheckBox TTL6_Switch,font="Arial",value= 1
 	CheckBox TTL6_Override,pos={135,834},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL6_Override,font="Arial",value= 0
+	CheckBox TTL6_Override,font="Arial",value= 1
 	TitleBox TTLtitle7,pos={25,850},size={50,20},title="TTL7"
 	TitleBox TTLtitle7,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle7,anchor= MC,fixedSize=1
@@ -1004,15 +1123,15 @@ Window OverrideVariables() : Panel
 	CheckBox TTL9_Switch,pos={75,874},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL9_Switch,font="Arial",value= 0
 	CheckBox TTL9_Override,pos={135,874},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL9_Override,font="Arial",value= 0	
-	TitleBox TTLtitle10,pos={25,890},size={50,20},title="TTL10"
+	CheckBox TTL9_Override,font="Arial",value= 0
+	TitleBox TTLtitle10,pos={25,890},size={50,20},title="AWG"
 	TitleBox TTLtitle10,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle10,anchor= MC,fixedSize=1
 	CheckBox TTL10_Switch,pos={75,894},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL10_Switch,font="Arial",value= 0
 	CheckBox TTL10_Override,pos={135,894},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
 	CheckBox TTL10_Override,font="Arial",value= 0
-	TitleBox TTLtitle11,pos={25,910},size={50,20},title="TTL11"
+	TitleBox TTLtitle11,pos={25,910},size={50,20},title="AWG A/B"
 	TitleBox TTLtitle11,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle11,anchor= MC,fixedSize=1
 	CheckBox TTL11_Switch,pos={75,914},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
@@ -1030,6 +1149,8 @@ Window OverrideVariables() : Panel
 	Button DC_ConInit,pos={95,964},size={70,20},proc=DC_ctrl_Init,title="DC Init"
 	Button PulserInit,pos={169,964},size={70,20},proc=Pulse_Init,title="Pulser Init"
 	Button PulseCreator_init,pos={21,986},size={70,20},proc=PulseCreator_Init,title="Creat Init"
+	Button openComButton,pos={95,986},size={70,20},proc=DC_ctrl_Init,title="Open COM"
+	Button closeComButton,pos={169,986},size={70,20},proc=Pulse_Init,title="Close COM"
 EndMacro
 
 //_____________________________________________________________________________
@@ -1051,4 +1172,49 @@ Function ScrollHook(info)
 			endif
 		endfor
 	endif
+End
+
+Function openComButton(ba) : ButtonControl
+	STRUCT WMButtonAction &ba
+	 Switch (ba.eventCode)
+	 	Case 2: //mouse up
+	 		openCOM()
+	 		Break
+		Case -1: // control being killed
+			Break
+	 EndSwitch
+
+	Return 0
+End
+
+Function openCOM()
+	SVAR dds_p = root:ExpParams:DDS_PORT
+	SVAR seq_p=root:ExpParams:SEQ_PORT
+	
+	VDT2/P=$dds_p baud=230400,stopbits=2,killio
+	VDTOpenPort2 $dds_p
+	
+	VDT2/P=$seq_p baud=230400,stopbits=2,killio
+	VDTOpenPort2 $seq_p
+End
+
+Function closeComButton(ba) : ButtonControl
+	STRUCT WMButtonAction &ba
+	 Switch (ba.eventCode)
+	 	Case 2: //mouse up
+	 		closeCOM()
+	 		Break
+		Case -1: // control being killed
+			Break
+	 EndSwitch
+
+	Return 0
+End
+
+Function closeCOM()
+	SVAR dds_p = root:ExpParams:DDS_PORT
+	SVAR seq_p=root:ExpParams:SEQ_PORT
+	
+	VDTClosePort2 $dds_p
+	VDTClosePort2 $seq_p
 End

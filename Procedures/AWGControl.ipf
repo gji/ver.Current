@@ -192,9 +192,7 @@ function ConstructAWGSegment(expt, ExOpIdx)
 		CalculateSBCWaveform(expt, ExOpIdx, awgTTLs)
 		duration = 1000*expt.ExOps[ExOpIdx].SBCTotalTime
 	else
-		duration = 1000*str2num(StringFromList(WhichListItem("Duration", expt.ExOps[ExOpIdx].ControlParameters), expt.ExOps[ExOpIdx].Values))
-		awgTTLs[0][0] = sb_ttl
-		awgTTLs[0][1] = duration*(50/1000)
+		duration = 1000*str2num(StringFromList(0, expt.ExOps[ExOpIdx].Values))
 	endif
 	
 	Variable numPoints = (64)*(ceil(round(duration)/64))	// Add padding so that waveform length is multiple of 64
@@ -212,15 +210,16 @@ function ConstructAWGSegment(expt, ExOpIdx)
 		endfor
 	endif
 	
-	if(expt.ExOps[ExOpIdx].Shuttled == 1)
-		InsertPoints 0,1,awgTTLs
-		awgTTLs[0][0] = TTL_09
-		awgTTLs[0][1] = shuttleDur*50
-	endif
+	// this won't work since we only modify ttls in runexpvalues if the experiment operation is sb cooling
+//	if(expt.ExOps[ExOpIdx].Shuttled == 1)
+//		InsertPoints 0,1,awgTTLs
+//		awgTTLs[0][0] = TTL_09
+//		awgTTLs[0][1] = shuttleDur*50
+//	endif
 	
-	Redimension/N=(Dimsize(awgTTLs,0)+1,2) awgTTLs
-	awgTTLs[Dimsize(awgTTLs,0)][0] = TTL_09
-	awgTTLs[Dimsize(awgTTLs,0)][1] = 10
+//	Redimension/N=(Dimsize(awgTTLs,0)+1,2) awgTTLs
+//	awgTTLs[Dimsize(awgTTLs,0)][0] = TTL_09
+//	awgTTLs[Dimsize(awgTTLs,0)][1] = 10
 	
 end
 
@@ -247,6 +246,14 @@ function AWGWaveformPoint(t, ExOpIdx, ExOpType, expt)
 	
 	strswitch(ExOpType)
 		case "AWGRotation":	// Simple rotation
+			amplitudeIdx = WhichListItem("Amplitude", expt.ExOps[ExOpIdx].ControlParameters)
+			amplitude = str2num(StringFromList(amplitudeIdx, expt.ExOps[ExOpIdx].Values))
+			frequencyIdx = WhichListItem("Frequency", expt.ExOps[ExOpIdx].ControlParameters)
+			frequency = str2num(StringFromList(frequencyIdx, expt.ExOps[ExOpIdx].Values))	
+			phaseIdx = WhichListItem("Phase", expt.ExOps[ExOpIdx].ControlParameters)
+			phase = str2num(StringFromList(phaseIdx, expt.ExOps[ExOpIdx].Values))	
+			//printf "%g, %g, %g\r", amplitude, frequency, phase	
+		case "Microwave":	// Simple rotation
 			amplitudeIdx = WhichListItem("Amplitude", expt.ExOps[ExOpIdx].ControlParameters)
 			amplitude = str2num(StringFromList(amplitudeIdx, expt.ExOps[ExOpIdx].Values))
 			frequencyIdx = WhichListItem("Frequency", expt.ExOps[ExOpIdx].ControlParameters)

@@ -6,6 +6,7 @@ Macro InitializeCamera()
 	Menu "GraphMarquee", dynamic
 		SetROIText(1), MarqueeSetROI()
 		SetROIText(2),MarqueeExpandROI()
+		SetROIText(3),MarqueeSetAutoLoadRegion()
 	End
 EndMacro
 
@@ -74,7 +75,7 @@ Function Initialize()
 	Variable/G LOOPS = 1
 	Variable/G DELAY_LARGE = 0
 	Variable/G DELAY_SMALL = 0
-	Variable/G EXPOSURE_LARGE = 100
+	Variable/G EXPOSURE_LARGE = 250
 	Variable/G EXPOSURE_SMALL = 0
 	Variable/G CAMERA_INIT = 0
 	
@@ -84,25 +85,27 @@ Function Initialize()
 	
 	Make/O/N=1 FPS
 	Make/O/N=2 RANGE = {1,0,4096} // 0 for hold, 1 for auto, max camera range
+	Make/O/N=(2,2) autoLoadPos={{106,498},{135,519}}
 End
 
 // this thread must be threadsafe!! it runs concurrently with the GUI.
 
-ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, RANGE)
-	Wave temp, temp_Hist, FPS, Lineplot, RANGE
+ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, RANGE, autoLoadPos,IonHere,ROI)
+	Wave temp, temp_Hist, FPS, Lineplot, RANGE, autoLoadPos,IonHere,ROI
 	
-	Make/N=51/O FFT_local
 	Make/N=4096/O temp_Hist_thread
-	
+	Make/N=10/O loadHist
 	Variable bglvl = 0
 	Variable bgsub = 0
+	
+	IonHere=0
 	
 	Variable imgCap = 0
 	Make/O old1, old2, old3, old4, old5
 	DFREF threadRoot = GetDataFolderDFR()
 	
 	Duplicate/O temp, buf
-
+	
 	do
 		Variable timeEl = ticks
 		PCOCamExecCOC buf
@@ -162,7 +165,7 @@ ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, RANGE)
 		endif
 		
 		// calculate local histogram, copy to displayed histogram.
-		Histogram/B={0,1,4096} temp,temp_Hist_thread
+		Histogram/B={0,1,4096} temp, temp_Hist_thread
 		temp_Hist = temp_Hist_thread[p]
 		
 		variable totalPhotons = 0
@@ -175,9 +178,73 @@ ThreadSafe Function GetCamData(temp, temp_Hist, FPS,Lineplot, RANGE)
 		totalPhotons/=(1024*1280)
 		totalPhotonsStDev/=(1024*1280)
 		Lineplot = Lineplot[p+1]
-		Lineplot[99] = totalPhotons					
+		Lineplot[99] = totalPhotons
+		
+		//Lineplot_avg = Lineplot_avg[p+1]
+		//Lineplot_avg[99] = sum(Lineplot)			
  
 		FPS[0] = round((FPS[0] + 10 * 60/(ticks-timeEl))/11) // weighted average
+		
+		// ion auto loader 
+		Variable x_min= autoLoadPos[0][0]-((ROI[0][0]-1)*32)
+		Variable x_max= autoLoadPos[1][0]-((ROI[0][0]-1)*32)
+		Variable y_min= autoLoadPos[0][1]-((ROI[0][1]-1)*32)
+		Variable y_max= autoLoadPos[1][1]-((ROI[0][1]-1)*32)
+		//print "xmin: "+num2str(x_min)+", xmax: "+num2str(x_max)+", ymin: "+num2str(y_min)+", ymax: "+num2str(y_max)
+		Variable j
+		Variable pixelTotal=0 // sum of all pixels in load region dark
+		Variable pixelAvg=0 // average of pixels in load region dark
+		Variable pixelVar=0 // varience of pivels in load region dark
+		Variable pixelStdev=0 // standard deviation of pixels in load region dark
+		Variable pixelCounts=((x_max-x_min)+1)*((y_max-y_min)+1)
+		Variable loadHistTotal=0 // sum of Load Hist
+		Variable loadHistAvg=0 // average of Load Hist
+		Variable loadHistVar=0 // varience of Load Hist
+		Variable loadHistStdev=0 // standard Load Hist
+		Variable loadHistCounts=0
+		for (i=x_min; i<=x_max; i+=1)
+			for(j=y_min; j<=y_max; j+=1)
+				pixelTotal+= temp[i][j]
+			endfor
+		endfor
+		pixelAvg= pixelTotal/pixelCounts
+		//print "Pixel Total: "+num2str(pixelTotal)
+		//print "Pixel Average: "+num2str(pixelAvg)
+		for (i=x_min; i<=x_max; i+=1)
+			for(j=y_min; j<=y_max; j+=1)
+				pixelVar+= (temp[i][j]-pixelAvg)^2
+			endfor
+		endfor
+		pixelVar= pixelVar/(pixelCounts-1)
+		pixelStdev= sqrt(pixelVar)
+		//print "Pixel Varience: "+num2str(pixelVar)
+		//print "Pixel Standard Deviation: "+num2str(pixelStdev)
+		for(i=0; i<=9; i+=1)
+			if (loadHist[i] >0)
+				loadHistTotal+=loadHist[i]
+				loadHistCounts+=1
+			endif
+		endfor
+		loadHistAvg=loadHistTotal/loadHistCounts
+		//print "Load Hist Total: "+num2str(loadHistTotal)
+//		print "Load Hist Average: "+num2str(loadHistAvg)
+//		for(i=0; i<=9; i+=1)
+//			if (loadHist[i] >0)
+//				loadHistVar+=(loadHist[i]-loadHistAvg)^2
+//			endif
+//		endfor
+//		loadHistVar=loadHistVar/loadHistCounts
+//		loadHistStdev=sqrt(loadHistVar)
+//		print "Load Hist Varience:  "+num2str(loadHistVar)
+//		print "Load Hist Standard Deviation: "+num2str(loadHistStdev)
+		for(i=0; i<=8; i+=1)
+			loadHist[i]=loadHist[i+1] 
+		endfor
+		loadHist[9]=pixelStdev
+		if(pixelStdev>(1.1*loadHistAvg))
+			IonHere=1
+			//print "found ion"
+		endif
 	while (1)
 End
 
@@ -197,6 +264,7 @@ Function StartExposureThread()
 	WAVE BINS
 	WAVE FPS
 	WAVE RANGE
+	WAVE autoLoadPos
 	
 	COC_RUNNING=1
 	
@@ -212,7 +280,7 @@ Function StartExposureThread()
 	NewImage/N=camView/K=1 temp
 	SetAxis/A/R left
 	ModifyImage temp log=1
-	ModifyImage temp ctab= {*,*,VioletOrangeYellow,0}
+	ModifyImage temp ctab= {*,*,Geo,0}
 	
 	Make/N=4096/O temp_Hist
 	DoWindow/K camHist
@@ -229,8 +297,15 @@ Function StartExposureThread()
 	Display/K=1/W=(1000,300,1400,450)/N=totalPhotons Lineplot //[lineplotLowerPointer,lineplotPointer]
 	ModifyGraph mode=6
 	
+	Make/O/N=1 IonHere
+	
+	//Make/O/N=100 Lineplot_avg
+	//DoWindow/K totalPhotons_avg
+	//Display/K=1/W=(1000,300,1400,450)/N=totalPhotons_avg //Lineplot [lineplotLowerPointer,lineplotPointer]
+	//ModifyGraph mode=6
+	
 	Variable/G mt = ThreadGroupCreate(1)
-	ThreadStart mt, 0, GetCamData(temp, temp_Hist, FPS,Lineplot,RANGE) // Start thread
+	ThreadStart mt, 0, GetCamData(temp, temp_Hist, FPS,Lineplot,RANGE, autoLoadPos,IonHere,ROI) // Start thread
 End
 
 
@@ -389,11 +464,11 @@ Wave temp,RANGE
 
 if((RANGE[0] == 1 && switching ==1 )|| (RANGE[0] ==0 && switching ==0))
 				Button rangeCont title="Auto Range"
-				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],VioletOrangeYellow,0}
+				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],Geo,0}
 				RANGE[0] = 0
 			else
 				Button rangeCont title="Hold Range"
-				ModifyImage/W=camView temp ctab= {*,*,VioletOrangeYellow,0}
+				ModifyImage/W=camView temp ctab= {*,*,Geo,0}
 				RANGE[0] = 1
 			endif
 End
@@ -485,7 +560,7 @@ Function EventNewRange(sva) : SetVariableControl
 		case 3: // Live update
 			if(RANGE[0] == 0)
 				Button rangeCont title="Auto Range"
-				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],VioletOrangeYellow,0}
+				ModifyImage/W=camView temp ctab= {RANGE[1],RANGE[2],Geo,0}
 			endif
 			break
 		case -1: // control being killed
@@ -503,8 +578,8 @@ Function MarqueeSetROI()
 
 	Variable left, right, top, bottom
 	left = floor(V_left /32) +ROI[0]
-	right = ceil( V_right/32) + ROI[0]
-	top=ceil( V_top /32) +ROI[0][1]
+	right = floor( V_right/32) + ROI[0]
+	top=floor( V_top /32) +ROI[0][1]
 	bottom=floor( V_bottom/32) + ROI[0][1]
 	//check boundries
 	If (left>40) 
@@ -532,8 +607,6 @@ Function MarqueeSetROI()
 	ROI[0][0] = left
 	ROI[1][0] = right
 	ROI[0][1] = top
-	//print bottom
-	print ROI[0][1] - ROI[1][1]
 	ROI[1][1] = bottom
 	CamUpdate()
 End
@@ -552,18 +625,50 @@ Function MarqueeExpandROI()
 	CamUpdate()
 END
 
+Function MarqueeSetAutoLoadRegion()
+	SetDataFolder root:Camera
+	Wave ROI
+	Wave autoLoadPos
+	String format
+	GetMarquee/K/W=camView left, top
+	Variable left, right, top, bottom
+	print "current auto load position is: "
+	print "[0][0]: "+ num2str(autoLoadPos[0][0])+ ", [1][0]: "+ num2str(autoLoadPos[1][0])+", [0][1]: "+ num2str(autoLoadPos[0][1])+", [1][1]: "+ num2str(autoLoadPos[1][1])
+	left =floor(V_left)
+	right =floor(V_right)
+	top =floor(V_top)
+	bottom =floor(V_bottom)
+	format = "flag: %g; left: %g; top: %g; right: %g; bottom: %g\r"
+	printf format, V_flag, left,top,right,bottom
+	print "left: "+num2str(left)+", right: "+num2str(right)+", top: "+num2str(top)+", bottom: "+num2str(bottom)
+//	Variable x_minCheck= autoLoadPos[0][0]-((ROI[0][0]-1)*32)
+//	Variable x_maxCheck= autoLoadPos[1][0]-((ROI[0][0]-1)*32)
+//	Variable y_minCheck= autoLoadPos[0][1]-((ROI[0][1]-1)*32)
+//	Variable y_maxCheck= autoLoadPos[1][1]-((ROI[0][1]-1)*32)
+	autoLoadPos[0][0] = left+((ROI[0][0]-1)*32)
+	autoLoadPos[1][0] = right+((ROI[0][0]-1)*32)
+	autoLoadPos[0][1] = top+((ROI[0][1]-1)*32)
+	autoLoadPos[1][1] = bottom+((ROI[0][1]-1)*32)
+	print "new auto load position is: "
+	print "[0][0]: "+ num2str(autoLoadPos[0][0])+ ", [1][0]: "+ num2str(autoLoadPos[1][0])+", [0][1]: "+ num2str(autoLoadPos[0][1])+", [1][1]: "+ num2str(autoLoadPos[1][1])
+	CamUpdate()
+End
+
 Function/S SetROIText(itemNumber)
 	Variable itemNumber
 	GetMarquee/Z
 	if (V_flag ==1)
 		strswitch(S_marqueeWin)
-			case"camView":
+			case "camView":
 				switch(itemNumber)
 					case 1:
 						return "Set Region of Interest"
 						break
 					case 2:
 						return "Zoom out Region of Interest"
+						break
+					case 3:
+						return "Adjust Auto Load Region"	
 						break
 					default:
 						return ""

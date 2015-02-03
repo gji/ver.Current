@@ -59,7 +59,7 @@ Structure ExOpDefinitions
 	STRUCT ExOp SBCooling
 	STRUCT ExOp Delay
 	STRUCT ExOp Microwave
-	STRUCT ExOp AWGRotation	
+	STRUCT ExOp AWGRotation			
 EndStructure
 
 //_____________________________________________________________________________
@@ -70,6 +70,7 @@ EndStructure
 function GetExOpDefinitions(ExOpDefs)
 	STRUCT ExOpDefinitions &ExOpDefs
 	NVAR CUR_POS	=	root:ExpParams:CUR_POS
+	WAVE COMP_INFO =	root:expParams:comp_info
 		
 	ExOpDefs.Pump.name = "Pump"
 	ExOpDefs.Pump.description = "Optical Pumping"
@@ -77,9 +78,9 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.Pump.ControlParameters = "Duration;Amplitude;Frequency;"
 	ExOpDefs.Pump.Values = "5;100;200;"
 	ExOpDefs.Pump.ScannableParameters = "1;0;1;"
-	ExOpDefs.Pump.MinVal = "0.1;0;100;"
+	ExOpDefs.Pump.MinVal = ".1;0;100;"
 	ExOpDefs.Pump.MaxVal = "1E8;100;400;"
-	ExOpDefs.Pump.MinInc = "0.1;1;0.01;"
+	ExOpDefs.Pump.MinInc = "0.1;1;0.0001;"
 	ExOpDefs.Pump.ScanParameter = 0
 	ExOpDefs.Pump.Position = CUR_POS	
 	ExOpDefs.SBCooling.SBCPumpingTime = 0
@@ -95,9 +96,9 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.Cool.ControlParameters = "Duration;Amplitude;Frequency;"
 	ExOpDefs.Cool.Values = "100;100;200;"
 	ExOpDefs.Cool.ScannableParameters = "1;0;1;"
-	ExOpDefs.Cool.MinVal = "0.1;0;100;"
+	ExOpDefs.Cool.MinVal = ".1;0;100;"
 	ExOpDefs.Cool.MaxVal = "1E8;100;400;"
-	ExOpDefs.Cool.MinInc = "0.1;1;0.01;"
+	ExOpDefs.Cool.MinInc = "0.1;1;0.0001;"
 	ExOpDefs.Cool.ScanParameter = 0
 	ExOpDefs.Cool.Position = CUR_POS	
 	ExOpDefs.SBCooling.SBCPumpingTime = 0
@@ -109,20 +110,20 @@ function GetExOpDefinitions(ExOpDefs)
 	
 	ExOpDefs.Microwave.name = "Microwave"
 	ExOpDefs.Microwave.description = "Microwave qubit rotation"
-	ExOpDefs.Microwave.device = "AWG"
-	ExOpDefs.Microwave.ControlParameters = "Duration;Amplitude;Frequency;Phase;"
-	ExOpDefs.Microwave.Values = "10;1023;250;0;"
-	ExOpDefs.Microwave.ScannableParameters = "1;1;1;1;"
-	ExOpDefs.Microwave.MinVal = "10;0;100;0;"
-	ExOpDefs.Microwave.MaxVal = "1E8;2047;400;359;"
-	ExOpDefs.Microwave.MinInc = "0.5;1;0.01;1;"
-	ExOpDefs.Microwave.ScanParameter = 0	
+	ExOpDefs.Microwave.device = "DDS3"
+	ExOpDefs.Microwave.ControlParameters = "Duration;Amplitude;Frequency;"
+	ExOpDefs.Microwave.Values = "100;100;200;"
+	ExOpDefs.Microwave.ScannableParameters = "1;0;1;"
+	ExOpDefs.Microwave.MinVal = ".1;0;100;"
+	ExOpDefs.Microwave.MaxVal = "1E8;100;400;"
+	ExOpDefs.Microwave.MinInc = "0.1;1;0.0001;"
+	ExOpDefs.Microwave.ScanParameter = 0
+	ExOpDefs.Microwave.Position = CUR_POS	
 	ExOpDefs.SBCooling.SBCPumpingTime = 0
 	ExOpDefs.SBCooling.SBCTotalTime = 0
 	ExOpDefs.SBCooling.SBCFrequencies = ""
 	ExOpDefs.SBCooling.SBCAmplitudes = ""
 	ExOpDefs.SBCooling.SBCTimes = ""
-	ExOpDefs.SBCooling.SBCCycles = ""
 	
 	ExOpDefs.AWGRotation.name = "AWGRotation"
 	ExOpDefs.AWGRotation.description = "AWG rotation"
@@ -130,9 +131,9 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.AWGRotation.ControlParameters = "Duration;Amplitude;Frequency;Phase;"
 	ExOpDefs.AWGRotation.Values = "1;2047;250;0;"
 	ExOpDefs.AWGRotation.ScannableParameters = "1;1;1;1;"
-	ExOpDefs.AWGRotation.MinVal = "0.1;0;10;0;"
+	ExOpDefs.AWGRotation.MinVal = ".1;0;100;0;"
 	ExOpDefs.AWGRotation.MaxVal = "100000;4094;350;359;"
-	ExOpDefs.AWGRotation.MinInc = "0.5;1;0.01;1;"
+	ExOpDefs.AWGRotation.MinInc = "0.1;1;0.0001;1;"
 	ExOpDefs.AWGRotation.ScanParameter = 0	
 	ExOpDefs.SBCooling.SBCPumpingTime = 0
 	ExOpDefs.SBCooling.SBCTotalTime = 0
@@ -147,9 +148,9 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.Detect.ControlParameters = "Duration;Amplitude;Frequency;"
 	ExOpDefs.Detect.Values = "10;100;300;"
 	ExOpDefs.Detect.ScannableParameters = "1;0;1;"
-	ExOpDefs.Detect.MinVal = "0.1;0;100;"
+	ExOpDefs.Detect.MinVal = ".1;0;100;"
 	ExOpDefs.Detect.MaxVal = "1E8;100;400;"
-	ExOpDefs.Detect.MinInc = "0.1;1;0.01;"
+	ExOpDefs.Detect.MinInc = "0.1;1;0.0001;"
 	ExOpDefs.Detect.ScanParameter = 0
 	ExOpDefs.Detect.Position = CUR_POS	
 	ExOpDefs.SBCooling.SBCPumpingTime = 0
@@ -180,12 +181,12 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.FlrDetect.name = "Flourescence Detect"
 	ExOpDefs.FlrDetect.description = "Flourescence Detection"
 	ExOpDefs.FlrDetect.device = "DDS1"
-	ExOpDefs.FlrDetect.ControlParameters = "Duration;Amplitude;Frequency;"
+	ExOpDefs.FlrDetect.ControlParameters = "Duration;Amplitude;Frequency;DC;"
 	ExOpDefs.FlrDetect.Values = "100;100;200;"
-	ExOpDefs.FlrDetect.ScannableParameters = "1;0;1;"
-	ExOpDefs.FlrDetect.MinVal = "0.1;0;100;"
+	ExOpDefs.FlrDetect.ScannableParameters = "1;0;1;1;"
+	ExOpDefs.FlrDetect.MinVal = ".1;0;100;"
 	ExOpDefs.FlrDetect.MaxVal = "1E8;100;400;"
-	ExOpDefs.FlrDetect.MinInc = "0.1;1;0.01;"
+	ExOpDefs.FlrDetect.MinInc = "0.1;1;"
 	ExOpDefs.FlrDetect.ScanParameter = 0
 	ExOpDefs.FlrDetect.Position = CUR_POS	
 	ExOpDefs.SBCooling.SBCPumpingTime = 0
@@ -195,15 +196,33 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.SBCooling.SBCTimes = ""
 	ExOpDefs.SBCooling.SBCCycles = ""
 	
+//	ExOpDefs.DcField.name = "DC Potential"
+//	ExOpDefs.DcField.description = "DC Potential"
+//	ExOpDefs.DcField.device = ""
+//	ExOpDefs.DcField.ControlParameters = "Ex Field;Ey Field;Ez Field;Harm Field;"
+//	ExOpDefs.DcField.Values = num2str(COMP_Info[0][0])+";"+num2str(COMP_Info[1][0])+";"+num2str(COMP_Info[3][0])+";"+num2str(COMP_Info[5][0])+";"
+//	ExOpDefs.DcField.ScannableParameters = "1;1;1;1;"
+//	ExOpDefs.DcField.MinVal = ".-2;-2;-2;0.01;"
+//	ExOpDefs.DcField.MaxVal = "2;2;2;2;"
+//	ExOpDefs.DcField.MinInc = "0.0001;0.0001;0.0001;0.0001;0.0001;"
+//	ExOpDefs.DcField.ScanParameter = 0
+//	ExOpDefs.DcField.Position = CUR_POS	
+//	ExOpDefs.SBCooling.SBCPumpingTime = 0
+//	ExOpDefs.SBCooling.SBCTotalTime = 0
+//	ExOpDefs.SBCooling.SBCFrequencies = ""
+//	ExOpDefs.SBCooling.SBCAmplitudes = ""
+//	ExOpDefs.SBCooling.SBCTimes = ""
+//	ExOpDefs.SBCooling.SBCCycles = ""
+	
 	ExOpDefs.MSGate.name = "MSGate"
 	ExOpDefs.MSGate.description = "Constant amplitude MS gate"
 	ExOpDefs.MSGate.device = "AWG"
 	ExOpDefs.MSGate.ControlParameters = "Duration;Amplitude;GateDetuning;Phase;"
 	ExOpDefs.MSGate.Values = "10;2047;1;0;"
 	ExOpDefs.MSGate.ScannableParameters = "1;1;1;0;"
-	ExOpDefs.MSGate.MinVal = "10;0;0.001;0;"
-	ExOpDefs.MSGate.MaxVal = "1E8;2047;10;359;"
-	ExOpDefs.MSGate.MinInc = "0.1;1;0.001;1;"
+	ExOpDefs.MSGate.MinVal = "0.1;0;0.0001;0;"
+	ExOpDefs.MSGate.MaxVal = "1E8;4094;10;359;"
+	ExOpDefs.MSGate.MinInc = "0.1;1;0.0001;1;"
 	ExOpDefs.MSGate.ScanParameter = 0	
 	ExOpDefs.SBCooling.SBCPumpingTime = 0
 	ExOpDefs.SBCooling.SBCTotalTime = 0

@@ -21,9 +21,9 @@ function DataHandler(rawData,[init])
 	variable k
 	for(i=1;i!=9;i+=1)
 
-		WAVE data							= $("data_0"+num2str(i))
+		WAVE data						= $("data_0"+num2str(i))
 		WAVE dataHist					= $("dataHist_0"+num2str(i))
-		WAVE dataAvg						= $("dataAvg_0"+num2str(i))
+		WAVE dataAvg					= $("dataAvg_0"+num2str(i))
 		WAVE dataStd 					= $("dataStd_0"+num2str(i))
 		WAVE dataProb					= $("dataProb_0"+num2str(i))
 		WAVE dataBiErr					= $("dataBiErr_0"+num2str(i))
@@ -31,8 +31,10 @@ function DataHandler(rawData,[init])
 		WAVE dataBasisFitError			= $("dataBasisFitError_0"+num2str(i))		
 		WAVE dataParity					= $("dataParity_0"+num2str(i))
 		WAVE dataParityError			= $("dataParityError_0"+num2str(i))
+		WAVE dataPop					= $("dataPop_0"+num2str(i))
+		WAVE dataPopError				= $("dataPopError_0"+num2str(i))		
 		
-		k= 10*(1+Sin(Pi*2*datascanvar[Dimsize(Datascanvar,0)-1]/datascanvar[0]))
+//		k= 10*(1+Sin(Pi*2*datascanvar[Dimsize(Datascanvar,0)-1]/datascanvar[0]))
 		
 		variable counts		= 0
 		if(init)
@@ -46,32 +48,25 @@ function DataHandler(rawData,[init])
 			Redimension/N=0 dataBasisFitError			
 			Redimension/N=0 dataParity
 			Redimension/N=0 dataParityError
+			Redimension/N=0 dataPop
+			Redimension/N=0 dataPopError			
 			
 			
 		Elseif(DimSize(rawData,0)>=i)
 			if(PMT_wave[i])
-				//print i
-				PoissonScan(k)
-				Wave PoissonWave	=	root:Test:PoissonWave
+
 				Redimension/N=(DimSize(rawData,1)) data 
-				//print rawData
-//				data =rawData[i-1][p]
-				data =PoissonWave
-				//data=rawData
+				data =rawData[i-1][p]
 				wavestats/Q data
 				
 				counts=V_npnts                    // number of experiments that happened or the number of columsns in rawData[i]
 				
-//				Histogram/B={0,1,AlignMaxHist} data,  dataHist           // histogram computed
-				
-				Histogram/B={0,1,MaxHist} PoissonWave,  dataHist 
-				dataHist	=dataHist/DimSize(PoissonWave,0)	
-				//BasisFit(dataBasisFit,x,NumIonChan[i-1])
+				Histogram/B={0,1,MaxHist} data,  dataHist           // histogram computed
 				Redimension/N=(Dimsize(dataAvg,0)+1) dataAvg    	
 				Redimension/N=(Dimsize(dataStd,0)+1) dataStd	
-				
-				dataAvg[(Dimsize(dataAvg,0)-1)] 	= V_avg		// average computed
-				dataStd[(Dimsize(dataStd,0)-1)] 	= V_sdev	// standard deviation calculated
+				dataHist=dataHist/counts
+				dataAvg[(Dimsize(dataAvg,0)-1)] 	= V_avg			// average computed
+				dataStd[(Dimsize(dataStd,0)-1)] 	= V_sdev/counts	// standard error calculated
 				
 				if(NumIon[i-1]==1)
 					Redimension/N=2 dataBasisFit
@@ -81,6 +76,10 @@ function DataHandler(rawData,[init])
 					dataBasisFit={0.5,0.5}
 					FuncFit/N=1/W=2/Q/NTHR=0 HistOneIon, dataBasisFit,  dataHist /D /C=T_Constraints/E=dataBasisFitError
 					dataBasisFit=dataBasisFit/Sum(dataBasisFit)
+					Redimension/N=(Dimsize(dataPop,0)+1) dataPop
+					Redimension/N=(Dimsize(dataPopError,0)+1) dataPopError
+					dataPop[(Dimsize(dataPop,0)-1)] 	=dataBasisFit[1]
+					dataPopError[(Dimsize(dataPopError,0)-1)] = dataBasisFitError[1]					
 				elseif(NumIon[i-1]==2)
 					Redimension/N=3 dataBasisFit
 					Redimension/N=3 dataBasisFitError
@@ -92,39 +91,31 @@ function DataHandler(rawData,[init])
 					Redimension/N=(Dimsize(dataParity,0)+1) dataParity
 					Redimension/N=(Dimsize(dataParityError,0)+1) dataParityError
 					dataParity[(Dimsize(dataParity,0)-1)] 	=dataBasisFit[2]+ dataBasisFit[0]-dataBasisFit[1]
-					dataParityError[(Dimsize(dataParityError,0)-1)] = Sum(dataBasisFitError)
+					dataParityError[(Dimsize(dataParityError,0)-1)] = Sum(dataBasisFitError)	
 				endif
 			else
-				//print i
 				Redimension/N=(DimSize(rawData,1)) data 
-				//print rawData
 				data =rawData[i-1][p]
 				data[i-1]=0								// sets the raw date to zeros
 				wavestats/Q data
 				
 				counts=V_npnts
 				
-//				Histogram/B={0,1,AlignMaxHist} data ,dataHist
+				Histogram/B={0,1,MaxHist} data ,dataHist
 			
-				Poisson()
-				Wave PoissonWave	=	root:Test:PoissonWave
-				Histogram/B={0,1,MaxHist} PoissonWave,  dataHist 
-				dataHist	=dataHist/DimSize(PoissonWave,0)		
 				Redimension/N=(Dimsize(dataAvg,0)+1) dataAvg
 				Redimension/N=(Dimsize(dataStd,0)+1) dataStd
-				
+				dataHist=dataHist/counts				
 				dataAvg[(Dimsize(dataAvg,0)-1)] = V_avg
-				dataStd[(Dimsize(dataStd,0)-1)] = V_sdev
+				dataStd[(Dimsize(dataStd,0)-1)] = V_sdev/counts
 			endif
 				
 				wavestats/Q/R=[DiscPoint] dataHist
-//				dataHist	=dataHist/counts						// normalizing the histogram
 				Redimension/N=(Dimsize(dataProb,0)+1) dataProb
 				Redimension/N=(Dimsize(dataBiErr,0)+1) dataBiErr
 				
 				dataProb[(Dimsize(dataProb,0)-1)] = V_sum/counts
 				dataBiErr[(Dimsize(dataBiErr,0)-1)] = sqrt(((V_sum/counts)*(1-(V_sum/counts)))/counts)
-
 		else
 			Break
 		endif		
@@ -241,10 +232,12 @@ function DataDisplay()
 	WAVE/T dataHistPMTchannels				=	root:sequencer:data:dataHistPMTchannels
 	WAVE/T dataBiErrPMTchannels				=	root:sequencer:data:dataBiErrPMTchannels
 	WAVE/T dataProbPMTchannels				=	root:sequencer:data:dataProbPMTchannels
-	WAVE/T dataBasisFitchannels				=	root:sequencer:data:dataBasisFitchannels
+	WAVE/T dataBasisFitchannels					=	root:sequencer:data:dataBasisFitchannels
 	WAVE/T dataBasisFitErrorchannels			=	root:sequencer:data:dataBasisFitErrorchannels
 	WAVE/T dataParitychannels					=	root:sequencer:data:dataParitychannels
-	WAVE/T dataParityErrorchannels			=	root:sequencer:data:dataParityErrorchannels
+	WAVE/T dataParityErrorchannels				=	root:sequencer:data:dataParityErrorchannels
+	WAVE/T dataPopchannels						=	root:sequencer:data:dataPopchannels
+	WAVE/T dataPopErrorchannels				=	root:sequencer:data:dataPopErrorchannels	
 	
 	Redimension/N=0 dataAvgPMTchannels
 	Redimension/N=0 dataStdPMTchannels
@@ -255,6 +248,8 @@ function DataDisplay()
 	Redimension/N=0 dataBasisFitErrorchannels
 	Redimension/N=0 dataParitychannels
 	Redimension/N=0 dataParityErrorchannels
+	Redimension/N=0 dataPopchannels
+	Redimension/N=0 dataPopErrorchannels	
 	
 	SetDataFolder root:Sequencer:data	
 	for(i=1;i!=9;i+=1)
@@ -265,22 +260,24 @@ function DataDisplay()
 		WAVE dataProb				= $("dataProb_0"+num2str(i))
 		WAVE dataBiErr				= $("dataBiErr_0"+num2str(i))
 		WAVE dataBasisFit			= $("dataBasisFit_0"+num2str(i))
-		WAVE dataBasisFitError	= $("dataBasisFitError_0"+num2str(i))
-		WAVE dataParity			= $("dataParity_0"+num2str(i))
+		WAVE dataBasisFitError		= $("dataBasisFitError_0"+num2str(i))
+		WAVE dataParity				= $("dataParity_0"+num2str(i))
 		WAVE dataParityError		= $("dataParityError_0"+num2str(i))
+		WAVE dataPop				= $("dataPop_0"+num2str(i))
+		WAVE dataPopError			= $("dataPopError_0"+num2str(i))
 		
 		if(PMT_wave[i])
 			Redimension/N=(Dimsize(dataAvgPMTchannels,0)+1) dataAvgPMTchannels
-			dataAvgPMTchannels[Dimsize(dataAvgPMTchannels,0)-1]					=	"dataAvg_0"+num2str(i)
+			dataAvgPMTchannels[Dimsize(dataAvgPMTchannels,0)-1]						=	"dataAvg_0"+num2str(i)
 			
 			Redimension/N=(Dimsize(dataStdPMTchannels,0)+1) dataStdPMTchannels
-			dataStdPMTchannels[Dimsize(dataStdPMTchannels,0)-1]					=	"dataStd_0"+num2str(i)
+			dataStdPMTchannels[Dimsize(dataStdPMTchannels,0)-1]						=	"dataStd_0"+num2str(i)
 			
 			Redimension/N=(Dimsize(dataHistPMTchannels,0)+1) dataHistPMTchannels
 			dataHistPMTchannels[Dimsize(dataHistPMTchannels,0)-1]					=	"dataHist_0"+num2str(i)
 			
 			Redimension/N=(Dimsize(dataBiErrPMTchannels,0)+1) dataBiErrPMTchannels
-			dataBiErrPMTchannels[Dimsize(dataBiErrPMTchannels,0)-1]				=	"dataBiErr_0"+num2str(i)
+			dataBiErrPMTchannels[Dimsize(dataBiErrPMTchannels,0)-1]					=	"dataBiErr_0"+num2str(i)
 			
 			Redimension/N=(Dimsize(dataProbPMTchannels,0)+1) dataProbPMTchannels
 			dataProbPMTchannels[Dimsize(dataProbPMTchannels,0)-1]					=	"dataProb_0"+num2str(i)
@@ -292,6 +289,12 @@ function DataDisplay()
 			
 			Redimension/N=(Dimsize(dataBasisFitErrorchannels,0)+1) dataBasisFitErrorchannels
 			dataBasisFitErrorchannels[Dimsize(dataBasisFitErrorchannels,0)-1]	=	"dataBasisFitError_0"+num2str(i)
+			
+			Redimension/N=(Dimsize(dataPopchannels,0)+1) dataPopchannels
+			dataPopchannels[Dimsize(dataPopchannels,0)-1]					=	"datapop_0"+num2str(i)
+			
+			Redimension/N=(Dimsize(dataPopErrorchannels,0)+1) dataPopErrorchannels
+			dataPopErrorchannels[Dimsize(dataPopErrorchannels,0)-1]		=	"dataPopError_0"+num2str(i)
 		endif
 		if(NumIon[i-1]==2)
 			Redimension/N=(Dimsize(dataParitychannels,0)+1) dataParitychannels
@@ -419,16 +422,18 @@ Window AlignPref() : Panel
 	CheckBox PMT7box,pos={24,134},size={49,15},proc=PMTproc,title="Chan 7",value= 0
 	CheckBox PMT8box,pos={87,135},size={49,15},proc=PMTproc,title="Chan 8",value= 0
 	CheckBox PMT5box,pos={24,105},size={49,15},proc=PMTproc,title="Chan 5",value= 0
-	CheckBox ProbDisp,pos={160,44},size={88,15},proc=AlignDispProc,title="Display Prob"
+	CheckBox ProbDisp,pos={160,84},size={88,15},proc=AlignDispProc,title="Display Prob"
 	CheckBox ProbDisp,variable= AlignDisplayFlagProb,mode=1,value =0
 	CheckBox AvgDisp,pos={160,64},size={81,15},proc=alignDispProc,title="Display Avg"
 	CheckBox AvgDisp,variable= AlignDisplayFlagAvg,mode=1,value=1
+	CheckBox TDCDisp,pos={160,44},size={81,15},proc=alignDispProc,title="Display TDC"
+	CheckBox TDCDisp,variable= AlignDisplayFlagTDC,mode=1,value=0
 	Button AlignRun,pos={413,84},size={100,20},proc=AlignmentProc,title="Run"
-	SetVariable AlignPoints,pos={135,84},size={151,18},bodyWidth=54,title="Window Pts"
+	SetVariable AlignPoints,pos={135,104},size={151,18},bodyWidth=54,title="Window Pts"
 	SetVariable AlignPoints,limits={1,1000,1},value= root:Sequencer:AlignmentSweeper:ALIGNSWEEP_POINTS
-	SetVariable MaxHistPoints,pos={140,104},size={147,18},bodyWidth=54,title="Hist Range"
+	SetVariable MaxHistPoints,pos={140,124},size={147,18},bodyWidth=54,title="Hist Range"
 	SetVariable MaxHistPoints,limits={1,1000,1},value= root:Sequencer:AlignmentSweeper:AlignMaxHist
-	SetVariable DiscPointBox,pos={125,124},size={163,18},bodyWidth=54,title="Discriminator"
+	SetVariable DiscPointBox,pos={125,144},size={163,18},bodyWidth=54,title="Discriminator"
 	SetVariable DiscPointBox,limits={0,1000,1},value= root:Sequencer:DiscPoint
 	SetVariable NumIon1,pos={250,44},size={147,18},bodyWidth=54,title="Chan 1"
 	SetVariable NumIon1,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[0]
@@ -463,22 +468,38 @@ Function AlignDispProc(ctrlName,checked): CheckBoxControl
 	
 	NVAR AlignDisplayFlagAvg			=	root:sequencer:alignmentsweeper:AlignDisplayFlagAvg
 	NVAR AlignDisplayFlagProb			=	root:sequencer:alignmentsweeper:AlignDisplayFlagProb
+	NVAR AlignDisplayFlagTDC			=	root:sequencer:alignmentsweeper:AlignDisplayFlagTDC	
 	strswitch(ctrlName)
 		case "ProbDisp":
 			if(checked)
-				if(AlignDisplayFlagAvg&&AlignDisplayFlagProb==0)
+				if((AlignDisplayFlagAvg+AlignDisplayFlagProb+AlignDisplayFlagTDC)==1)
 					AlignDisplayFlagProb	=1
 					AlignDisplayFlagAvg	=0
+					AlignDisplayFlagTDC	=0
 					CheckBox AvgDisp, value=0
+					CheckBox TDCDisp, value=0					
 				endif	
 			endif
 			break
 		case "AvgDisp":
 			if(checked)
-				if(AlignDisplayFlagProb&&AlignDisplayFlagAvg==0)
+				if((AlignDisplayFlagAvg+AlignDisplayFlagProb+AlignDisplayFlagTDC)==1)
 					AlignDisplayFlagProb	=0
 					AlignDisplayFlagAvg	=1
+					AlignDisplayFlagTDC	=0					
 					CheckBox ProbDisp, value=0
+					CheckBox TDCDisp, value=0						
+				endif	
+			endif
+			break
+		case "TDCDisp":
+			if(checked)
+				if((AlignDisplayFlagAvg+AlignDisplayFlagProb+AlignDisplayFlagTDC)==1)
+					AlignDisplayFlagProb	=0
+					AlignDisplayFlagAvg	=0
+					AlignDisplayFlagTDC	=1					
+					CheckBox ProbDisp, value=0
+					CheckBox AVGDisp, value=0					
 				endif	
 			endif
 			break
@@ -872,9 +893,11 @@ function AlignSweepDataHandler(rawData,[init])
 		WAVE alignmentProb					= $("alignmentProb_0"+num2str(i))
 		WAVE alignmentBiErr					= $("alignmentBiErr_0"+num2str(i))
 		WAVE alignmentBasisFit				= $("alignmentBasisFit_0"+num2str(i))
-		WAVE alignmentBasisFitError		= $("alignmentBasisFitError_0"+num2str(i))		
+		WAVE alignmentBasisFitError			= $("alignmentBasisFitError_0"+num2str(i))		
 		WAVE alignmentParity				= $("alignmentParity_0"+num2str(i))
 		WAVE alignmentParityError			= $("alignmentParityError_0"+num2str(i))
+		WAVE alignmentPop					= $("alignmentPop_0"+num2str(i))
+		WAVE alignmentPopError				= $("alignmentPopError_0"+num2str(i))		
 		
 		
 		variable counts		= 0
@@ -889,32 +912,26 @@ function AlignSweepDataHandler(rawData,[init])
 			Redimension/N=0 alignmentBasisFitError			
 			Redimension/N=0 alignmentParity
 			Redimension/N=0 alignmentParityError
+			Redimension/N=0 alignmentPop
+			Redimension/N=0 alignmentPopError			
 			
 			
 		Elseif(DimSize(rawData,0)>=i)
 			if(PMT_wave[i])
-				//print i
-				Poisson()
-				Wave PoissonWave	=	root:Test:PoissonWave
+
 				Redimension/N=(DimSize(rawData,1)) alignment 
-				//print rawData
-//				alignment =rawData[i-1][p]
-				alignment =PoissonWave
-				//data=rawData
+				alignment =rawData[i-1][p]
 				wavestats/Q alignment
 				
 				counts=V_npnts                    // number of experiments that happened or the number of columsns in rawData[i]
 				
-//				Histogram/B={0,1,AlignMaxHist} alignment,  alignmentHist           // histogram computed
+				Histogram/B={0,1,AlignMaxHist} alignment,  alignmentHist           // histogram computed
 				
-				Histogram/B={0,1,AlignMaxHist} PoissonWave,  alignmentHist 
-				alignmentHist	=alignmentHist/DimSize(PoissonWave,0)	
-				//BasisFit(alignmentBasisFit,x,NumIonChan[i-1])
 				Redimension/N=(Dimsize(alignmentAvg,0)+1) alignmentAvg    	
 				Redimension/N=(Dimsize(alignmentStd,0)+1) alignmentStd	
-				
+				alignmentHist=alignmentHist/counts
 				alignmentAvg[(Dimsize(alignmentAvg,0)-1)] 	= V_avg		// average computed
-				alignmentStd[(Dimsize(alignmentStd,0)-1)] 	= V_sdev	// standard deviation calculated
+				alignmentStd[(Dimsize(alignmentStd,0)-1)] 	= V_sdev/counts	// standard deviation calculated
 				
 				if(NumIon[i-1]==1)
 					Redimension/N=2 alignmentBasisFit
@@ -924,6 +941,10 @@ function AlignSweepDataHandler(rawData,[init])
 					alignmentBasisFit={0.5,0.5}
 					FuncFit/N=1/W=2/Q/NTHR=0 HistOneIon, alignmentBasisFit,  alignmentHist /D /C=T_Constraints/E=alignmentBasisFitError
 					alignmentBasisFit=AlignmentBasisFit/Sum(AlignmentBasisFit)
+					Redimension/N=(Dimsize(alignmentPop,0)+1) alignmentPop
+					Redimension/N=(Dimsize(alignmentPopError,0)+1) alignmentPopError
+					alignmentPop[(Dimsize(alignmentPop,0)-1)] 	=alignmentBasisFit[1]
+					alignmentPopError[(Dimsize(alignmentPopError,0)-1)] = alignmentBasisFitError[1]						
 				elseif(NumIon[i-1]==2)
 					Redimension/N=3 alignmentBasisFit
 					Redimension/N=3 alignmentBasisFitError
@@ -938,30 +959,24 @@ function AlignSweepDataHandler(rawData,[init])
 					alignmentParityError[(Dimsize(alignmentParityError,0)-1)] = Sum(alignmentBasisFitError)
 				endif
 			else
-				//print i
 				Redimension/N=(DimSize(rawData,1)) alignment 
-				//print rawData
 				alignment =rawData[i-1][p]
 				alignment[i-1]=0								// sets the raw date to zeros
 				wavestats/Q alignment
 				
 				counts=V_npnts
 				
-//				Histogram/B={0,1,AlignMaxHist} alignment ,alignmentHist
-			
-				Poisson()
-				Wave PoissonWave	=	root:Test:PoissonWave
-				Histogram/B={0,1,AlignMaxHist} PoissonWave,  alignmentHist 
-				alignmentHist	=alignmentHist/DimSize(PoissonWave,0)		
+				Histogram/B={0,1,AlignMaxHist} alignment ,alignmentHist
+	
+				alignmentHist=alignmentHist/counts	
 				Redimension/N=(Dimsize(alignmentAvg,0)+1) alignmentAvg
 				Redimension/N=(Dimsize(alignmentStd,0)+1) alignmentStd
 				
 				alignmentAvg[(Dimsize(alignmentAvg,0)-1)] = V_avg
-				alignmentStd[(Dimsize(alignmentStd,0)-1)] = V_sdev
+				alignmentStd[(Dimsize(alignmentStd,0)-1)] = V_sdev/counts
 			endif
 				
 				wavestats/Q/R=[DiscPoint] alignmentHist
-//				alignmentHist	=alignmentHist/counts						// normalizing the histogram
 				Redimension/N=(Dimsize(alignmentProb,0)+1) alignmentProb
 				Redimension/N=(Dimsize(alignmentBiErr,0)+1) alignmentBiErr
 				
@@ -993,9 +1008,17 @@ function AlignSweepDataHandler(rawData,[init])
 					Redimension/N=(alignsweep_points) alignmentParity
 				endif
 				if(Dimsize(alignmentParityError,0)>alignsweep_points)
-					DeletePoints 0,1,alignmentParity
+					DeletePoints 0,1,alignmentParityError
 					Redimension/N=(alignsweep_points) alignmentParityError
 				endif
+				if(Dimsize(alignmentPop,0)>alignsweep_points)
+					DeletePoints 0,1,alignmentPop
+					Redimension/N=(alignsweep_points) alignmentPop
+				endif			
+				if(Dimsize(alignmentPopError,0)>alignsweep_points)
+					DeletePoints 0,1,alignmentPopError
+					Redimension/N=(alignsweep_points) alignmentPopError
+				endif				
 		else
 			Break
 		endif		
@@ -1026,9 +1049,11 @@ function AlignDataDisplay()
 	WAVE/T AlignBiErrPMTchannels				=	root:sequencer:alignmentsweeper:AlignBiErrPMTchannels
 	WAVE/T AlignProbPMTchannels				=	root:sequencer:alignmentsweeper:AlignProbPMTchannels
 	WAVE/T AlignBasisFitchannels				=	root:sequencer:alignmentsweeper:AlignBasisFitchannels
-	WAVE/T AlignBasisFitErrorchannels		=	root:sequencer:alignmentsweeper:AlignBasisFitErrorchannels
-	WAVE/T AlignParitychannels				=	root:sequencer:alignmentsweeper:AlignParitychannels
-	WAVE/T AlignParityErrorchannels			=	root:sequencer:alignmentsweeper:AlignParityErrorchannels
+	WAVE/T AlignBasisFitErrorchannels			=	root:sequencer:alignmentsweeper:AlignBasisFitErrorchannels
+	WAVE/T AlignParitychannels					=	root:sequencer:alignmentsweeper:AlignParitychannels
+	WAVE/T AlignParityErrorchannels				=	root:sequencer:alignmentsweeper:AlignParityErrorchannels
+	WAVE/T AlignPopchannels					=	root:sequencer:alignmentsweeper:AlignPopchannels
+	WAVE/T AlignPopErrorchannels				=	root:sequencer:alignmentsweeper:AlignPopErrorchannels	
 	
 	Redimension/N=0 AlignAvgPMTchannels
 	Redimension/N=0 AlignStdPMTchannels
@@ -1039,6 +1064,8 @@ function AlignDataDisplay()
 	Redimension/N=0 AlignBasisFitErrorchannels
 	Redimension/N=0 AlignParitychannels
 	Redimension/N=0 AlignParityErrorchannels
+	Redimension/N=0 AlignPopchannels
+	Redimension/N=0 AlignPopErrorchannels	
 	
 	SetDataFolder root:Sequencer:AlignmentSweeper	
 	for(i=1;i!=9;i+=1)
@@ -1049,9 +1076,11 @@ function AlignDataDisplay()
 		WAVE alignmentProb				= $("alignmentProb_0"+num2str(i))
 		WAVE alignmentBiErr				= $("alignmentBiErr_0"+num2str(i))
 		WAVE alignmentBasisFit			= $("alignmentBasisFit_0"+num2str(i))
-		WAVE alignmentBasisFitError	= $("alignmentBasisFitError_0"+num2str(i))
+		WAVE alignmentBasisFitError		= $("alignmentBasisFitError_0"+num2str(i))
 		WAVE alignmentParity			= $("alignmentParity_0"+num2str(i))
 		WAVE alignmentParityError		= $("alignmentParityError_0"+num2str(i))
+		WAVE alignmentPop				= $("alignmentPop_0"+num2str(i))
+		WAVE alignmentPopError			= $("alignmentPopError_0"+num2str(i))		
 		
 		if(PMT_wave[i])
 			Redimension/N=(Dimsize(AlignAvgPMTchannels,0)+1) AlignAvgPMTchannels
@@ -1064,7 +1093,7 @@ function AlignDataDisplay()
 			AlignHistPMTchannels[Dimsize(AlignHistPMTchannels,0)-1]					=	"alignmentHist_0"+num2str(i)
 			
 			Redimension/N=(Dimsize(AlignBiErrPMTchannels,0)+1) AlignBiErrPMTchannels
-			AlignBiErrPMTchannels[Dimsize(AlignBiErrPMTchannels,0)-1]				=	"alignmentBiErr_0"+num2str(i)
+			AlignBiErrPMTchannels[Dimsize(AlignBiErrPMTchannels,0)-1]					=	"alignmentBiErr_0"+num2str(i)
 			
 			Redimension/N=(Dimsize(AlignProbPMTchannels,0)+1) AlignProbPMTchannels
 			AlignProbPMTchannels[Dimsize(AlignProbPMTchannels,0)-1]					=	"alignmentProb_0"+num2str(i)
@@ -1072,17 +1101,23 @@ function AlignDataDisplay()
 		endif
 		if(NumIon[i-1])		
 			Redimension/N=(Dimsize(AlignBasisFitchannels,0)+1) AlignBasisFitchannels
-			AlignBasisFitchannels[Dimsize(AlignBasisFitchannels,0)-1]				=	"alignmentBasisFit_0"+num2str(i)
+			AlignBasisFitchannels[Dimsize(AlignBasisFitchannels,0)-1]					=	"alignmentBasisFit_0"+num2str(i)
 			
 			Redimension/N=(Dimsize(AlignBasisFitErrorchannels,0)+1) AlignBasisFitErrorchannels
-			AlignBasisFitErrorchannels[Dimsize(AlignBasisFitErrorchannels,0)-1]	=	"alignmentBasisFitError_0"+num2str(i)
+			AlignBasisFitErrorchannels[Dimsize(AlignBasisFitErrorchannels,0)-1]			=	"alignmentBasisFitError_0"+num2str(i)
+				
+			Redimension/N=(Dimsize(AlignPopchannels,0)+1) AlignPopchannels
+			AlignPopchannels[Dimsize(AlignPopchannels,0)-1]							=	"alignmentpop_0"+num2str(i)
+			
+			Redimension/N=(Dimsize(AlignPopErrorchannels,0)+1) AlignPopErrorchannels
+			AlignPopErrorchannels[Dimsize(AlignPopErrorchannels,0)-1]					=	"alignmentPopError_0"+num2str(i)			
 		endif
 		if(NumIon[i-1]==2)
 			Redimension/N=(Dimsize(AlignParitychannels,0)+1) AlignParitychannels
-			AlignParitychannels[Dimsize(AlignParitychannels,0)-1]					=	"alignmentparity_0"+num2str(i)
+			AlignParitychannels[Dimsize(AlignParitychannels,0)-1]						=	"alignmentparity_0"+num2str(i)
 			
 			Redimension/N=(Dimsize(AlignParityErrorchannels,0)+1) AlignParityErrorchannels
-			AlignParityErrorchannels[Dimsize(AlignParityErrorchannels,0)-1]		=	"alignmentParityError_0"+num2str(i)
+			AlignParityErrorchannels[Dimsize(AlignParityErrorchannels,0)-1]				=	"alignmentParityError_0"+num2str(i)
 		endif	
 		
 	endfor
@@ -1119,9 +1154,9 @@ Window AlignSweepDataFrame() : Panel
 					Display/W=(12,6,536,376)/N=AlignProbTestName/HOST=#   $(AlignProbPMTchannels[Dimsize(AlignProbPMTchannels,0)-1])  vs dataScanVar
 					ModifyGraph mode=3
 					ModifyGraph/W=AlignSweepDataFrame#AlignProbTestName marker=19
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][0]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][1]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][2]		=	65000*((enoise(1)+1)/2)
+					temp_color[DimSize(AlignProbPMTchannels,0)-1][0]		=	65000*(abs(gnoise(2))/2)
+					temp_color[DimSize(AlignProbPMTchannels,0)-1][1]		=	65000*(abs(gnoise(2))/2)
+					temp_color[DimSize(AlignProbPMTchannels,0)-1][2]		=	65000*(abs(gnoise(2))/2)
 					ModifyGraph rgb ($(AlignProbPMTchannels[Dimsize(AlignProbPMTchannels,0)-1]))=(temp_color[DimSize(AlignProbPMTchannels,0)-1][0],temp_color[DimSize(AlignProbPMTchannels,0)-1][1],temp_color[DimSize(AlignProbPMTchannels,0)-1][2])
 					Label left "Probability"
 					Label bottom "Sweep Points"
@@ -1133,9 +1168,9 @@ Window AlignSweepDataFrame() : Panel
 					AppendToGraph/W=AlignSweepDataFrame#AlignProbTestName $(AlignProbPMTchannels[Dimsize(AlignProbPMTchannels,0)-1]) vs dataScanVar
 					ModifyGraph mode=3
 					ModifyGraph marker=19
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][0]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][1]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][2]		=	65000*((enoise(1)+1)/2)
+					temp_color[DimSize(AlignProbPMTchannels,0)-1][0]		=	65000*(abs(gnoise(2))/2)
+					temp_color[DimSize(AlignProbPMTchannels,0)-1][1]		=	65000*(abs(gnoise(2))/2)
+					temp_color[DimSize(AlignProbPMTchannels,0)-1][2]		=	65000*(abs(gnoise(2))/2)
 					ModifyGraph rgb ($(AlignProbPMTchannels[Dimsize(AlignProbPMTchannels,0)-1]))=(temp_color[DimSize(AlignProbPMTchannels,0)-1][0],temp_color[DimSize(AlignProbPMTchannels,0)-1][1],temp_color[DimSize(AlignProbPMTchannels,0)-1][2])
 					ErrorBars $(AlignProbPMTchannels[Dimsize(AlignProbPMTchannels,0)-1]) Y,wave=($(AlignBiErrPMTchannels[Dimsize(AlignBiErrPMTchannels,0)-1]),$(AlignBiErrPMTchannels[Dimsize(AlignBiErrPMTchannels,0)-1]))
 				endif
@@ -1208,6 +1243,67 @@ Window AlignSweepDataFrame() : Panel
 			DeletePoints (DimSize(AlignHistPMTchannels,0)-1),1,AlignHistPMTchannels
 		endif
 	while(Dimsize(AlignHistPMTchannels,0))
+	SetActiveSubwindow ##
+	k=0
+	do
+		if(Dimsize(AlignParitychannels,0)||Dimsize(AlignPopchannels,0)==0)
+			break
+		else
+			if(k==0)
+				if(NumIonChanAlign[splitdatastring(AlignBasisFitchannels[Dimsize(AlignBasisFitchannels,0)-1])-1]==1)
+					Display/W=(12,381,536,751)/N=AlignPopTestName/HOST=#   $(AlignPopchannels[Dimsize(AlignPopchannels,0)-1]) vs dataScanVar
+					ModifyGraph mode=3
+					ModifyGraph marker =19				
+	//				ModifyGraph hbFill=5	
+					ModifyGraph rgb ($(AlignPopchannels[Dimsize(AlignPopchannels,0)-1]))=(temp_color[DimSize(AlignPopchannels,0)-1][0],temp_color[DimSize(AlignPopchannels,0)-1][1],temp_color[DimSize(AlignPopchannels,0)-1][2])
+					ErrorBars/T=2/L=2  $(AlignPopchannels[Dimsize(AlignPopchannels,0)-1]) Y,wave=($(AlignPopErrorchannels[Dimsize(AlignPopErrorchannels,0)-1]),$(AlignPopErrorchannels[Dimsize(AlignPopErrorchannels,0)-1]))	
+					//SetAxis left 0,1
+					Label left "Parity"
+	//				Label bottom ""
+					Legend			
+					k=1
+				endif
+				if(NumIonChanAlign[splitdatastring(AlignBasisFitchannels[Dimsize(AlignBasisFitchannels,0)-1])-1]==2)
+					Display/W=(12,381,536,751)/N=AlignParityTestName/HOST=#   $(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]) vs dataScanVar
+					ModifyGraph mode=3
+					ModifyGraph marker =19				
+	//				ModifyGraph hbFill=5	
+					ModifyGraph rgb ($(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]))=(temp_color[DimSize(AlignParitychannels,0)-1][0],temp_color[DimSize(AlignParitychannels,0)-1][1],temp_color[DimSize(AlignParitychannels,0)-1][2])
+					ErrorBars/T=2/L=2  $(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]) Y,wave=($(AlignParityErrorchannels[Dimsize(AlignParityErrorchannels,0)-1]),$(AlignParityErrorchannels[Dimsize(AlignParityErrorchannels,0)-1]))	
+					//SetAxis left 0,1
+					Label left " Bright Population"
+	//				Label bottom ""
+					Legend			
+					k=1
+				endif
+			else
+				if(NumIonChanAlign[splitdatastring(AlignBasisFitchannels[Dimsize(AlignBasisFitchannels,0)-1])-1]==1)
+					AppendToGraph/W=AlignSweepDataFrame#AlignPopTestName $(AlignPopchannels[Dimsize(AlignPopchannels,0)-1]) vs dataScanVar
+					ModifyGraph mode=3
+					ModifyGraph marker =19
+	//				ModifyGraph hbFill=5
+					ModifyGraph rgb ($(AlignPopchannels[Dimsize(AlignPopchannels,0)-1]))=(temp_color[DimSize(AlignPopchannels,0)-1][0],temp_color[DimSize(AlignPopchannels,0)-1][1],temp_color[DimSize(AlignPopchannels,0)-1][2])			
+					ErrorBars/T=2/L=2  $(AlignPopchannels[Dimsize(AlignPopchannels,0)-1]) Y,wave=($(AlignPopErrorchannels[Dimsize(AlignPopErrorchannels,0)-1]),$(AlignPopErrorchannels[Dimsize(AlignPopErrorchannels,0)-1]))	
+				endif
+				if(NumIonChanAlign[splitdatastring(AlignBasisFitchannels[Dimsize(AlignBasisFitchannels,0)-1])-1]==2)
+					AppendToGraph/W=AlignSweepDataFrame#AlignParityTestName $(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]) vs dataScanVar
+					ModifyGraph mode=3
+					ModifyGraph marker =19
+	//				ModifyGraph hbFill=5
+					ModifyGraph rgb ($(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]))=(temp_color[DimSize(AlignParitychannels,0)-1][0],temp_color[DimSize(AlignParitychannels,0)-1][1],temp_color[DimSize(AlignParitychannels,0)-1][2])			
+					ErrorBars/T=2/L=2  $(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]) Y,wave=($(AlignParityErrorchannels[Dimsize(AlignParityErrorchannels,0)-1]),$(AlignParityErrorchannels[Dimsize(AlignParityErrorchannels,0)-1]))	
+				endif
+			endif
+			if(NumIonChanAlign[splitdatastring(AlignBasisFitchannels[Dimsize(AlignBasisFitchannels,0)-1])-1]==1)
+				if(DimSize(AlignPopchannels,0)!=0)
+					DeletePoints (DimSize(AlignPopchannels,0)-1),1,AlignPopchannels	
+				endif
+			endif
+			if(NumIonChanAlign[splitdatastring(AlignBasisFitchannels[Dimsize(AlignBasisFitchannels,0)-1])-1]==2)
+				DeletePoints (DimSize(AlignParitychannels,0)-1),1,AlignParitychannels
+			endif
+		endif
+	while(Dimsize(AlignParitychannels,0))
 	SetActiveSubwindow ##
 	k=0
 	do
@@ -1319,33 +1415,6 @@ Window AlignSweepDataFrame() : Panel
 			DeletePoints (DimSize(AlignBasisFitchannels,0)-1),1,AlignBasisFitchannels
 		endif
 	while(Dimsize(AlignBasisFitchannels,0))
-	SetActiveSubwindow ##
-	k=0
-	do
-		if(Dimsize(AlignParitychannels,0)==0)
-			break
-		else
-			if(k==0)
-				Display/W=(12,381,536,751)/N=AlignParityTestName/HOST=#   $(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]) vs dataScanVar
-				ModifyGraph mode=5
-				ModifyGraph hbFill=5	
-				ModifyGraph rgb ($(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]))=(temp_color[DimSize(AlignParitychannels,0)-1][0],temp_color[DimSize(AlignParitychannels,0)-1][1],temp_color[DimSize(AlignParitychannels,0)-1][2])
-				ErrorBars/T=2/L=2  $(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]) Y,wave=($(AlignParityErrorchannels[Dimsize(AlignParityErrorchannels,0)-1]),$(AlignParityErrorchannels[Dimsize(AlignParityErrorchannels,0)-1]))	
-				//SetAxis left 0,1
-				Label left "Parity"
-//				Label bottom ""
-				Legend			
-				k=1
-			else
-				AppendToGraph/W=AlignSweepDataFrame#AlignParityTestName $(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]) vs dataScanVar
-				ModifyGraph mode=5
-				ModifyGraph hbFill=5
-				ModifyGraph rgb ($(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]))=(temp_color[DimSize(AlignParitychannels,0)-1][0],temp_color[DimSize(AlignParitychannels,0)-1][1],temp_color[DimSize(AlignParitychannels,0)-1][2])			
-				ErrorBars/T=2/L=2  $(AlignParitychannels[Dimsize(AlignParitychannels,0)-1]) Y,wave=($(AlignParityErrorchannels[Dimsize(AlignParityErrorchannels,0)-1]),$(AlignParityErrorchannels[Dimsize(AlignParityErrorchannels,0)-1]))	
-			endif
-			DeletePoints (DimSize(AlignParitychannels,0)-1),1,AlignParitychannels
-		endif
-	while(Dimsize(AlignParitychannels,0))
 //	SetActiveSubwindow ##
 	SetDatafolder fldrSav0
 EndMacro
@@ -1464,6 +1533,67 @@ Window DataFrame() : Panel
 	SetActiveSubwindow ##
 	k=0
 	do
+		if(Dimsize(DataParitychannels,0)||Dimsize(DataPopchannels,0)==0)
+			break
+		else
+			if(k==0)
+				if(NumIonChan[splitdatastring(DataBasisFitchannels[Dimsize(DataBasisFitchannels,0)-1])-1]==1)
+					Display/W=(12,381,536,751)/N=DataPopTestName/HOST=#   $(DataPopchannels[Dimsize(DataPopchannels,0)-1]) vs dataScanVar
+					ModifyGraph mode=3
+					ModifyGraph marker =19				
+	//				ModifyGraph hbFill=5	
+					ModifyGraph rgb ($(DataPopchannels[Dimsize(DataPopchannels,0)-1]))=(temp_color[DimSize(DataPopchannels,0)-1][0],temp_color[DimSize(DataPopchannels,0)-1][1],temp_color[DimSize(DataPopchannels,0)-1][2])
+					ErrorBars/T=2/L=2  $(DataPopchannels[Dimsize(DataPopchannels,0)-1]) Y,wave=($(DataPopErrorchannels[Dimsize(DataPopErrorchannels,0)-1]),$(DataPopErrorchannels[Dimsize(DataPopErrorchannels,0)-1]))	
+					//SetAxis left 0,1
+					Label left "Parity"
+	//				Label bottom ""
+					Legend			
+					k=1
+				endif
+				if(NumIonChan[splitdatastring(DataBasisFitchannels[Dimsize(DataBasisFitchannels,0)-1])-1]==2)
+					Display/W=(12,381,536,751)/N=DataParityTestName/HOST=#   $(DataParitychannels[Dimsize(DataParitychannels,0)-1]) vs dataScanVar
+					ModifyGraph mode=3
+					ModifyGraph marker =19				
+	//				ModifyGraph hbFill=5	
+					ModifyGraph rgb ($(DataParitychannels[Dimsize(DataParitychannels,0)-1]))=(temp_color[DimSize(DataParitychannels,0)-1][0],temp_color[DimSize(DataParitychannels,0)-1][1],temp_color[DimSize(DataParitychannels,0)-1][2])
+					ErrorBars/T=2/L=2  $(DataParitychannels[Dimsize(DataParitychannels,0)-1]) Y,wave=($(DataParityErrorchannels[Dimsize(DataParityErrorchannels,0)-1]),$(DataParityErrorchannels[Dimsize(DataParityErrorchannels,0)-1]))	
+					//SetAxis left 0,1
+					Label left " Bright Population"
+	//				Label bottom ""
+					Legend			
+					k=1
+				endif
+			else
+				if(NumIonChan[splitdatastring(DataBasisFitchannels[Dimsize(DataBasisFitchannels,0)-1])-1]==1)
+					AppendToGraph/W=DataFrame#DataPopTestName $(DataPopchannels[Dimsize(DataPopchannels,0)-1]) vs dataScanVar
+					ModifyGraph mode=3
+					ModifyGraph marker =19
+	//				ModifyGraph hbFill=5
+					ModifyGraph rgb ($(DataPopchannels[Dimsize(DataPopchannels,0)-1]))=(temp_color[DimSize(DataPopchannels,0)-1][0],temp_color[DimSize(DataPopchannels,0)-1][1],temp_color[DimSize(DataPopchannels,0)-1][2])			
+					ErrorBars/T=2/L=2  $(DataPopchannels[Dimsize(DataPopchannels,0)-1]) Y,wave=($(DataPopErrorchannels[Dimsize(DataPopErrorchannels,0)-1]),$(DataPopErrorchannels[Dimsize(DataPopErrorchannels,0)-1]))	
+				endif
+				if(NumIonChan[splitdatastring(DataBasisFitchannels[Dimsize(DataBasisFitchannels,0)-1])-1]==2)
+					AppendToGraph/W=DataFrame#DataParityTestName $(DataParitychannels[Dimsize(DataParitychannels,0)-1]) vs dataScanVar
+					ModifyGraph mode=3
+					ModifyGraph marker =19
+	//				ModifyGraph hbFill=5
+					ModifyGraph rgb ($(DataParitychannels[Dimsize(DataParitychannels,0)-1]))=(temp_color[DimSize(DataParitychannels,0)-1][0],temp_color[DimSize(DataParitychannels,0)-1][1],temp_color[DimSize(DataParitychannels,0)-1][2])			
+					ErrorBars/T=2/L=2  $(DataParitychannels[Dimsize(DataParitychannels,0)-1]) Y,wave=($(DataParityErrorchannels[Dimsize(DataParityErrorchannels,0)-1]),$(DataParityErrorchannels[Dimsize(DataParityErrorchannels,0)-1]))	
+				endif
+			endif
+			if(NumIonChan[splitdatastring(DataBasisFitchannels[Dimsize(DataBasisFitchannels,0)-1])-1]==1)
+				if(DimSize(DataPopchannels,0)!=0)
+					DeletePoints (DimSize(DataPopchannels,0)-1),1,DataPopchannels	
+				endif
+			endif
+			if(NumIonChan[splitdatastring(DataBasisFitchannels[Dimsize(DataBasisFitchannels,0)-1])-1]==2)
+				DeletePoints (DimSize(DataParitychannels,0)-1),1,DataParitychannels
+			endif
+		endif
+	while(Dimsize(DataParitychannels,0))
+	SetActiveSubwindow ##
+	k=0
+	do
 		if(Dimsize(DataBasisFitchannels,0)==0)
 			break
 		else
@@ -1572,35 +1702,6 @@ Window DataFrame() : Panel
 			DeletePoints (DimSize(DataBasisFitchannels,0)-1),1,DataBasisFitchannels
 		endif
 	while(Dimsize(DataBasisFitchannels,0))
-	SetActiveSubwindow ##
-	k=0
-	do
-		if(Dimsize(DataParitychannels,0)==0)
-			break
-		else
-			if(k==0)
-				Display/W=(12,381,536,751)/N=DataParityTestName/HOST=#   $(DataParitychannels[Dimsize(DataParitychannels,0)-1]) vs dataScanVar
-				ModifyGraph mode=3
-				ModifyGraph marker =19				
-//				ModifyGraph hbFill=5	
-				ModifyGraph rgb ($(DataParitychannels[Dimsize(DataParitychannels,0)-1]))=(temp_color[DimSize(DataParitychannels,0)-1][0],temp_color[DimSize(DataParitychannels,0)-1][1],temp_color[DimSize(DataParitychannels,0)-1][2])
-				ErrorBars/T=2/L=2  $(DataParitychannels[Dimsize(DataParitychannels,0)-1]) Y,wave=($(DataParityErrorchannels[Dimsize(DataParityErrorchannels,0)-1]),$(DataParityErrorchannels[Dimsize(DataParityErrorchannels,0)-1]))	
-				//SetAxis left 0,1
-				Label left "Parity"
-//				Label bottom ""
-				Legend			
-				k=1
-			else
-				AppendToGraph/W=DataFrame#DataParityTestName $(DataParitychannels[Dimsize(DataParitychannels,0)-1]) vs dataScanVar
-				ModifyGraph mode=3
-				ModifyGraph marker =19
-//				ModifyGraph hbFill=5
-				ModifyGraph rgb ($(DataParitychannels[Dimsize(DataParitychannels,0)-1]))=(temp_color[DimSize(DataParitychannels,0)-1][0],temp_color[DimSize(DataParitychannels,0)-1][1],temp_color[DimSize(DataParitychannels,0)-1][2])			
-				ErrorBars/T=2/L=2  $(DataParitychannels[Dimsize(DataParitychannels,0)-1]) Y,wave=($(DataParityErrorchannels[Dimsize(DataParityErrorchannels,0)-1]),$(DataParityErrorchannels[Dimsize(DataParityErrorchannels,0)-1]))	
-			endif
-			DeletePoints (DimSize(DataParitychannels,0)-1),1,DataParitychannels
-		endif
-	while(Dimsize(DataParitychannels,0))
-	SetActiveSubwindow ##
+//	SetActiveSubwindow ##
 	SetDatafolder fldrSav0
 EndMacro
