@@ -59,7 +59,8 @@ Structure ExOpDefinitions
 	STRUCT ExOp SBCooling
 	STRUCT ExOp Delay
 	STRUCT ExOp Microwave
-	STRUCT ExOp AWGRotation			
+	STRUCT ExOp AWGRotation
+	STRUCT ExOp TDCDetect				
 EndStructure
 
 //_____________________________________________________________________________
@@ -76,7 +77,7 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.Pump.description = "Optical Pumping"
 	ExOpDefs.Pump.device = "DDS0"
 	ExOpDefs.Pump.ControlParameters = "Duration;Amplitude;Frequency;"
-	ExOpDefs.Pump.Values = "5;100;200;"
+	ExOpDefs.Pump.Values = "2;45;200;"
 	ExOpDefs.Pump.ScannableParameters = "1;0;1;"
 	ExOpDefs.Pump.MinVal = ".1;0;100;"
 	ExOpDefs.Pump.MaxVal = "1E8;100;400;"
@@ -94,7 +95,7 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.Cool.description = "Doppler Cooling"
 	ExOpDefs.Cool.device = "DDS2"
 	ExOpDefs.Cool.ControlParameters = "Duration;Amplitude;Frequency;"
-	ExOpDefs.Cool.Values = "100;100;200;"
+	ExOpDefs.Cool.Values = "600;45;195;"
 	ExOpDefs.Cool.ScannableParameters = "1;0;1;"
 	ExOpDefs.Cool.MinVal = ".1;0;100;"
 	ExOpDefs.Cool.MaxVal = "1E8;100;400;"
@@ -127,9 +128,9 @@ function GetExOpDefinitions(ExOpDefs)
 	
 	ExOpDefs.AWGRotation.name = "AWGRotation"
 	ExOpDefs.AWGRotation.description = "AWG rotation"
-	ExOpDefs.AWGRotation.device = "AWG"
+	ExOpDefs.AWGRotation.device = "DDS4"
 	ExOpDefs.AWGRotation.ControlParameters = "Duration;Amplitude;Frequency;Phase;"
-	ExOpDefs.AWGRotation.Values = "1;2047;250;0;"
+	ExOpDefs.AWGRotation.Values = "1;2049;200;0;"
 	ExOpDefs.AWGRotation.ScannableParameters = "1;1;1;1;"
 	ExOpDefs.AWGRotation.MinVal = ".1;0;100;0;"
 	ExOpDefs.AWGRotation.MaxVal = "100000;4094;350;359;"
@@ -146,7 +147,7 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.Detect.description = "State Detection"
 	ExOpDefs.Detect.device = "DDS0"
 	ExOpDefs.Detect.ControlParameters = "Duration;Amplitude;Frequency;"
-	ExOpDefs.Detect.Values = "10;100;300;"
+	ExOpDefs.Detect.Values = "400;45;200;"
 	ExOpDefs.Detect.ScannableParameters = "1;0;1;"
 	ExOpDefs.Detect.MinVal = ".1;0;100;"
 	ExOpDefs.Detect.MaxVal = "1E8;100;400;"
@@ -181,9 +182,9 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.FlrDetect.name = "Flourescence Detect"
 	ExOpDefs.FlrDetect.description = "Flourescence Detection"
 	ExOpDefs.FlrDetect.device = "DDS1"
-	ExOpDefs.FlrDetect.ControlParameters = "Duration;Amplitude;Frequency;DC;"
+	ExOpDefs.FlrDetect.ControlParameters = "Duration;Amplitude;Frequency;"
 	ExOpDefs.FlrDetect.Values = "100;100;200;"
-	ExOpDefs.FlrDetect.ScannableParameters = "1;0;1;1;"
+	ExOpDefs.FlrDetect.ScannableParameters = "1;0;1;"
 	ExOpDefs.FlrDetect.MinVal = ".1;0;100;"
 	ExOpDefs.FlrDetect.MaxVal = "1E8;100;400;"
 	ExOpDefs.FlrDetect.MinInc = "0.1;1;"
@@ -195,6 +196,24 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.SBCooling.SBCAmplitudes = ""
 	ExOpDefs.SBCooling.SBCTimes = ""
 	ExOpDefs.SBCooling.SBCCycles = ""
+	
+	ExOpDefs.TDCDetect.name = "TDC Detect"
+	ExOpDefs.TDCDetect.description = "TDC Detection"
+	ExOpDefs.TDCDetect.device = "DDS1"
+	ExOpDefs.TDCDetect.ControlParameters = "Duration;Amplitude;Frequency;"
+	ExOpDefs.TDCDetect.Values = "100;100;200;"
+	ExOpDefs.TDCDetect.ScannableParameters = "1;0;1;"
+	ExOpDefs.TDCDetect.MinVal = ".1;0;100;"
+	ExOpDefs.TDCDetect.MaxVal = "1E8;100;400;"
+	ExOpDefs.TDCDetect.MinInc = "0.1;1;"
+	ExOpDefs.TDCDetect.ScanParameter = 0
+	ExOpDefs.TDCDetect.Position = CUR_POS	
+	ExOpDefs.SBCooling.SBCPumpingTime = 0
+	ExOpDefs.SBCooling.SBCTotalTime = 0
+	ExOpDefs.SBCooling.SBCFrequencies = ""
+	ExOpDefs.SBCooling.SBCAmplitudes = ""
+	ExOpDefs.SBCooling.SBCTimes = ""
+	ExOpDefs.SBCooling.SBCCycles = ""	
 	
 //	ExOpDefs.DcField.name = "DC Potential"
 //	ExOpDefs.DcField.description = "DC Potential"
@@ -297,7 +316,10 @@ function BuildExperiment(Sequence, expt)
 				break
 			case "Microwave":
 				expt.ExOps[k] = ExOpDefs.Microwave
-				break					
+				break
+			case "TDC Detection":
+				expt.ExOps[k] = ExOpDefs.TDCDetect
+				break			
 			default:							// optional default expression executed
 				break						// when no case matches
 		endswitch

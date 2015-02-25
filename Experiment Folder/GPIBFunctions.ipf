@@ -93,11 +93,21 @@ Function Trap_RF_Offset(x)
 	print "Trap DC Offset: "+offset
 End
 
+// GPIB Commands for Lab Clock
+// Power On & Off
+Function Clock_Frequency(x)
+	Variable x
+	NVAR LabClock = root:GPIBparams:LabClock
+	GPIB2 device = LabClock
+	GPIBWrite2 "F"+num2str(x*1000000000)+"\nA1\n"
+End
+
 // Creates Panel Containing GPIB Commands for Oven and TrapRF
 Window GPIBCtrl() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(1270,806,1654,958) as "GPIB Commands"
+	NewPanel /K=1 /W=(1350,750,1909,907) as "GPIB Commands"
 	ModifyPanel cbRGB=(50432,39424,59136)
+	ShowTools/A
 	SetDrawLayer UserBack
 	SetDrawEnv fillfgc= (65280,43520,0),fsize= 14
 	SetDrawEnv save
@@ -105,6 +115,7 @@ Window GPIBCtrl() : Panel
 	Button TrapRFCtrl,pos={233,91},size={111,23},bodyWidth=75,proc=TrapRFUpdate,title="Trap RF Update"
 	Button AutoLoad_Ctrl,pos={235,117},size={110,26},bodyWidth=75,proc=AutoLoadIon,title="Autoload"
 	Button AutoLoadStop_Ctr,pos={45,116},size={110,24},bodyWidth=75,proc=AutoLoadStop,title="Autoload Stop"
+	Button LabClockCtrl,pos={437,92},size={95,23},bodyWidth=75,proc=ClockUpdate,title="Clock Update"
 	SetVariable OvenVoltageCtrl,pos={3,41},size={151,18},bodyWidth=75,title="Oven Voltage"
 	SetVariable OvenVoltageCtrl,limits={0,2,0.01},value= root:GPIBparams:OvenVoltage
 	SetVariable OvenCurrentCtrl,pos={3,18},size={151,18},bodyWidth=75,title="Oven Current"
@@ -115,8 +126,27 @@ Window GPIBCtrl() : Panel
 	SetVariable TrapRFFrequencyCtrl,limits={0.1,30,0.0001},value= root:GPIBparams:TrapRFfrequency
 	SetVariable TrapRFOffsetCtrl,pos={203,62},size={158,18},bodyWidth=75,title="Trap RF Offset"
 	SetVariable TrapRFOffsetCtrl,limits={-2,2,0.01},value= root:GPIBparams:TrapRFoffset
+	SetVariable LabClockFrequencyCtrl,pos={374,20},size={170,18},bodyWidth=75,title="Clock Frequency"
+	SetVariable LabClockFrequencyCtrl,limits={0,1.1,0.01},value= root:GPIBparams:ClockFrequency, format="%0.6f"
 EndMacro
+
 // Updates GPIB Commands Panel
+// Updates Clock Frequency
+Function ClockUpdate(ba) :ButtonControl
+	STRUCT WMButtonAction &ba
+	String fldrSav0= GetDataFolder(1)	
+	setDatafolder root:GPIBparams
+	NVAR ClockFrequency
+	switch( ba.eventCode )	
+		case 2: // mouse up
+			Clock_Frequency(ClockFrequency)
+			break
+		case -1:
+			break
+	endswitch
+	setDatafolder fldrSav0	
+end
+
 // Updates Oven Settings
 Function OvenUpdate(ba) :ButtonControl
 	STRUCT WMButtonAction &ba

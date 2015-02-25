@@ -120,7 +120,7 @@ Function Param_Init()
 	Variable/G LOAD_POS				= 	53
 	Variable/G CUR_POS					= 	LOAD_POS
 	Variable/G MOV_POS				= 	CUR_POS
-	Variable/G HOLD_POS				= 	250		
+	Variable/G HOLD_POS				= 	248	
 		
 	Variable/G DELAY					=	TTL_00|TTL_06|TTL_16
 	Variable/G COOL						=	TTL_04|TTL_06|TTL_16
@@ -128,10 +128,11 @@ Function Param_Init()
 	Variable/G STATE_DET				=	TTL_01|DI_01|TTL_06|TTL_16
 	Variable/G FLR_DET					=	TTL_04|TTL_02|DI_01|TTL_06|TTL_16
 	Variable/G PUMP						=	TTL_01|TTL_05|TTL_06|TTL_16
-	Variable/G LOAD_SHTR				=	TTL_08|TTL_06|TTL_16
+//	Variable/G LOAD_SHTR				=	TTL_08|TTL_06|TTL_16
 	Variable/G MICROWAVE				=	TTL_10|TTL_16
-	Variable/G AWG_TRIG				= 	TTL_10|TTL_11|TTL_06|TTL_16
-	Variable/G PMT						=	DI_01|TTL_06|TTL_16	// PMT might be gated, might need to add a TTL pulse here
+	Variable/G AWG_TRIG				= 	TTL_10|TTL_06|TTL_16|TTL_07|TTL_11
+	Variable/G TDC_DET					= 	TTL_04|TTL_02|DI_01|TTL_06|TTL_16|TTL_15	
+//	Variable/G PMT						=	DI_01|TTL_06|TTL_16	// PMT might be gated, might need to add a TTL pulse here
 	
 	Variable/G COOL_FREQ				= 	195 // MHz
 	Variable/G COOL_AMP				=	20 // Max Amp
@@ -148,6 +149,19 @@ Function Param_Init()
 	Variable/G FLR_DET_FREQ			=	200 // MHz
 	Variable/G FLR_DET_AMP			=	20 // Max Amp
 	Variable/G FLR_DET_PHASE			=	0
+	
+	Variable/G uWave_FREQ				=	200 // MHz
+	Variable/G uWave_AMP				=	100 // Max Amp
+	Variable/G uWave_PHASE			=	0
+
+	Variable/G RamanOne_FREQ			=	200 // MHz
+	Variable/G RamanOne_AMP			=	100 // Max Amp
+	Variable/G RamanOne_PHASE		=	0
+
+	Variable/G RamanTwo_FREQ			=	210 // MHz
+	Variable/G RamanTwo_AMP			=	100 // Max Amp
+	Variable/G RamanTwo_PHASE			=	0
+	
 
 	Variable/G MIN_POSITION = 0			// Lowest ion position index (voltage set specification)
 	Variable/G MAX_POSITION = 10		// Highest ion position index (voltage set specification)
@@ -163,7 +177,11 @@ Function Param_Init()
 	Variable/G VAR_TTL_08				=	TTL_08	
 	Variable/G VAR_TTL_09				=	TTL_09
 	Variable/G VAR_TTL_010				=	TTL_10
-	Variable/G VAR_TTL_011				=	TTL_11	
+	Variable/G VAR_TTL_011				=	TTL_11
+	Variable/G VAR_TTL_012				=	TTL_12
+	Variable/G VAR_TTL_013				=	TTL_13
+	Variable/G VAR_TTL_014				=	TTL_14
+	Variable/G VAR_TTL_015				=	TTL_15
 	Variable/G VAR_TTL_016				=	TTL_16
 
 
@@ -172,7 +190,7 @@ Function Param_Init()
 	String/G	WAVEb_Ez					=	"::waveforms:BGA:BGA_20140502_compEz.csv"
 	String/G	WAVEb_Ex					=	"::waveforms:BGA:BGA_20140502_compEx.csv"
 	String/G	WAVEb_Ey					=	"::waveforms:BGA:BGA_20140502_compEy.csv"
-	String/G	WAVEb_Harm				=	"::waveforms:BGA:BGA_string_20141219_mod34.csv"		
+	String/G	WAVEb_Harm				=	"::waveforms:BGA:BGA_mergeTest_248a.csv"		
 	String/G	WAVEb_Hardware			=	"::waveforms:BGA:Hardware_BGA.csv"
 	String/G	WAVEb_Transport			=	"::waveforms:BGA:merge_BGA_20150113a_smooth.csv"
 	
@@ -201,18 +219,18 @@ Function Param_Init()
 	Make/O/N=0 GroupVals
 	Make/O/N=0 PopupVals
 	
-	Variable/G SequenceCurrent                       =  0
-	Variable/G VerticalButtonPosition                =  16
-	Variable/G VerticalLoopPosition                  =  16
-	Variable/G GroupNumber                         	 =  0
-	Variable/G GroupError                           	 =  0
-	Make/D/O/N=8 NameWave                            =  {DELAY,COOL,STATE_DET,FLR_DET,PUMP,LOAD_SHTR,PMT,MICROWAVE,AWG_TRIG,AWG_TRIG}
-	Make/O/T/N=8 TTLNames                            =  {"Delay","Cool", "State Detection","Flourescence Detection","Pump", "LoadShutter","PMT","Microwave","AWGRotation","SBCooling"}
+	Variable/G SequenceCurrent                        =  0
+	Variable/G VerticalButtonPosition			=  16
+	Variable/G VerticalLoopPosition                   =  16
+	Variable/G GroupNumber                         	=  0
+	Variable/G GroupError                           	=  0
+	Make/D/O/N=8 NameWave				=  {DELAY,COOL,STATE_DET,FLR_DET,PUMP,MICROWAVE,AWG_TRIG,AWG_TRIG,TDC_DET}
+	Make/O/T/N=8 TTLNames                           =  {"Delay","Cool", "State Detection","Flourescence Detection","Pump","Microwave","AWGRotation","SBCooling","TDC Detection"}
 	// The following should be matched up, in order, with TTLNames. The indexes denote the scan types labeled in SCAN_TITLES.
 	// For example, 0 is for Delay, 0123 is for Cooling. 
 	String/G 	 TTL_PARAMS			                  		 	=	"0;012345;0123;012345;012345;0;0;0;"
 	String/G	 SCAN_TITLES 				          				= 	"Duration;AO Frequency;AO Amplitude;AO Phase;EO Frequency;EO Power;Rotation Amplitude;Rotation Frequency;Rotation Phase"
-	Make/O/T/N=3 DDSNames                      				   	=	{"State Detection","Flourescence Detection", "Doppler Cooling"}
+	Make/O/T/N=3 DDSNames                      				   	=	{"State Detection","Flourescence Detection", "Doppler Cooling","Microwave","Raman 1","Raman 2"}
 	Make/O/T/N=4 DDSScans									=	{"Duration","Frequency","Amplitude","Phase"}
 	Make/O/T/N=3 EONames									=	{"Optical Pumping", "Cooling", "Repump"}
 	Make/O/T/N=1 EONotDDSNames							=	{"935 EO"}
@@ -339,7 +357,59 @@ Function Param_Init()
 							DDS_INFO[i][j]	=	0
 					EndSwitch
 				EndFor
-				break			
+				break
+			case uWave_CNL:
+				For(j=0; j!=(DDS_Params+1); j+=1)	
+					switch(j)
+						case 0:	
+							DDS_INFO[i][j]	=	uWave_FREQ
+							break
+						case 1:
+							DDS_INFO[i][j]	=	uWave_AMP
+							break
+						case 2:
+							DDS_INFO[i][j]	=	uWave_PHASE
+							break
+						default:
+							DDS_INFO[i][j]	=	0
+					EndSwitch
+				EndFor
+				break
+			case RamanOne_CNL:
+				For(j=0; j!=(DDS_Params+1); j+=1)	
+					switch(j)
+						case 0:	
+							DDS_INFO[i][j]	=	RamanOne_FREQ
+							break
+						case 1:
+							DDS_INFO[i][j]	=	RamanOne_AMP
+							break
+						case 2:
+							DDS_INFO[i][j]	=	RamanOne_PHASE
+							break
+						default:
+							DDS_INFO[i][j]	=	0
+					EndSwitch
+				EndFor
+				break	
+			case RamanTwo_CNL:
+				For(j=0; j!=(DDS_Params+1); j+=1)	
+					switch(j)
+						case 0:	
+							DDS_INFO[i][j]	=	RamanTwo_FREQ
+							break
+						case 1:
+							DDS_INFO[i][j]	=	RamanTwo_AMP
+							break
+						case 2:
+							DDS_INFO[i][j]	=	RamanTwo_PHASE
+							break
+						default:
+							DDS_INFO[i][j]	=	0
+					EndSwitch
+				EndFor
+				break					
+												
 			default:
 				For(j=0; j!=(DDS_Params+1); j+=1)	
 					switch(j)
@@ -551,6 +621,7 @@ Function GPIB_init()
 	Variable/G gGPIBBoardRef = 0
 	Variable/G OvenRef = 0
 	Variable/G TrapRFRef = 0
+	Variable/G LabClock= 0
 	
 	// Get board descriptor
 	NVAR gGPIBBoardRef = root:GPIBparams:gGPIBBoardRef
@@ -565,12 +636,17 @@ Function GPIB_init()
 	Variable/G OvenCurrent = 0
 	Variable/G OvenVoltage = 0
 	
+	// Get device descriptor for device at GPIB address 16 Lab Clock
+	NVAR LabClock = root:GPIBparams:LabClock
+	NI4882 ibdev={0,16,0,13,1,0}; LabClock = V_flag
+	Variable/G ClockFrequency = 1.000000000
+	
 	// Get device descriptor for device at GPIB address 19 Trap RF
 	NVAR TrapRFRef = root:GPIBparams:TrapRFRef
 	NI4882 ibdev={0,19,0,13,1,0}; TrapRFRef = V_flag
 
-	Variable/G TrapRFamplitude = -18.5
-	Variable/G TrapRFfrequency = 20.655
+	Variable/G TrapRFamplitude = -18
+	Variable/G TrapRFfrequency = 20.6731
 	Variable/G TrapRFoffset = 0
 
 	string windows= WinList("GPIBCtrl"," ; ","")
@@ -988,7 +1064,7 @@ EndMacro
 //
 Window OverrideVariables() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /K=1 /W=(24,76,297,1089) as "Override Variables"
+	NewPanel /K=1 /W=(46,660,547,1372) as "Override Variables"
 	ModifyPanel cbRGB=(65280,48896,48896)
 	TitleBox DDS1Namebox,pos={50,15},size={150,20},title="DDS #1: State Detection"
 	TitleBox DDS1Namebox,labelBack=(0,0,0),font="Arial",frame=4
@@ -1003,7 +1079,7 @@ Window OverrideVariables() : Panel
 	SetVariable DDS1_AMPL_BOX,font="Arial"
 	SetVariable DDS1_AMPL_BOX,limits={0,100,1},value= root:ExpParams:DDS_INFO[0][1]
 	CheckBox DDS1_Override,pos={50,100},size={103,15},bodyWidth=130,proc=DDS_Overridewrapper,title="DDS 1 Override"
-	CheckBox DDS1_Override,font="Arial",value= 0
+	CheckBox DDS1_Override,font="Arial",value= 1
 	TitleBox DDS2Namebox,pos={50,140},size={150,20},title="DDS #2: Flourescence Detection"
 	TitleBox DDS2Namebox,labelBack=(0,0,0),font="Arial",frame=4
 	TitleBox DDS2Namebox,fColor=(65535,65535,65535),anchor= MC,fixedSize=1
@@ -1032,6 +1108,20 @@ Window OverrideVariables() : Panel
 	SetVariable DDS3_AMPL_BOX,limits={0,100,1},value= root:ExpParams:DDS_INFO[2][1]
 	CheckBox DDS3_Override,pos={50,350},size={103,15},bodyWidth=130,proc=DDS_Overridewrapper,title="DDS 3 Override"
 	CheckBox DDS3_Override,font="Arial",value= 1
+	TitleBox DDS4Namebox,pos={304,14},size={150,20},title="DDS #4: Microwave"
+	TitleBox DDS4Namebox,labelBack=(0,0,0),font="Arial",frame=4
+	TitleBox DDS4Namebox,fColor=(65535,65535,65535),anchor= MC,fixedSize=1
+	SetVariable DDS4_FREQ_BOX,pos={262,40},size={227,18},bodyWidth=130,proc=DDS_wrapper,title="DDS4 Frequency"
+	SetVariable DDS4_FREQ_BOX,font="Arial"
+	SetVariable DDS4_FREQ_BOX,limits={0,400,1},value= root:ExpParams:DDS_INFO[3]
+	SetVariable DDS4_PHASE_BOX,pos={283,60},size={206,18},bodyWidth=130,proc=DDS_wrapper,title="DDS4 Phase"
+	SetVariable DDS4_PHASE_BOX,font="Arial"
+	SetVariable DDS4_PHASE_BOX,limits={0,180,1},value= root:ExpParams:DDS_INFO[3][2]
+	SetVariable DDS4_AMPL_BOX,pos={264,80},size={225,18},bodyWidth=130,proc=DDS_wrapper,title="DDS4 Amplitude"
+	SetVariable DDS4_AMPL_BOX,font="Arial"
+	SetVariable DDS4_AMPL_BOX,limits={0,100,1},value= root:ExpParams:DDS_INFO[3][1]
+	CheckBox DDS4_Override,pos={298,102},size={103,15},bodyWidth=130,proc=DDS_Overridewrapper,title="DDS 4 Override"
+	CheckBox DDS4_Override,font="Arial",value= 1
 	TitleBox EO1Namebox,pos={50,390},size={150,20},title="EO #1: Optical Pumping"
 	TitleBox EO1Namebox,labelBack=(0,0,0),font="Arial",frame=4
 	TitleBox EO1Namebox,fColor=(65535,65535,65535),anchor= MC,fixedSize=1
@@ -1065,92 +1155,127 @@ Window OverrideVariables() : Panel
 	SetVariable EO3_AMPL_BOX,limits={0,1023,1},value= root:ExpParams:EO_INFO[2][2]
 	CheckBox EO3_Override,pos={50,665},size={94,15},bodyWidth=130,proc=EO_Overridewrapper,title="EO 3 Override"
 	CheckBox EO3_Override,font="Arial",value= 1
-	TitleBox TTLtitle,pos={50,705},size={150,20},title="TTL Controls"
+	TitleBox TTLtitle,pos={304,378},size={150,20},title="TTL Controls"
 	TitleBox TTLtitle,labelBack=(0,0,0),font="Arial",frame=4
 	TitleBox TTLtitle,fColor=(65535,65535,65535),anchor= MC,fixedSize=1
-	TitleBox TTLtitle1,pos={25,730},size={50,20},title="Detect"
+	TitleBox TTLtitle1,pos={274,403},size={55,20},title="Detect"
 	TitleBox TTLtitle1,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle1,anchor= MC,fixedSize=1
-	CheckBox TTL1_Switch,pos={75,734},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL1_Switch,pos={329,407},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL1_Switch,font="Arial",value= 0
-	CheckBox TTL1_Override,pos={135,734},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL1_Override,font="Arial",value= 0
-	TitleBox TTLtitle2,pos={25,750},size={50,20},title="Fluor"
+	CheckBox TTL1_Override,pos={389,407},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL1_Override,font="Arial",value= 1
+	TitleBox TTLtitle2,pos={274,423},size={55,20},title="Fluor"
 	TitleBox TTLtitle2,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle2,anchor= MC,fixedSize=1
-	CheckBox TTL2_Switch,pos={75,754},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL2_Switch,pos={329,427},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL2_Switch,font="Arial",value= 0
-	CheckBox TTL2_Override,pos={135,754},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL2_Override,font="Arial",value= 0
-	TitleBox TTLtitle3,pos={25,770},size={50,20},title="Repump"
+	CheckBox TTL2_Override,pos={389,427},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL2_Override,font="Arial",value= 1
+	TitleBox TTLtitle3,pos={274,443},size={55,20},title="Repump"
 	TitleBox TTLtitle3,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle3,anchor= MC,fixedSize=1
-	CheckBox TTL3_Switch,pos={75,774},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL3_Switch,pos={329,447},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL3_Switch,font="Arial",value= 1
-	CheckBox TTL3_Override,pos={135,774},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL3_Override,pos={389,447},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
 	CheckBox TTL3_Override,font="Arial",value= 1
-	TitleBox TTLtitle4,pos={25,790},size={50,20},title="Cool"
+	TitleBox TTLtitle4,pos={274,463},size={55,20},title="Cool"
 	TitleBox TTLtitle4,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle4,anchor= MC,fixedSize=1
-	CheckBox TTL4_Switch,pos={75,794},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL4_Switch,pos={329,467},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL4_Switch,font="Arial",value= 1
-	CheckBox TTL4_Override,pos={135,794},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL4_Override,pos={389,467},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
 	CheckBox TTL4_Override,font="Arial",value= 1
-	TitleBox TTLtitle5,pos={25,810},size={50,20},title="Opt"
+	TitleBox TTLtitle5,pos={274,483},size={55,20},title="Opt"
 	TitleBox TTLtitle5,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle5,anchor= MC,fixedSize=1
-	CheckBox TTL5_Switch,pos={75,814},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL5_Switch,pos={329,487},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL5_Switch,font="Arial",value= 0
-	CheckBox TTL5_Override,pos={135,814},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL5_Override,font="Arial",value= 0
-	TitleBox TTLtitle6,pos={25,830},size={50,20},title="uWave"
+	CheckBox TTL5_Override,pos={389,487},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL5_Override,font="Arial",value= 1
+	TitleBox TTLtitle6,pos={274,503},size={55,20},title="uWave"
 	TitleBox TTLtitle6,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle6,anchor= MC,fixedSize=1
-	CheckBox TTL6_Switch,pos={75,834},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL6_Switch,pos={329,507},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL6_Switch,font="Arial",value= 1
-	CheckBox TTL6_Override,pos={135,834},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL6_Override,pos={389,507},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
 	CheckBox TTL6_Override,font="Arial",value= 1
-	TitleBox TTLtitle7,pos={25,850},size={50,20},title="TTL7"
+	TitleBox TTLtitle7,pos={274,523},size={55,20},title="Raman 2"
 	TitleBox TTLtitle7,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle7,anchor= MC,fixedSize=1
-	CheckBox TTL7_Switch,pos={75,854},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
-	CheckBox TTL7_Switch,font="Arial",value= 0
-	CheckBox TTL7_Override,pos={135,854},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL7_Override,font="Arial",value= 0
-	TitleBox TTLtitle9,pos={25,870},size={50,20},title="TTL9"
+	CheckBox TTL7_Switch,pos={329,527},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL7_Switch,font="Arial",value= 1
+	CheckBox TTL7_Override,pos={389,527},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL7_Override,font="Arial",value= 1
+	TitleBox TTLtitle9,pos={274,543},size={55,20},title="TTL9"
 	TitleBox TTLtitle9,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle9,anchor= MC,fixedSize=1
-	CheckBox TTL9_Switch,pos={75,874},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL9_Switch,pos={329,547},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL9_Switch,font="Arial",value= 0
-	CheckBox TTL9_Override,pos={135,874},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL9_Override,pos={389,547},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
 	CheckBox TTL9_Override,font="Arial",value= 0
-	TitleBox TTLtitle10,pos={25,890},size={50,20},title="AWG"
+	TitleBox TTLtitle10,pos={274,563},size={55,20},title="AWG"
 	TitleBox TTLtitle10,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle10,anchor= MC,fixedSize=1
-	CheckBox TTL10_Switch,pos={75,894},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL10_Switch,pos={329,567},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL10_Switch,font="Arial",value= 0
-	CheckBox TTL10_Override,pos={135,894},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL10_Override,pos={389,567},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
 	CheckBox TTL10_Override,font="Arial",value= 0
-	TitleBox TTLtitle11,pos={25,910},size={50,20},title="AWG A/B"
+	TitleBox TTLtitle11,pos={274,583},size={55,20},title="Raman 1"
 	TitleBox TTLtitle11,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle11,anchor= MC,fixedSize=1
-	CheckBox TTL11_Switch,pos={75,914},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
-	CheckBox TTL11_Switch,font="Arial",value= 0
-	CheckBox TTL11_Override,pos={135,914},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
-	CheckBox TTL11_Override,font="Arial",value= 0
-	TitleBox TTLtitle16,pos={25,930},size={50,20},title="399 "
+	CheckBox TTL11_Switch,pos={329,587},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL11_Switch,font="Arial",value= 1
+	CheckBox TTL11_Override,pos={389,587},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL11_Override,font="Arial",value= 1
+	TitleBox TTLtitle16,pos={274,623},size={55,20},title="399 "
 	TitleBox TTLtitle16,labelBack=(65535,65535,65535),font="Arial",frame=0
 	TitleBox TTLtitle16,anchor= MC,fixedSize=1
-	CheckBox TTL16_Switch,pos={75,934},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL16_Switch,pos={329,627},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
 	CheckBox TTL16_Switch,font="Arial",value= 1
-	CheckBox TTL16_Override,pos={135,934},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL16_Override,pos={389,627},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
 	CheckBox TTL16_Override,font="Arial",value= 1
-	Button SeqInit,pos={21,964},size={70,20},proc=Seqinit,title="Seq Init"
-	Button DC_ConInit,pos={95,964},size={70,20},proc=DC_ctrl_Init,title="DC Init"
-	Button PulserInit,pos={169,964},size={70,20},proc=Pulse_Init,title="Pulser Init"
-	Button PulseCreator_init,pos={21,986},size={70,20},proc=PulseCreator_Init,title="Creat Init"
-	Button openComButton,pos={95,986},size={70,20},proc=DC_ctrl_Init,title="Open COM"
-	Button closeComButton,pos={169,986},size={70,20},proc=Pulse_Init,title="Close COM"
+	Button SeqInit,pos={275,662},size={70,20},proc=Seqinit,title="Seq Init"
+	Button DC_ConInit,pos={349,662},size={70,20},proc=DC_ctrl_Init,title="DC Init"
+	Button PulserInit,pos={423,662},size={70,20},proc=Pulse_Init,title="Pulser Init"
+	Button PulseCreator_init,pos={275,684},size={70,20},proc=PulseCreator_Init,title="Creat Init"
+	Button openComButton,pos={349,684},size={70,20},proc=DC_ctrl_Init,title="Open COM"
+	Button closeComButton,pos={423,684},size={70,20},proc=Pulse_Init,title="Close COM"
+	CheckBox TTL15_Override,pos={389,607},size={64,15},bodyWidth=130,proc=TTL_wrapper,title="Override"
+	CheckBox TTL15_Override,font="Arial",value= 1
+	CheckBox TTL15_Switch,pos={329,607},size={52,15},bodyWidth=130,proc=TTL_wrapper,title="On/Off"
+	CheckBox TTL15_Switch,font="Arial",value= 1
+	TitleBox TTLtitle15,pos={274,603},size={55,20},title="TDC"
+	TitleBox TTLtitle15,labelBack=(65535,65535,65535),font="Arial",frame=0
+	TitleBox TTLtitle15,anchor= MC,fixedSize=1
+	CheckBox DDS5_Override,pos={299,223},size={103,15},bodyWidth=130,proc=DDS_Overridewrapper,title="DDS 5 Override"
+	CheckBox DDS5_Override,font="Arial",value= 1
+	SetVariable DDS5_AMPL_BOX,pos={265,201},size={225,18},bodyWidth=130,proc=DDS_wrapper,title="DDS5 Amplitude"
+	SetVariable DDS5_AMPL_BOX,font="Arial"
+	SetVariable DDS5_AMPL_BOX,limits={0,100,1},value= root:ExpParams:DDS_INFO[4][1]
+	SetVariable DDS5_PHASE_BOX,pos={284,181},size={206,18},bodyWidth=130,proc=DDS_wrapper,title="DDS4 Phase"
+	SetVariable DDS5_PHASE_BOX,font="Arial"
+	SetVariable DDS5_PHASE_BOX,limits={0,180,1},value= root:ExpParams:DDS_INFO[4][2]
+	SetVariable DDS5_FREQ_BOX,pos={263,161},size={227,18},bodyWidth=130,proc=DDS_wrapper,title="DDS5 Frequency"
+	SetVariable DDS5_FREQ_BOX,font="Arial"
+	SetVariable DDS5_FREQ_BOX,limits={0,400,1},value= root:ExpParams:DDS_INFO[4]
+	TitleBox DDS4Namebox1,pos={305,135},size={150,20},title="DDS #5: Raman One"
+	TitleBox DDS4Namebox1,labelBack=(0,0,0),font="Arial",frame=4
+	TitleBox DDS4Namebox1,fColor=(65535,65535,65535),anchor= MC,fixedSize=1
+	CheckBox DDS6_Override,pos={298,353},size={103,15},bodyWidth=130,proc=DDS_Overridewrapper,title="DDS 6 Override"
+	CheckBox DDS6_Override,font="Arial",value= 1
+	SetVariable DDS6_AMPL_BOX,pos={264,331},size={225,18},bodyWidth=130,proc=DDS_wrapper,title="DDS6 Amplitude"
+	SetVariable DDS6_AMPL_BOX,font="Arial"
+	SetVariable DDS6_AMPL_BOX,limits={0,100,1},value= root:ExpParams:DDS_INFO[5][1]
+	SetVariable DDS6_PHASE_BOX,pos={283,311},size={206,18},bodyWidth=130,proc=DDS_wrapper,title="DDS6 Phase"
+	SetVariable DDS6_PHASE_BOX,font="Arial"
+	SetVariable DDS6_PHASE_BOX,limits={0,180,1},value= root:ExpParams:DDS_INFO[5][2]
+	SetVariable DDS6_FREQ_BOX,pos={262,291},size={227,18},bodyWidth=130,proc=DDS_wrapper,title="DDS6 Frequency"
+	SetVariable DDS6_FREQ_BOX,font="Arial"
+	SetVariable DDS6_FREQ_BOX,limits={0,400,1},value= root:ExpParams:DDS_INFO[5]
+	TitleBox DDS6Namebox,pos={304,265},size={150,20},title="DDS #6: Raman Two"
+	TitleBox DDS6Namebox,labelBack=(0,0,0),font="Arial",frame=4
+	TitleBox DDS6Namebox,fColor=(65535,65535,65535),anchor= MC,fixedSize=1
 EndMacro
 
 //_____________________________________________________________________________

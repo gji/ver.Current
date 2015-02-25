@@ -2,10 +2,13 @@
 
 //Constant LOAD_POS			= 53
 Constant DDS_Channels		= 6
-Constant DDS_Params			= 3
-Constant STATE_DET_CNL		= 0
+Constant DDS_Params		= 3
+Constant STATE_DET_CNL	= 0
 Constant FLR_DET_CNL		= 1
 Constant COOL_CNL			= 2
+Constant uWave_CNL			= 3
+Constant RamanOne_CNL		= 4
+Constant RamanTwo_CNL		= 5
 Constant NUM_DACS			= 2
 Constant NUM_DC_OUTS		= 12
 Constant SHUTTLE_DURATION = 100	// Shuttling time in microseconds

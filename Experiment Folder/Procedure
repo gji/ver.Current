@@ -12,6 +12,7 @@
 #include ":Procedures:DataHandling"
 #include ":Procedures:AWGControl"
 #include ":Procedures:Test"
+#include ":Procedures:GPIBFunctions"
 #include <FilterDialog> menus=0
 
 Window Table0() : Table
@@ -233,3 +234,39 @@ Window Panel0() : Panel
 EndMacro
 
 
+
+Window GPIBCtrl_1() : Panel
+	PauseUpdate; Silent 1		// building window...
+	NewPanel /K=1 /W=(1326,938,1896,1112) as "GPIB Commands"
+	ModifyPanel cbRGB=(51456,44032,58880)
+	ShowTools/A
+	SetDrawLayer UserBack
+	SetDrawEnv fillfgc= (65280,43520,0),fsize= 14
+	SetDrawEnv save
+	Button OvenOnOffCtrl,pos={51,90},size={95,23},bodyWidth=75,proc=OvenUpdate,title="Oven On"
+	Button TrapRFCtrl,pos={238,93},size={111,23},bodyWidth=75,proc=TrapRFUpdate,title="Trap RF Update"
+	Button AutoLoad_Ctrl,pos={242,119},size={110,26},bodyWidth=75,proc=AutoLoadIon,title="Autoload"
+	Button AutoLoadStop_Ctr,pos={45,116},size={110,24},bodyWidth=75,proc=AutoLoadStop,title="Autoload Stop"
+	Button LabClockCtrl,pos={412,94},size={95,23},bodyWidth=75,proc=ClockUpdate,title="Clock Update"
+	SetVariable OvenVoltageCtrl,pos={3,41},size={151,18},bodyWidth=75,title="Oven Voltage"
+	SetVariable OvenVoltageCtrl,limits={0,2,0.01},value= root:GPIBparams:OvenVoltage
+	SetVariable OvenCurrentCtrl,pos={3,18},size={151,18},bodyWidth=75,title="Oven Current"
+	SetVariable OvenCurrentCtrl,limits={0,2.8,0.01},value= root:GPIBparams:OvenCurrent
+	SetVariable TrapRFAmplitudeCtrl,pos={178,15},size={181,18},bodyWidth=75,title="Trap RF Amplitude"
+	SetVariable TrapRFAmplitudeCtrl,limits={-20,-12,0.01},value= root:GPIBparams:TrapRFamplitude
+	SetVariable TrapRFFrequencyCtrl,pos={178,39},size={183,18},bodyWidth=75,title="Trap RF Frequency"
+	SetVariable TrapRFFrequencyCtrl,limits={0.1,30,0.0001},value= root:GPIBparams:TrapRFfrequency
+	SetVariable TrapRFOffsetCtrl,pos={203,62},size={158,18},bodyWidth=75,title="Trap RF Offset"
+	SetVariable TrapRFOffsetCtrl,limits={-2,2,0.01},value= root:GPIBparams:TrapRFoffset
+	SetVariable LabClockFrequencyCtrl,pos={379,18},size={170,18},bodyWidth=75,title="Clock Frequency"
+	SetVariable LabClockFrequencyCtrl,limits={0,1.1,0.01},value= root:GPIBparams:ClockFrequency
+EndMacro
+
+Window Table1() : Table
+	PauseUpdate; Silent 1		// building window...
+	String fldrSav0= GetDataFolder(1)
+	SetDataFolder root:Sequences:
+	Edit/W=(5.25,42.5,510,236.75) Ramseytest
+	ModifyTable format(Point)=1
+	SetDataFolder fldrSav0
+EndMacro

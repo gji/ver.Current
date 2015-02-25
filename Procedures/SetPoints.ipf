@@ -8,6 +8,8 @@ function DDS_wrapper(ctrlName,varNum,varStr,varName) : SetVariableControl
 	Variable Frequency,Phase,Ampl
 	WAVE DDS_INFO = root:ExpParams:DDS_INFO
 	
+	print ctrlName, varNum, varStr, varName
+	
 	strswitch(ctrlName)
 		case "DDS1_FREQ_BOX":
 			If(DDS_INFO[0][3])
@@ -80,7 +82,79 @@ function DDS_wrapper(ctrlName,varNum,varStr,varName) : SetVariableControl
 				Phase		=	DDS_INFO[2][2]		
 				setDDS(3,Frequency,Phase,Ampl)
 			Endif
-			break		
+			break
+		case "DDS4_FREQ_BOX":
+			If(DDS_INFO[3][3])
+				Frequency	=	DDS_INFO[3][0]*10^6
+				Ampl		=	DDS_INFO[3][1]*1023/100
+				Phase		=	DDS_INFO[3][2]		
+				setDDS(4,Frequency,Phase,Ampl)
+			Endif
+			break
+		case "DDS4_AMPL_BOX":
+			If(DDS_INFO[3][3])
+				Frequency	=	DDS_INFO[3][0]*10^6
+				Ampl		=	DDS_INFO[3][1]*1023/100
+				Phase		=	DDS_INFO[3][2]		
+				setDDS(4,Frequency,Phase,Ampl)
+			Endif
+			break
+		case "DDS4_PHASE_BOX":
+			If(DDS_INFO[3][3])
+				Frequency	=	DDS_INFO[3][0]*10^6
+				Ampl		=	DDS_INFO[3][1]*1023/100
+				Phase		=	DDS_INFO[3][2]		
+				setDDS(4,Frequency,Phase,Ampl)
+			Endif
+			break
+		case "DDS5_FREQ_BOX":
+			If(DDS_INFO[4][3])
+				Frequency	=	DDS_INFO[4][0]*10^6
+				Ampl		=	DDS_INFO[4][1]*1023/100
+				Phase		=	DDS_INFO[4][2]		
+				setDDS(5,Frequency,Phase,Ampl)
+			Endif
+			break
+		case "DDS5_AMPL_BOX":
+			If(DDS_INFO[4][3])
+				Frequency	=	DDS_INFO[4][0]*10^6
+				Ampl		=	DDS_INFO[4][1]*1023/100
+				Phase		=	DDS_INFO[4][2]		
+				setDDS(5,Frequency,Phase,Ampl)
+			Endif
+			break
+		case "DDS5_PHASE_BOX":
+			If(DDS_INFO[4][3])
+				Frequency	=	DDS_INFO[4][0]*10^6
+				Ampl		=	DDS_INFO[4][1]*1023/100
+				Phase		=	DDS_INFO[4][2]		
+				setDDS(5,Frequency,Phase,Ampl)
+			Endif
+			break
+		case "DDS6_FREQ_BOX":
+			If(DDS_INFO[4][3])
+				Frequency	=	DDS_INFO[5][0]*10^6
+				Ampl		=	DDS_INFO[5][1]*1023/100
+				Phase		=	DDS_INFO[5][2]		
+				setDDS(6,Frequency,Phase,Ampl)
+			Endif
+			break
+		case "DDS6_AMPL_BOX":
+			If(DDS_INFO[5][3])
+				Frequency	=	DDS_INFO[5][0]*10^6
+				Ampl		=	DDS_INFO[5][1]*1023/100
+				Phase		=	DDS_INFO[5][2]		
+				setDDS(6,Frequency,Phase,Ampl)
+			Endif
+			break
+		case "DDS6_PHASE_BOX":
+			If(DDS_INFO[5][3])
+				Frequency	=	DDS_INFO[5][0]*10^6
+				Ampl		=	DDS_INFO[5][1]*1023/100
+				Phase		=	DDS_INFO[5][2]		
+				setDDS(6,Frequency,Phase,Ampl)
+			Endif
+			break																		
 	endswitch
 
 end
@@ -119,7 +193,35 @@ function DDS_Overridewrapper(ctrlName,checked) : CheckBoxControl
 				Ampl		=	DDS_INFO[2][1]*1023/100
 				Phase		=	DDS_INFO[2][2]		
 				setDDS(3,Frequency,Phase,Ampl)
-			Endif							
+			Endif
+			break
+		case "DDS4_Override":
+			DDS_INFO[3][3]	= checked
+			If(DDS_INFO[3][3])
+				Frequency	=	DDS_INFO[3][0]*10^6
+				Ampl		=	DDS_INFO[3][1]*1023/100
+				Phase		=	DDS_INFO[3][2]		
+				setDDS(4,Frequency,Phase,Ampl)
+			Endif
+			break
+		case "DDS5_Override":
+			DDS_INFO[4][3]	= checked
+			If(DDS_INFO[4][3])
+				Frequency	=	DDS_INFO[4][0]*10^6
+				Ampl		=	DDS_INFO[4][1]*1023/100
+				Phase		=	DDS_INFO[4][2]		
+				setDDS(5,Frequency,Phase,Ampl)
+			Endif
+			break	
+		case "DDS6_Override":
+			DDS_INFO[5][3]	= checked
+			If(DDS_INFO[5][3])
+				Frequency	=	DDS_INFO[5][0]*10^6
+				Ampl		=	DDS_INFO[5][1]*1023/100
+				Phase		=	DDS_INFO[5][2]		
+				setDDS(6,Frequency,Phase,Ampl)
+			Endif
+			break															
 	endswitch
 End
 
@@ -292,6 +394,11 @@ function TTL_wrapper(ctrlName,checked)
 			OverrideWave[10][2]	= 1
 			UpdateTTL()	
 			break
+		case "TTL15_Switch":
+			OverrideWave[14][0]	= checked
+			OverrideWave[14][2]	= 1
+			UpdateTTL()	
+			break	
 		case "TTL16_Switch":
 			OverrideWave[15][0]	= checked
 			OverrideWave[15][2]	= 1
@@ -352,6 +459,11 @@ function TTL_wrapper(ctrlName,checked)
 			OverrideWave[10][2]	= 2
 			UpdateTTL()	
 			break
+		case "TTL15_Override":
+			OverrideWave[14][1]	= checked
+			OverrideWave[14][2]	= 2
+			UpdateTTL()	
+			break	
 		case "TTL16_Override":
 			OverrideWave[15][1]	= checked
 			OverrideWave[15][2]	= 2
@@ -395,7 +507,7 @@ Function UpdateTTL()
 	EndFor
 
 	MaskWave={{Mask},{0x0000020}}
-	
+
 	sendSequence(MaskWave)
 	runSequence(2)
 	

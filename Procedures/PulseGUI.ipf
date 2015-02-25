@@ -479,7 +479,7 @@ Function GenerateSequenceControls(expt)
 				endif
 				if(stringmatch(ControlParamName,"DC")==0)
 					DefaultVal = str2num(ExOpElement(expt.ExOps[ExOpIdx].Values, k))
-					SetVariable $("Step"+num2str(ExOpIdx)+"setpoint"+num2str(k)),format="%.4f", pos={340, VerticalButtonPosition+2}, title=ControlParamName, win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:DefaultVal
+					SetVariable $("Step"+num2str(ExOpIdx)+"setpoint"+num2str(k)),format="%.6f", pos={340, VerticalButtonPosition+2}, title=ControlParamName, win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:DefaultVal
 				endif
 				VerticalButtonPosition+=25
 			endfor
@@ -544,16 +544,16 @@ Function RecreateSequenceControls(expt)
 					Variable scanStart = expt.ExOps[ExOpIdx].scanStart
 					Variable scanStop = expt.ExOps[ExOpIdx].scanStop
 					Variable scanInc = expt.ExOps[ExOpIdx].scanInc
-					SetVariable $("Step"+num2str(ExOpIdx)+"Scan"+num2str(k)+"Min"), pos={170+300, VerticalButtonPosition}, title="Min",format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:scanStart
-					SetVariable $("Step"+num2str(ExOpIdx)+"Scan"+num2str(k)+"Max"), pos={170+400, VerticalButtonPosition}, title="Max",format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:scanStop
-					SetVariable $("Step"+num2str(ExOpIdx)+"Scan"+num2str(k)+"Inc"), pos={170+500, VerticalButtonPosition}, title="Inc",format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={minInc,maxVal,minInc},value=_NUM:scanInc
+					SetVariable $("Step"+num2str(ExOpIdx)+"Scan"+num2str(k)+"Min"), pos={170+300, VerticalButtonPosition}, title="Min",format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:scanStart
+					SetVariable $("Step"+num2str(ExOpIdx)+"Scan"+num2str(k)+"Max"), pos={170+400, VerticalButtonPosition}, title="Max",format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:scanStop
+					SetVariable $("Step"+num2str(ExOpIdx)+"Scan"+num2str(k)+"Inc"), pos={170+500, VerticalButtonPosition}, title="Inc",format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={minInc,maxVal,minInc},value=_NUM:scanInc
 
 				endif
 				if ( str2num(ExOpElement(expt.ExOps[ExOpIdx].ScannableParameters, k)) == 0 )
 					CheckBox $("Step"+num2str(ExOpIdx)+"Scan"+num2str(k)), disable=2
 				endif
 				DefaultVal = str2num(ExOpElement(expt.ExOps[ExOpIdx].Values, k))
-				SetVariable $("Step"+num2str(ExOpIdx)+"setpoint"+num2str(k)), pos={340, VerticalButtonPosition+2}, title=ControlParamName,format="%.4f",win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:DefaultVal
+				SetVariable $("Step"+num2str(ExOpIdx)+"setpoint"+num2str(k)), pos={340, VerticalButtonPosition+2}, title=ControlParamName,format="%.6f",win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:DefaultVal
 				VerticalButtonPosition+=25
 			endfor
 		endif
@@ -588,9 +588,9 @@ Function GenerateSBCoolingControls(sva) : SetVariableControl
 			
 			Variable k
 			for (k=0; k < dval; k+=1)
-				SetVariable $("Step"+(numStep)+"SBCoolingFreq"+num2str(k)), pos={370+150*k, VerticalButtonPosition+2},title="Freq "+num2str(k+1),format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={10,300,0.0005},value=_NUM:100
-				SetVariable $("Step"+(numStep)+"SBCoolingTime"+num2str(k)), pos={370+150*k, VerticalButtonPosition+25},title="Duration "+num2str(k+1),format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={1,100000,1},value=_NUM:10
-				SetVariable $("Step"+(numStep)+"SBCoolingAmplitude"+num2str(k)), pos={370+150*k, VerticalButtonPosition+50},title="Amp "+num2str(k+1),format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={1,2047,1},value=_NUM:2047
+				SetVariable $("Step"+(numStep)+"SBCoolingFreq"+num2str(k)), pos={370+150*k, VerticalButtonPosition+2},title="Freq "+num2str(k+1),format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={10,300,0.0005},value=_NUM:100
+				SetVariable $("Step"+(numStep)+"SBCoolingTime"+num2str(k)), pos={370+150*k, VerticalButtonPosition+25},title="Duration "+num2str(k+1),format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={1,100000,1},value=_NUM:10
+				SetVariable $("Step"+(numStep)+"SBCoolingAmplitude"+num2str(k)), pos={370+150*k, VerticalButtonPosition+50},title="Amp "+num2str(k+1),format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={1,2047,1},value=_NUM:2047
 				SetVariable $("Step"+(numStep)+"SBCoolingCycles"+num2str(k)), pos={370+150*k, VerticalButtonPosition+75},title="Cycles "+num2str(k+1), win=Pulse,size={130,20},bodywidth=70,limits={1,500,1},value=_NUM:10
 			endfor
 		case 3: // Live update
@@ -645,17 +645,17 @@ Function ConstructScanControls(cba) : CheckBoxControl
 							break
 						endif
 					endfor
-					SetVariable $(cba.ctrlName+"Min"), pos={V_left+300, V_top}, title="Min",format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:minVal
-					SetVariable $(cba.ctrlName+"Max"), pos={V_left+400, V_top}, title="Max",format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:maxVal
-					SetVariable $(cba.ctrlName+"Inc"), pos={V_left+500, V_top}, title="Inc",format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={minInc,maxVal,minInc},value=_NUM:minInc
+					SetVariable $(cba.ctrlName+"Min"), pos={V_left+300, V_top}, title="Min",format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:minVal
+					SetVariable $(cba.ctrlName+"Max"), pos={V_left+400, V_top}, title="Max",format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:maxVal
+					SetVariable $(cba.ctrlName+"Inc"), pos={V_left+500, V_top}, title="Inc",format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={minInc,maxVal,minInc},value=_NUM:minInc
 				else
 					minVal	=0
 					maxVal	=0
 					minInc	=0
 					
-					SetVariable $(cba.ctrlName+"Min"), pos={V_left+300, V_top}, title="Min",format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:minVal
-					SetVariable $(cba.ctrlName+"Max"), pos={V_left+400, V_top}, title="Max",format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:maxVal
-					SetVariable $(cba.ctrlName+"Inc"), pos={V_left+500, V_top}, title="Inc",format="%.4f", win=Pulse,size={130,20},bodywidth=70,limits={minInc,maxVal,minInc},value=_NUM:minInc
+					SetVariable $(cba.ctrlName+"Min"), pos={V_left+300, V_top}, title="Min",format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:minVal
+					SetVariable $(cba.ctrlName+"Max"), pos={V_left+400, V_top}, title="Max",format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={minVal,maxVal,minInc},value=_NUM:maxVal
+					SetVariable $(cba.ctrlName+"Inc"), pos={V_left+500, V_top}, title="Inc",format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={minInc,maxVal,minInc},value=_NUM:minInc
 				endif
 			else
 				KillControl/W=Pulse $(cba.ctrlName+"Min")
@@ -1149,6 +1149,7 @@ Function AlignScanProc(ba) : ButtonControl
 			if	(strlen(windows))
 				KillWindow SaveBasisHistogram
 			endif
+			STRUCT Experiment expt							
 			AlignPrefGUI()
 			break
 		case -1:
@@ -1218,7 +1219,7 @@ Function RunExperiment(expt)
 	for (i=0;i<expt.numExOps;i+=1)
 		cOp = expt.ExOps[i]
 		if(cOp.Scanned == 1)                     // scanned flag is  up\
-			sprintf HiResScan, "%.4f",cOp.ScanStart	
+			sprintf HiResScan, "%.6f",cOp.ScanStart	
 			expt.ExOps[i].Values = ReplaceListItem(cOp.Values, HiResScan, cOp.ScanParameter) // Replace the "Scan parameter "th values by "Scan start" value
 			ScanVarName =StringFromList(cOp.ScanParameter, expt.ExOps[i].ControlParameters) // returns scanning parameter name  ex; "Duration"
 			Redimension/N=(Dimsize(dataScanVar,0)+1) dataScanVar
@@ -1261,7 +1262,7 @@ Function RunExperiment(expt)
 					else
 						dataScanVar[(DimSize(dataScanVar,0)-1)]	= nVal
 					endif
-					sprintf HiResScan, "%.4f",nVal	
+					sprintf HiResScan, "%.6f",nVal	
 					expt.ExOps[i].Values = ReplaceListItem(cOp.Values, HiResScan, cOp.ScanParameter)
 					wave out = RunExpValues(expt)  // this updates the FPGAs and the DDSs for real !!
 					dataHandler(out) // analyzes the data and also creates data handling windows which hold histograms and averages
@@ -1468,10 +1469,10 @@ function GetExperimentParameters(expt)                                          
 			//printf "%s: ExOpIdx = %d, ExOpParam = %d, Value = %d\r" ctrlName, ExOpIdx, ExOpParam, Value
 			String HiResScan
 			if (ExOpParam == 0)
-				sprintf HiResScan, "%.4f",Value	
+				sprintf HiResScan, "%.6f",Value	
 				expt.ExOps[ExOpIdx].Values = HiResScan + ";"
 			else
-				sprintf HiResScan, "%.4f",Value	
+				sprintf HiResScan, "%.6f",Value	
 				expt.ExOps[ExOpIdx].Values += HiResScan + ";"
 			endif
 		endif

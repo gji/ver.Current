@@ -409,57 +409,52 @@ end
 //
 Window AlignPref() : Panel
 	PauseUpdate; Silent 1		// building window...
+	
 	NewPanel /W=(309,458,837,686) as "Alignment Sweeper Preferences"
 	ModifyPanel cbRGB=(48896,65280,57344)
 	SetDrawLayer UserBack
 	DrawText 12,32,"Digital Inputs to Process"
 	DrawText 350,32,"# Ions"
-	CheckBox PMT2box,pos={86,43},size={49,15},proc=PMTproc,title="Chan 2",value= 0
-	CheckBox PMT1box,pos={23,44},size={49,15},proc=PMTproc,title="Chan 1",value= 0
-	CheckBox PMT3box,pos={23,74},size={49,15},proc=PMTproc,title="Chan 3",value= 0
-	CheckBox PMT4box,pos={87,74},size={49,15},proc=PMTproc,title="Chan 4",value= 0
-	CheckBox PMT6box,pos={87,104},size={49,15},proc=PMTproc,title="Chan 6",value= 0
-	CheckBox PMT7box,pos={24,134},size={49,15},proc=PMTproc,title="Chan 7",value= 0
-	CheckBox PMT8box,pos={87,135},size={49,15},proc=PMTproc,title="Chan 8",value= 0
-	CheckBox PMT5box,pos={24,105},size={49,15},proc=PMTproc,title="Chan 5",value= 0
+	CheckBox PMT2box,pos={86,43},size={58,15},proc=PMTproc,title="Chan 2",value= 0
+	CheckBox PMT1box,pos={23,44},size={58,15},proc=PMTproc,title="Chan 1",value= 1
+	CheckBox PMT3box,pos={23,74},size={58,15},proc=PMTproc,title="Chan 3",value= 0
+	CheckBox PMT4box,pos={87,74},size={58,15},proc=PMTproc,title="Chan 4",value= 0
+	CheckBox PMT6box,pos={87,104},size={58,15},proc=PMTproc,title="Chan 6",value= 0
+	CheckBox PMT7box,pos={24,134},size={58,15},proc=PMTproc,title="Chan 7",value= 0
+	CheckBox PMT8box,pos={87,135},size={58,15},proc=PMTproc,title="Chan 8",value= 0
+	CheckBox PMT5box,pos={24,105},size={58,15},proc=PMTproc,title="Chan 5",value= 0
+	
 	CheckBox ProbDisp,pos={160,84},size={88,15},proc=AlignDispProc,title="Display Prob"
-	CheckBox ProbDisp,variable= AlignDisplayFlagProb,mode=1,value =0
+	CheckBox ProbDisp,variable= AlignDisplayFlagProb,mode=1
 	CheckBox AvgDisp,pos={160,64},size={81,15},proc=alignDispProc,title="Display Avg"
-	CheckBox AvgDisp,variable= AlignDisplayFlagAvg,mode=1,value=1
-	CheckBox TDCDisp,pos={160,44},size={81,15},proc=alignDispProc,title="Display TDC"
-	CheckBox TDCDisp,variable= AlignDisplayFlagTDC,mode=1,value=0
-	Button AlignRun,pos={413,84},size={100,20},proc=AlignmentProc,title="Run"
-	SetVariable AlignPoints,pos={135,104},size={151,18},bodyWidth=54,title="Window Pts"
-	SetVariable AlignPoints,limits={1,1000,1},value= root:Sequencer:AlignmentSweeper:ALIGNSWEEP_POINTS
-	SetVariable MaxHistPoints,pos={140,124},size={147,18},bodyWidth=54,title="Hist Range"
+	CheckBox AvgDisp,variable= AlignDisplayFlagAvg,mode=1
+	CheckBox TDCDisp,pos={160,44},size={87,15},proc=alignDispProc,title="Display TDC"
+	CheckBox TDCDisp,variable= AlignDisplayFlagTDC,mode=1
+	SetVariable MaxHistPoints,pos={167,124},size={120,18},bodyWidth=54,title="Hist Range"
 	SetVariable MaxHistPoints,limits={1,1000,1},value= root:Sequencer:AlignmentSweeper:AlignMaxHist
-	SetVariable DiscPointBox,pos={125,144},size={163,18},bodyWidth=54,title="Discriminator"
+	SetVariable DiscPointBox,pos={156,144},size={132,18},bodyWidth=54,title="Discriminator"
 	SetVariable DiscPointBox,limits={0,1000,1},value= root:Sequencer:DiscPoint
-	SetVariable NumIon1,pos={250,44},size={147,18},bodyWidth=54,title="Chan 1"
-	SetVariable NumIon1,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[0]
-	SetVariable NumIon1, disable=2
-	SetVariable NumIon2,pos={250,64},size={147,18},bodyWidth=54,title="Chan 2"
-	SetVariable NumIon2,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[1]
-	SetVariable NumIon2, disable=2
-	SetVariable NumIon3,pos={250,84},size={147,18},bodyWidth=54,title="Chan 3"
-	SetVariable NumIon3,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[2]
-	SetVariable NumIon3, disable=2
-	SetVariable NumIon4,pos={250,104},size={147,18},bodyWidth=54,title="Chan 4"
-	SetVariable NumIon4,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[3]
-	SetVariable NumIon4, disable=2
-	SetVariable NumIon5,pos={250,124},size={147,18},bodyWidth=54,title="Chan 5"
-	SetVariable NumIon5,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[4]
-	SetVariable NumIon5, disable=2
-	SetVariable NumIon6,pos={250,144},size={147,18},bodyWidth=54,title="Chan 6"
-	SetVariable NumIon6,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[5]
-	SetVariable NumIon6, disable=2
-	SetVariable NumIon7,pos={250,164},size={147,18},bodyWidth=54,title="Chan 7"
-	SetVariable NumIon7,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[6]
-	SetVariable NumIon7, disable=2
-	SetVariable NumIon8,pos={250,184},size={147,18},bodyWidth=54,title="Chan 8"
-	SetVariable NumIon8,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[7]
-	SetVariable NumIon8, disable=2
+	
+	Button AlignRun,pos={413,84},size={100,20},proc=AlignmentProc,title="Run"
+	SetVariable AlignPoints,pos={163,104},size={123,18},bodyWidth=54,title="Window Pts"
+	SetVariable AlignPoints,limits={1,1000,1},value= root:Sequencer:AlignmentSweeper:ALIGNSWEEP_POINTS
 
+	SetVariable NumIon1,pos={299,44},size={98,18},bodyWidth=54,title="Chan 1"
+	SetVariable NumIon1,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[0]
+	SetVariable NumIon2,pos={299,64},size={98,18},bodyWidth=54,disable=2,title="Chan 2"
+	SetVariable NumIon2,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[1]
+	SetVariable NumIon3,pos={299,84},size={98,18},bodyWidth=54,disable=2,title="Chan 3"
+	SetVariable NumIon3,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[2]
+	SetVariable NumIon4,pos={299,104},size={98,18},bodyWidth=54,disable=2,title="Chan 4"
+	SetVariable NumIon4,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[3]
+	SetVariable NumIon5,pos={299,124},size={98,18},bodyWidth=54,disable=2,title="Chan 5"
+	SetVariable NumIon5,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[4]
+	SetVariable NumIon6,pos={299,144},size={98,18},bodyWidth=54,disable=2,title="Chan 6"
+	SetVariable NumIon6,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[5]
+	SetVariable NumIon7,pos={299,164},size={98,18},bodyWidth=54,disable=2,title="Chan 7"
+	SetVariable NumIon7,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[6]
+	SetVariable NumIon8,pos={299,184},size={98,18},bodyWidth=54,disable=2,title="Chan 8"
+	SetVariable NumIon8,limits={0,2,1},value= root:Sequencer:AlignmentSweeper:NumIonChanAlign[7]
 EndMacro
 
 Function AlignDispProc(ctrlName,checked): CheckBoxControl
@@ -514,7 +509,7 @@ end
 //
 Window SaveBasisHistogram() : Panel
 	PauseUpdate; Silent 1		// building window...
-	NewPanel /W=(309,458,837,646) as "SaveBasisHistogram"
+	NewPanel /K=1/W=(309,458,837,646) as "SaveBasisHistogram"
 	ModifyPanel cbRGB=(48896,65280,57344)
 	SetDrawLayer UserBack
 	SetDataFolder root:Sequencer:AlignmentSweeper
@@ -1131,6 +1126,7 @@ function AlignDataDisplay()
 	endif
 	//DoWindow
 end
+
 //_____________________________________________________________________________
 //
 //	AlignmentDataFrame() Macro to recreate data frame and the plots within
@@ -1145,6 +1141,7 @@ Window AlignSweepDataFrame() : Panel
 	SetDatafolder root:sequencer:alignmentsweeper:
 	variable k=0
 	make/o/n=(Dimsize(AlignHistPMTchannels,0),3) temp_color
+	Variable r, g, b
 	if(AlignDisplayFlagProb)
 		do
 			if(Dimsize(AlignProbPMTchannels,0)==0)
@@ -1154,9 +1151,14 @@ Window AlignSweepDataFrame() : Panel
 					Display/W=(12,6,536,376)/N=AlignProbTestName/HOST=#   $(AlignProbPMTchannels[Dimsize(AlignProbPMTchannels,0)-1])  vs dataScanVar
 					ModifyGraph mode=3
 					ModifyGraph/W=AlignSweepDataFrame#AlignProbTestName marker=19
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][0]		=	65000*(abs(gnoise(2))/2)
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][1]		=	65000*(abs(gnoise(2))/2)
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][2]		=	65000*(abs(gnoise(2))/2)
+					do
+						r = 65000*((enoise(1)+1)/2)
+						g = 65000*((enoise(1)+1)/2)
+						b = 65000*((enoise(1)+1)/2)
+					while(r^2 + g^2 + b^2 > 6337500000)
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][0] = r
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][1] = g
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][2] = b
 					ModifyGraph rgb ($(AlignProbPMTchannels[Dimsize(AlignProbPMTchannels,0)-1]))=(temp_color[DimSize(AlignProbPMTchannels,0)-1][0],temp_color[DimSize(AlignProbPMTchannels,0)-1][1],temp_color[DimSize(AlignProbPMTchannels,0)-1][2])
 					Label left "Probability"
 					Label bottom "Sweep Points"
@@ -1168,9 +1170,14 @@ Window AlignSweepDataFrame() : Panel
 					AppendToGraph/W=AlignSweepDataFrame#AlignProbTestName $(AlignProbPMTchannels[Dimsize(AlignProbPMTchannels,0)-1]) vs dataScanVar
 					ModifyGraph mode=3
 					ModifyGraph marker=19
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][0]		=	65000*(abs(gnoise(2))/2)
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][1]		=	65000*(abs(gnoise(2))/2)
-					temp_color[DimSize(AlignProbPMTchannels,0)-1][2]		=	65000*(abs(gnoise(2))/2)
+					do
+						r = 65000*((enoise(1)+1)/2)
+						g = 65000*((enoise(1)+1)/2)
+						b = 65000*((enoise(1)+1)/2)
+					while(r^2 + g^2 + b^2 > 6337500000)
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][0] = r
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][1] = g
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][2] = b
 					ModifyGraph rgb ($(AlignProbPMTchannels[Dimsize(AlignProbPMTchannels,0)-1]))=(temp_color[DimSize(AlignProbPMTchannels,0)-1][0],temp_color[DimSize(AlignProbPMTchannels,0)-1][1],temp_color[DimSize(AlignProbPMTchannels,0)-1][2])
 					ErrorBars $(AlignProbPMTchannels[Dimsize(AlignProbPMTchannels,0)-1]) Y,wave=($(AlignBiErrPMTchannels[Dimsize(AlignBiErrPMTchannels,0)-1]),$(AlignBiErrPMTchannels[Dimsize(AlignBiErrPMTchannels,0)-1]))
 				endif
@@ -1191,9 +1198,14 @@ Window AlignSweepDataFrame() : Panel
 					Display/W=(12,6,536,376)/N=AlignAvgTestName/HOST=#   $(AlignAvgPMTchannels[Dimsize(AlignAvgPMTchannels,0)-1])  vs dataScanVar
 					ModifyGraph mode=3
 					ModifyGraph/W=AlignSweepDataFrame#AlignAvgTestName marker=19
-					temp_color[DimSize(AlignAvgPMTchannels,0)-1][0]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(AlignAvgPMTchannels,0)-1][1]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(AlignAvgPMTchannels,0)-1][2]		=	65000*((enoise(1)+1)/2)
+					do
+						r = 65000*((enoise(1)+1)/2)
+						g = 65000*((enoise(1)+1)/2)
+						b = 65000*((enoise(1)+1)/2)
+					while(r^2 + g^2 + b^2 > 6337500000)
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][0] = r
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][1] = g
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][2] = b
 					ModifyGraph rgb ($(AlignAvgPMTchannels[Dimsize(AlignAvgPMTchannels,0)-1]))=(temp_color[DimSize(AlignAvgPMTchannels,0)-1][0],temp_color[DimSize(AlignAvgPMTchannels,0)-1][1],temp_color[DimSize(AlignAvgPMTchannels,0)-1][2])
 					Label left "Average Counts"
 					Label bottom "Sweep Points"
@@ -1206,9 +1218,14 @@ Window AlignSweepDataFrame() : Panel
 					AppendToGraph/W=AlignSweepDataFrame#AlignAvgTestName $(AlignAvgPMTchannels[Dimsize(AlignAvgPMTchannels,0)-1]) vs dataScanVar
 					ModifyGraph mode=3
 					ModifyGraph marker=19
-					temp_color[DimSize(AlignAvgPMTchannels,0)-1][0]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(AlignAvgPMTchannels,0)-1][1]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(AlignAvgPMTchannels,0)-1][2]		=	65000*((enoise(1)+1)/2)
+					do
+						r = 65000*((enoise(1)+1)/2)
+						g = 65000*((enoise(1)+1)/2)
+						b = 65000*((enoise(1)+1)/2)
+					while(r^2 + g^2 + b^2 > 6337500000)
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][0] = r
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][1] = g
+					temp_color[DimSize(AlignAvgPMTchannels,0)-1][2] = b
 					ModifyGraph rgb ($(AlignAvgPMTchannels[Dimsize(AlignAvgPMTchannels,0)-1]))=(temp_color[DimSize(AlignAvgPMTchannels,0)-1][0],temp_color[DimSize(AlignAvgPMTchannels,0)-1][1],temp_color[DimSize(AlignAvgPMTchannels,0)-1][2])
 					ErrorBars $(AlignAvgPMTchannels[Dimsize(AlignAvgPMTchannels,0)-1]) Y,wave=($(AlignStdPMTchannels[Dimsize(AlignStdPMTchannels,0)-1]),$(AlignStdPMTchannels[Dimsize(AlignStdPMTchannels,0)-1]))
 				endif
@@ -1430,7 +1447,7 @@ Window DataFrame() : Panel
 //	ShowInfo/W=DataFrame
 	String fldrSav0= GetDataFolder(1)
 	SetDatafolder root:sequencer:Data:
-	variable k=0
+	variable k=0, r, g, b
 	make/o/n=(Dimsize(DataHistPMTchannels,0),3) temp_color
 	if(DataDisplayFlagProb)
 		do
@@ -1441,9 +1458,14 @@ Window DataFrame() : Panel
 					Display/W=(12,6,536,376)/N=DataProbTestName/HOST=#   $(DataProbPMTchannels[Dimsize(DataProbPMTchannels,0)-1])  vs dataScanVar
 					ModifyGraph mode=3
 					ModifyGraph/W=DataFrame#DataProbTestName marker=19
-					temp_color[DimSize(DataProbPMTchannels,0)-1][0]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(DataProbPMTchannels,0)-1][1]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(DataProbPMTchannels,0)-1][2]		=	65000*((enoise(1)+1)/2)
+					do
+						r = 65000*((enoise(1)+1)/2)
+						g = 65000*((enoise(1)+1)/2)
+						b = 65000*((enoise(1)+1)/2)
+					while(r^2 + g^2 + b^2 > 6337500000)
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][0] = r
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][1] = g
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][2] = b
 					ModifyGraph rgb ($(DataProbPMTchannels[Dimsize(DataProbPMTchannels,0)-1]))=(temp_color[DimSize(DataProbPMTchannels,0)-1][0],temp_color[DimSize(DataProbPMTchannels,0)-1][1],temp_color[DimSize(DataProbPMTchannels,0)-1][2])
 					Label left "Probability"
 					Label bottom "Sweep Points"
@@ -1455,9 +1477,14 @@ Window DataFrame() : Panel
 					AppendToGraph/W=DataFrame#DataProbTestName $(DataProbPMTchannels[Dimsize(DataProbPMTchannels,0)-1]) vs dataScanVar
 					ModifyGraph mode=3
 					ModifyGraph marker=19
-					temp_color[DimSize(DataProbPMTchannels,0)-1][0]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(DataProbPMTchannels,0)-1][1]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(DataProbPMTchannels,0)-1][2]		=	65000*((enoise(1)+1)/2)
+					do
+						r = 65000*((enoise(1)+1)/2)
+						g = 65000*((enoise(1)+1)/2)
+						b = 65000*((enoise(1)+1)/2)
+					while(r^2 + g^2 + b^2 > 6337500000)
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][0] = r
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][1] = g
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][2] = b
 					ModifyGraph rgb ($(DataProbPMTchannels[Dimsize(DataProbPMTchannels,0)-1]))=(temp_color[DimSize(DataProbPMTchannels,0)-1][0],temp_color[DimSize(DataProbPMTchannels,0)-1][1],temp_color[DimSize(DataProbPMTchannels,0)-1][2])
 					ErrorBars $(DataProbPMTchannels[Dimsize(DataProbPMTchannels,0)-1]) Y,wave=($(DataBiErrPMTchannels[Dimsize(DataBiErrPMTchannels,0)-1]),$(DataBiErrPMTchannels[Dimsize(DataBiErrPMTchannels,0)-1]))
 				endif
@@ -1478,9 +1505,14 @@ Window DataFrame() : Panel
 					Display/W=(12,6,536,376)/N=DataAvgTestName/HOST=#   $(DataAvgPMTchannels[Dimsize(DataAvgPMTchannels,0)-1])  vs dataScanVar
 					ModifyGraph mode=3
 					ModifyGraph/W=DataFrame#DataAvgTestName marker=19
-					temp_color[DimSize(DataAvgPMTchannels,0)-1][0]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(DataAvgPMTchannels,0)-1][1]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(DataAvgPMTchannels,0)-1][2]		=	65000*((enoise(1)+1)/2)
+					do
+						r = 65000*((enoise(1)+1)/2)
+						g = 65000*((enoise(1)+1)/2)
+						b = 65000*((enoise(1)+1)/2)
+					while(r^2 + g^2 + b^2 > 6337500000)
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][0] = r
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][1] = g
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][2] = b
 					ModifyGraph rgb ($(DataAvgPMTchannels[Dimsize(DataAvgPMTchannels,0)-1]))=(temp_color[DimSize(DataAvgPMTchannels,0)-1][0],temp_color[DimSize(DataAvgPMTchannels,0)-1][1],temp_color[DimSize(DataAvgPMTchannels,0)-1][2])
 					Label left "Average Counts"
 					Label bottom "Sweep Points"
@@ -1493,9 +1525,14 @@ Window DataFrame() : Panel
 					AppendToGraph/W=DataFrame#DataAvgTestName $(DataAvgPMTchannels[Dimsize(DataAvgPMTchannels,0)-1]) vs dataScanVar
 					ModifyGraph mode=3
 					ModifyGraph marker=19
-					temp_color[DimSize(DataAvgPMTchannels,0)-1][0]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(DataAvgPMTchannels,0)-1][1]		=	65000*((enoise(1)+1)/2)
-					temp_color[DimSize(DataAvgPMTchannels,0)-1][2]		=	65000*((enoise(1)+1)/2)
+					do
+						r = 65000*((enoise(1)+1)/2)
+						g = 65000*((enoise(1)+1)/2)
+						b = 65000*((enoise(1)+1)/2)
+					while(r^2 + g^2 + b^2 > 6337500000)
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][0] = r
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][1] = g
+					temp_color[DimSize(DataAvgPMTchannels,0)-1][2] = b
 					ModifyGraph rgb ($(DataAvgPMTchannels[Dimsize(DataAvgPMTchannels,0)-1]))=(temp_color[DimSize(DataAvgPMTchannels,0)-1][0],temp_color[DimSize(DataAvgPMTchannels,0)-1][1],temp_color[DimSize(DataAvgPMTchannels,0)-1][2])
 					ErrorBars $(DataAvgPMTchannels[Dimsize(DataAvgPMTchannels,0)-1]) Y,wave=($(DataStdPMTchannels[Dimsize(DataStdPMTchannels,0)-1]),$(DataStdPMTchannels[Dimsize(DataStdPMTchannels,0)-1]))
 				endif
