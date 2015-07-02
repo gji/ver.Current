@@ -60,7 +60,10 @@ Structure ExOpDefinitions
 	STRUCT ExOp Delay
 	STRUCT ExOp Microwave
 	STRUCT ExOp AWGRotation
-	STRUCT ExOp TDCDetect				
+	STRUCT ExOp TDCDetect			
+	STRUCT ExOp RFDetect
+	STRUCT EXOp DDS_Raman	
+	STRUCT EXOp DDS_SBCooling	
 EndStructure
 
 //_____________________________________________________________________________
@@ -128,13 +131,13 @@ function GetExOpDefinitions(ExOpDefs)
 	
 	ExOpDefs.AWGRotation.name = "AWGRotation"
 	ExOpDefs.AWGRotation.description = "AWG rotation"
-	ExOpDefs.AWGRotation.device = "DDS4"
-	ExOpDefs.AWGRotation.ControlParameters = "Duration;Amplitude;Frequency;Phase;"
-	ExOpDefs.AWGRotation.Values = "1;2049;200;0;"
-	ExOpDefs.AWGRotation.ScannableParameters = "1;1;1;1;"
-	ExOpDefs.AWGRotation.MinVal = ".1;0;100;0;"
-	ExOpDefs.AWGRotation.MaxVal = "100000;4094;350;359;"
-	ExOpDefs.AWGRotation.MinInc = "0.1;1;0.0001;1;"
+	ExOpDefs.AWGRotation.device = "DDS6"
+	ExOpDefs.AWGRotation.ControlParameters = "Duration;Amplitude;Frequency;"
+	ExOpDefs.AWGRotation.Values = "1;100;200;0;"
+	ExOpDefs.AWGRotation.ScannableParameters = "1;1;1;"
+	ExOpDefs.AWGRotation.MinVal = ".1;0;100;"
+	ExOpDefs.AWGRotation.MaxVal = "100000;100;350;"
+	ExOpDefs.AWGRotation.MinInc = "0.1;1;0.0001;"
 	ExOpDefs.AWGRotation.ScanParameter = 0	
 	ExOpDefs.SBCooling.SBCPumpingTime = 0
 	ExOpDefs.SBCooling.SBCTotalTime = 0
@@ -213,7 +216,43 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.SBCooling.SBCFrequencies = ""
 	ExOpDefs.SBCooling.SBCAmplitudes = ""
 	ExOpDefs.SBCooling.SBCTimes = ""
-	ExOpDefs.SBCooling.SBCCycles = ""	
+	ExOpDefs.SBCooling.SBCCycles = ""
+	
+	ExOpDefs.RFDetect.name = "RF Detect"
+	ExOpDefs.RFDetect.description = "RF Detection"
+	ExOpDefs.RFDetect.device = "DDS5"
+	ExOpDefs.RFDetect.ControlParameters = "Duration;Amplitude;Frequency;"
+	ExOpDefs.RFDetect.Values = "400;100;20.722;"
+	ExOpDefs.RFDetect.ScannableParameters = "1;0;1;"
+	ExOpDefs.RFDetect.MinVal = ".1;0;20;"
+	ExOpDefs.RFDetect.MaxVal = "1E8;100;40;"
+	ExOpDefs.RFDetect.MinInc = "0.1;0.001;"
+	ExOpDefs.RFDetect.ScanParameter = 0
+	ExOpDefs.RFDetect.Position = CUR_POS	
+	ExOpDefs.SBCooling.SBCPumpingTime = 0
+	ExOpDefs.SBCooling.SBCTotalTime = 0
+	ExOpDefs.SBCooling.SBCFrequencies = ""
+	ExOpDefs.SBCooling.SBCAmplitudes = ""
+	ExOpDefs.SBCooling.SBCTimes = ""
+	ExOpDefs.SBCooling.SBCCycles = ""
+	
+	ExOpDefs.DDS_Raman.name = "DDS Raman"
+	ExOpDefs.DDS_Raman.description = "DDS Raman"
+	ExOpDefs.DDS_Raman.device = "DDS6"
+	ExOpDefs.DDS_Raman.ControlParameters = "Duration;Amplitude;Frequency;"
+	ExOpDefs.DDS_Raman.Values = "60;100;211.153;"
+	ExOpDefs.DDS_Raman.ScannableParameters = "1;0;1;"
+	ExOpDefs.DDS_Raman.MinVal = ".1;0;150;"
+	ExOpDefs.DDS_Raman.MaxVal = "1E8;100;300;"
+	ExOpDefs.DDS_Raman.MinInc = "0.1;0.01;0.0001;"
+	ExOpDefs.DDS_Raman.ScanParameter = 0
+	ExOpDefs.DDS_Raman.Position = CUR_POS	
+	ExOpDefs.SBCooling.SBCPumpingTime = 0
+	ExOpDefs.SBCooling.SBCTotalTime = 0
+	ExOpDefs.SBCooling.SBCFrequencies = ""
+	ExOpDefs.SBCooling.SBCAmplitudes = ""
+	ExOpDefs.SBCooling.SBCTimes = ""
+	ExOpDefs.SBCooling.SBCCycles = ""			
 	
 //	ExOpDefs.DcField.name = "DC Potential"
 //	ExOpDefs.DcField.description = "DC Potential"
@@ -267,6 +306,24 @@ function GetExOpDefinitions(ExOpDefs)
 	ExOpDefs.SBCooling.SBCAmplitudes = ""
 	ExOpDefs.SBCooling.SBCTimes = ""
 	ExOpDefs.SBCooling.SBCCycles = ""
+	
+	ExOpDefs.DDS_SBCooling.name = "DDS SBCooling"
+	ExOpDefs.DDS_SBCooling.description = "DDS Sideband Cooling"
+	ExOpDefs.DDS_SBCooling.device = "DDS6"
+	ExOpDefs.DDS_SBCooling.ControlParameters = ""
+	ExOpDefs.DDS_SBCooling.Values = ""
+	ExOpDefs.DDS_SBCooling.ScannableParameters = ""
+	ExOpDefs.DDS_SBCooling.MinVal = ";"
+	ExOpDefs.DDS_SBCooling.MaxVal = ""
+	ExOpDefs.DDS_SBCooling.MinInc = ""
+	ExOpDefs.DDS_SBCooling.ScanParameter = 0
+	ExOpDefs.DDS_SBCooling.Position = CUR_POS	
+	ExOpDefs.DDS_SBCooling.SBCPumpingTime = 5
+	ExOpDefs.DDS_SBCooling.SBCTotalTime = 1
+	ExOpDefs.DDS_SBCooling.SBCFrequencies = ""
+	ExOpDefs.DDS_SBCooling.SBCAmplitudes = ""
+	ExOpDefs.DDS_SBCooling.SBCTimes = ""
+	ExOpDefs.DDS_SBCooling.SBCCycles = ""
 end
 
 //_____________________________________________________________________________
@@ -319,7 +376,16 @@ function BuildExperiment(Sequence, expt)
 				break
 			case "TDC Detection":
 				expt.ExOps[k] = ExOpDefs.TDCDetect
-				break			
+				break
+			case "RF Detection":
+				expt.ExOps[k] = ExOpDefs.RFDetect
+				break
+			case "DDS Raman":
+				expt.ExOps[k] = ExOpDefs.DDS_Raman
+				break
+			case "DDS SBCooling":
+				expt.ExOps[k] = ExOpDefs.DDS_SBCooling
+				break					
 			default:							// optional default expression executed
 				break						// when no case matches
 		endswitch
@@ -449,7 +515,7 @@ function/S ExportExptToJSONString(expt)
 		JSONstr += TAB+TAB+TAB+Q+"ScanInc"+Q+": "+ num2str(expt.ExOps[ExOpIdx].ScanInc)+","+CR
 		JSONstr += TAB+TAB+TAB+Q+"Position"+Q+": "+ num2str(expt.ExOps[ExOpIdx].Position)+","+CR
 		JSONstr += TAB+TAB+TAB+Q+"Shuttled"+Q+": "+ num2str(expt.ExOps[ExOpIdx].Shuttled)+","+CR
-		if (cmpstr(expt.ExOps[ExOpIdx].name, "SBCooling") == 0)
+		if (cmpstr(expt.ExOps[ExOpIdx].name, "SBCooling") == 0 || cmpstr(expt.ExOps[ExOpIdx].name, "DDS SBCooling") == 0)
 			JSONstr += TAB+TAB+TAB+Q+"SBCPumpingTime"+Q+": "+ num2str(expt.ExOps[ExOpIdx].SBCPumpingTime)+","+CR
 			JSONstr += TAB+TAB+TAB+Q+"SBCTotalTime"+Q+": "+ num2str(expt.ExOps[ExOpIdx].SBCTotalTime)+","+CR
 			JSONstr += TAB+TAB+TAB+Q+"SBCFrequencies"+Q+": "+ expt.ExOps[ExOpIdx].SBCFrequencies+","+CR
@@ -826,6 +892,30 @@ function ImportExptFromJSONString(expt, PathToSettingWave)
 		query2 = ","
 		p2 = strsearch(ExOp,query2, p1 + strlen(query1))
 		expt.ExOps[ExOpIdx].SBCPumpingTime = str2num( ExOp[p1 + strlen(query1), p2-1] )
+	
+		query1 = "SBCFrequencies:"
+		p1 = strsearch(ExOp,query1, 0)
+		query2 = ","
+		p2 = strsearch(ExOp,query2, p1 + strlen(query1))
+		expt.ExOps[ExOpIdx].SBCFrequencies = ExOp[p1 + strlen(query1), p2-1]
+		
+		query1 = "SBCAmplitudes:"
+		p1 = strsearch(ExOp,query1, 0)
+		query2 = ","
+		p2 = strsearch(ExOp,query2, p1 + strlen(query1))
+		expt.ExOps[ExOpIdx].SBCAmplitudes = ExOp[p1 + strlen(query1), p2-1]
+	
+		query1 = "SBCTimes:"
+		p1 = strsearch(ExOp,query1, 0)
+		query2 = ","
+		p2 = strsearch(ExOp,query2, p1 + strlen(query1))
+		expt.ExOps[ExOpIdx].SBCTimes = ExOp[p1 + strlen(query1), p2-1]
+		
+		query1 = "SBCCycles:"
+		p1 = strsearch(ExOp,query1, 0)
+		query2 = ","
+		p2 = strsearch(ExOp,query2, p1 + strlen(query1))
+		expt.ExOps[ExOpIdx].SBCCycles = ExOp[p1 + strlen(query1), p2-1]
 	endfor
 
 end

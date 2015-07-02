@@ -65,7 +65,7 @@ function CalculateSBCWaveform(expt, SBCIdx, awgTTLs)
 	endfor
 	for (k=0; k< numModes; k+=1)
 		for (j=0; j< SBCCycles[k]; j+=1)
-			SBCTime[k][j] = SBCTime[k][0]/sqrt(j+1)
+			SBCTime[k][j] = SBCTime[k][0]//*sqrt(j+1)
 		endfor
 	endfor
 	Variable SBCTotalTime = sum(SBCTime) + totalPumpingDuration

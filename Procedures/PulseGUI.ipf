@@ -459,7 +459,7 @@ Function GenerateSequenceControls(expt)
 
 		TitleBox $("Step"+num2str(ExOpIdx)+"Title"),labelBack=(65535,65535,65535),frame=5, fixedSize=1,anchor=MC,pos={15,VerticalButtonPosition},size={150,20}, title=ExOpName,win=Pulse
 		SetVariable $("Step"+num2str(ExOpIdx)+"position"), pos={240, VerticalButtonPosition+2}, title="Position", win=Pulse,size={100,20},bodywidth=30,limits={MIN_POSITION,MAX_POSITION,1},value=_NUM:DEFAULT_POSITION
-		if (cmpstr(ExOpName, "SBCooling") == 0)
+		if (cmpstr(ExOpName, "SBCooling") == 0 || cmpstr(ExOpName, "DDS SBCooling") == 0)
 			SetVariable $("Step"+num2str(ExOpIdx)+"SBCNumModes"), pos={140, VerticalButtonPosition+2}, title="Modes", win=Pulse,size={100,20},bodywidth=30,limits={1,20,1},value=_NUM:0, proc=GenerateSBCoolingControls
 			VerticalButtonPosition+=100
 		else
@@ -518,8 +518,21 @@ Function RecreateSequenceControls(expt)
 
 		TitleBox $("Step"+num2str(ExOpIdx)+"Title"),labelBack=(65535,65535,65535),frame=5, fixedSize=1,anchor=MC,pos={15,VerticalButtonPosition},size={150,20}, title=ExOpName,win=Pulse
 		SetVariable $("Step"+num2str(ExOpIdx)+"position"), pos={240, VerticalButtonPosition+2}, title="Position", win=Pulse,size={100,20},bodywidth=30,limits={MIN_POSITION,MAX_POSITION,1},value=_NUM:DEFAULT_POSITION
-		if (cmpstr(ExOpName, "SBCooling") == 0)
-			SetVariable $("Step"+num2str(ExOpIdx)+"SBCNumModes"), pos={140, VerticalButtonPosition+2}, title="Modes", win=Pulse,size={100,20},bodywidth=30,limits={1,20,1},value=_NUM:0, proc=GenerateSBCoolingControls
+		if (cmpstr(ExOpName, "SBCooling") == 0 || cmpstr(ExOpName, "DDS SBCooling") == 0)		
+			Variable cycles = ItemsInList(expt.ExOps[ExOpIdx].SBCFrequencies, ";")
+			SetVariable $("Step"+num2str(ExOpIdx)+"SBCNumModes"), pos={140, VerticalButtonPosition+2}, title="Modes", win=Pulse,size={100,20},bodywidth=30,limits={1,20,1},value=_NUM:cycles, proc=GenerateSBCoolingControls
+			
+			for (k=0; k < cycles; k+=1)
+				Variable frq = str2num(ExOpElement(expt.ExOps[ExOpIdx].SBCFrequencies, k))
+				Variable amp = str2num(ExOpElement(expt.ExOps[ExOpIdx].SBCAmplitudes, k))
+				Variable tim = str2num(ExOpElement(expt.ExOps[ExOpIdx].SBCTimes, k))
+				Variable cyc =str2num(ExOpElement(expt.ExOps[ExOpIdx].SBCCycles, k))
+				SetVariable $("Step"+(num2str(ExOpIdx))+"SBCoolingFreq"+num2str(k)), pos={370+150*k, VerticalButtonPosition+2},title="Freq "+num2str(k+1),format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={10,300,0.0005},value=_NUM:frq
+				SetVariable $("Step"+(num2str(ExOpIdx))+"SBCoolingTime"+num2str(k)), pos={370+150*k, VerticalButtonPosition+25},title="Duration "+num2str(k+1),format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={1,100000,1},value=_NUM:tim
+				SetVariable $("Step"+(num2str(ExOpIdx))+"SBCoolingAmplitude"+num2str(k)), pos={370+150*k, VerticalButtonPosition+50},title="Amp "+num2str(k+1),format="%.6f", win=Pulse,size={130,20},bodywidth=70,limits={1,2047,1},value=_NUM:amp
+				SetVariable $("Step"+(num2str(ExOpIdx))+"SBCoolingCycles"+num2str(k)), pos={370+150*k, VerticalButtonPosition+75},title="Cycles "+num2str(k+1), win=Pulse,size={130,20},bodywidth=70,limits={1,500,1},value=_NUM:cyc
+			endfor
+			
 			VerticalButtonPosition+=100
 		else
 			numControlParams = GetNumberControlParams(expt.ExOps[ExOpIdx])
@@ -1321,11 +1334,11 @@ Function/WAVE RunExpValues(expt)
 	Variable AWGupdate=0
 	Variable mask = 0
 	Variable enable = 0
-	Variable n,m,i,j=0;
+	Variable n,m,i,j,k=0;
+	STRUCT ExOp cOp;
 	
-	make/o/N=(expt.numExOps,2) SBC_steps		=	 0
-	make/o/N=(expt.numExOps,2) Rot_steps		=	 0
-	make/o/N=(expt.numExOps,2) uWave_steps		=	 0
+	STRUCT ExOpDefinitions ExOpDefs
+	GetExOpDefinitions(ExOpDefs)
 	
 	For(i=0; i<16; i+=1)
 		If(OverrideWave[i][1] && OverrideWave[i][0])         // setting the ,ask dependent on which ttl is overriden
@@ -1337,10 +1350,13 @@ Function/WAVE RunExpValues(expt)
 			mask = mask | 2^(i)
 		endif
 	EndFor
-
+	
 	Make/D/O/N=(expt.numExOps,2)/I/U fpgaSeq // unsigned 32-bit   ; we have 2 columns and rows equal to number of exops
-	STRUCT ExOp cOp;
+	fpgaSeq[][] = 0
 	variable cur_ttl = 0; // this keeps track of the actual number of ttl pulses, as opposed to the chapter
+	KillDataFolder dds // this needs to be empty, we use it to check if a dds needs to be set
+	NewDataFolder dds
+	Make/O/N=12 DDSUsed={0,0,0,0,0,0,0,0,0,0,0,0}
 	for (i=0;i<expt.numExOps;i+=1)
 		cOp = expt.ExOps[i]
 		
@@ -1348,18 +1364,53 @@ Function/WAVE RunExpValues(expt)
 		Variable ttlNo = V_value // the number that can correspond to a TTL name
 		fpgaSeq[cur_ttl][0] = (NameWave[ttlNo] & ~mask) | enable // name wave corresponds to the actual TTLs corresponding to indices
 		fpgaSeq[cur_ttl][1] = str2num(StringFromList(0, cOp.Values)) *50  // take the duration from the values in us and convert it to clock cycles (20ns)
+		
 		strswitch(cOp.device[0,2])
 			case "DDS":  // in case of DDS the frequency of a certain DDS gets overwritten
 				Variable ddsNo = str2num(cOp.device[3,strlen(cOp.device)-1])
-				//print strlen(cOp.device)-1
-				//print num2str(ddsNo) + ":" + StringFromList(2, cOp.Values)
-				if(DDS_INFO[ddsNo][3] == 0) // if not overridden
-					Variable frequency = str2num(StringFromList(2, cOp.Values))
-					//print frequency
-					Variable phase = str2num(StringFromList(3, cOp.Values))
-					Variable amplitude = str2num(StringFromList(1, cOp.Values))
-					setDDS(ddsNo+1,frequency*1000000, phase, amplitude*1023/100) // dds numbers are 1 indexed. freq in hertz . Sets the DDS values to be updated. dds number =1 for RF;dds number =2 for Raman1 etc
+				
+				DDSUsed[ddsNo] = 1;
+				String ddsname = "dds"+num2str(ddsNo+1);
+				Wave ddswave = :dds:$ddsname
+				
+				if(cmpstr(cOp.name, "DDS SBCooling") == 0)
+					DeletePoints/M=0 cur_ttl, 1, fpgaSeq
+					Variable numModes = ItemsInList(cOp.SBCFrequencies)
+					
+					for(j=0; j<numModes; j+=1)
+						Variable numCycles = str2num(StringFromList(j, cOp.SBCCycles))
+						
+						for(k=0; k<numCycles; k+=1)
+							Wave ddswave = :dds:$ddsname
+							InsertPoints/M=0 cur_ttl, 1, fpgaSeq
+							FindValue/TEXT="DDS Raman" TTLNames
+							fpgaSeq[cur_ttl][0] = (NameWave[V_value] & ~mask) | enable // name wave corresponds to the actual TTLs corresponding to indices
+							fpgaSeq[cur_ttl][1] = str2num(StringFromList(j, cOp.SBCTimes)) *50  // take the duration from the values in us and convert it to clock cycles (20ns)
+							cur_ttl += 1
+							
+							STRUCT ExOp rot;
+							rot = ExOpDefs.DDS_Raman
+							rot.Values = StringFromList(j, cOp.SBCTimes)+";"+StringFromList(j, cOp.SBCAmplitudes)+";"+StringFromList(j, cOp.SBCFrequencies)+";0"
+
+							cur_ttl = insertDDSPoint(rot, ddsNo, ddswave, fpgaSeq, cur_ttl, mask, enable)
+							
+							InsertPoints/M=0 cur_ttl, 1, fpgaSeq
+							FindValue/TEXT="Pump" TTLNames
+							fpgaSeq[cur_ttl][0] = (NameWave[V_value] & ~mask) | enable // name wave corresponds to the actual TTLs corresponding to indices
+							fpgaSeq[cur_ttl][1] = cOp.SBCPumpingTime *50  // take the duration from the values in us and convert it to clock cycles (20ns)
+							cur_ttl += 1
+						endfor
+					endfor
+					cur_ttl -= 1		
+				else
+					// only add a new entry if the frequency is different from the last one
+					if(WaveExists(ddswave) && dimsize(ddswave, 0) >= 1 && abs(ddswave[dimsize(ddswave, 0)-1][0]-1000000*str2num(StringFromList(2, cOp.Values))) < 10)
+						break
+					endif
+					
+					cur_ttl = insertDDSPoint(cOp, ddsNo,ddswave, fpgaSeq, cur_ttl, mask, enable)
 				endif
+			
 			break
 			case "AWG":
 				awgupdate=1
@@ -1376,16 +1427,32 @@ Function/WAVE RunExpValues(expt)
 		endswitch
 		cur_ttl += 1
 	endfor
-	if (AWGupdate)
-		AWGUploadWaveform()
-	endif
 	
-	//SVAR SEQ_PORT=root:ExpParams:SEQ_PORT
-	//string seq_p = SEQ_PORT	
-	//VDT2/P=$seq_p baud=230400,stopbits=2,killio
-	//VDTOpenPort2 $seq_p
-	//VDTOperationsPort2 $seq_p
-	//Print fpgaSeq	
+	WAVE DDSTrigTTL = root:ExpParams:DDSTrigTTL  // ttls to trigger dds
+	variable DDSResetMask = 0;
+	for(i=0;i<12;i+=1)
+		if(DDSUsed[i])
+			wave ddsout = :dds:$("dds"+num2str(i+1))
+			setDDSSeq(i+1, ddsout)
+			if(dimsize(ddsout, 0) > 1)
+				DDSResetMask = DDSResetMask | DDSTrigTTL[i];
+			endif
+		endif
+	endfor
+
+	InsertPoints/M=0 cur_ttl, 5, fpgaSeq
+	fpgaSeq[cur_ttl][0] = (NameWave[0] & ~mask) | enable 
+	fpgaSeq[cur_ttl+1][0] = ((NameWave[0] | DDSResetMask) & ~mask) | enable
+	fpgaSeq[cur_ttl+2][0] = (NameWave[0] & ~mask) | enable 
+	fpgaSeq[cur_ttl+3][0] = ((NameWave[0] | DDSResetMask) & ~mask) | enable
+	fpgaSeq[cur_ttl+4][0] = (NameWave[0] & ~mask) | enable 
+	fpgaSeq[cur_ttl][1] = 10
+	fpgaSeq[cur_ttl+1][1] = 10
+	fpgaSeq[cur_ttl+2][1] = 500
+	fpgaSeq[cur_ttl+3][1] = 10
+	fpgaSeq[cur_ttl+4][1] = 10
+	cur_ttl+=5
+	
 	sendSequence(fpgaSeq)  // Sends the the updated TTL sequence to FPGA
 	//wave out = runSequence(expt.exptsPerPoint, recmask = 0x01000000)
 	//return runSequence(expt.exptsPerPoint, recmask =PMT_mask) // this one triggers the fpga once after updating it and the DDSs and returns the long string of data for each PMT count
@@ -1393,6 +1460,49 @@ Function/WAVE RunExpValues(expt)
 //	VDTClosePort2 COM18	// rec mask will tell which channel is plotted
 	
 End
+
+function insertDDSPoint(cOp, ddsno, ddswave, fpgaSeq, cur_ttl, mask, enable)
+	STRUCT ExOp &cOp;
+	Variable ddsno
+	Wave ddswave
+	Wave fpgaSeq
+	Variable cur_ttl, mask, enable
+	
+	
+	WAVE DDSTrigTTL = root:ExpParams:DDSTrigTTL  // ttls to trigger dds
+	
+	if(WaveExists(ddswave) == 0)
+		Make/O/N=(1,3) :dds:$("dds"+num2str(ddsNo+1))
+		Wave ddswave = :dds:$("dds"+num2str(ddsNo+1))
+	else
+		InsertPoints/M=0 dimsize(ddswave,0), 1, ddswave
+	endif
+	
+	ddswave[dimsize(ddswave,0)-1][0] =  1000000*str2num(StringFromList(2, cOp.Values)) // freqency
+	ddswave[dimsize(ddswave,0)-1][1] = str2num(StringFromList(3, cOp.Values)) // phase
+	ddswave[dimsize(ddswave,0)-1][2] =  str2num(StringFromList(1, cOp.Values)) * 1023/100 // amplitude
+	
+	// only need to add a trigger if it's after the first dds sequence element
+	if(dimsize(ddswave,0) > 1)
+		InsertPoints/M=0 cur_ttl-1, 1, fpgaSeq
+		
+		if(DDSTrigTTL[ddsno] == -1)
+			Abort "No trigger TTL assigned to that DDS!"
+		endif
+		
+		fpgaSeq[cur_ttl-1][0] = ((fpgaSeq[cur_ttl][0] | DDSTrigTTL[ddsNo]) & ~mask) | enable 
+		fpgaSeq[cur_ttl-1][1] = 10;
+		
+		if(fpgaSeq[cur_ttl][1] < 20)
+			Abort "Couldn't run sequence, timing too short!"
+		endif
+		
+		fpgaSeq[cur_ttl][1] -= 10
+		cur_ttl += 1
+	endif
+	
+	return cur_ttl
+end
 
 //_____________________________________________________________________________
 //
@@ -1529,7 +1639,9 @@ function GetExperimentParameters(expt)                                          
 			ExOpParam = str2num(S_Value)
 			ControlInfo/W=$(windowName) $ctrlName
 			checked = V_Value
-			if ( !checked )
+			print ctrlName
+			print V_Value
+			if ( !checked  && !expt.ExOps[ExOpIdx].Scanned)
 				expt.ExOps[ExOpIdx].Scanned = 0
 			endif
 		endif

@@ -224,12 +224,14 @@ Function Param_Init()
 	Variable/G VerticalLoopPosition                   =  16
 	Variable/G GroupNumber                         	=  0
 	Variable/G GroupError                           	=  0
-	Make/D/O/N=8 NameWave				=  {DELAY,COOL,STATE_DET,FLR_DET,PUMP,MICROWAVE,AWG_TRIG,AWG_TRIG,TDC_DET}
-	Make/O/T/N=8 TTLNames                           =  {"Delay","Cool", "State Detection","Flourescence Detection","Pump","Microwave","AWGRotation","SBCooling","TDC Detection"}
+	Make/D/O NameWave				=  {DELAY,COOL,STATE_DET,FLR_DET,PUMP,MICROWAVE,DDS_RAMAN,AWG_TRIG,AWG_TRIG,TDC_DET,STATE_DET, 0}
+	Make/O/T TTLNames                           =  {"Delay","Cool", "State Detection","Flourescence Detection","Pump","Microwave","DDS Raman","AWGRotation","SBCooling","TDC Detection","RF Detection","DDS SBCooling"}
 	// The following should be matched up, in order, with TTLNames. The indexes denote the scan types labeled in SCAN_TITLES.
 	// For example, 0 is for Delay, 0123 is for Cooling. 
 	String/G 	 TTL_PARAMS			                  		 	=	"0;012345;0123;012345;012345;0;0;0;"
 	String/G	 SCAN_TITLES 				          				= 	"Duration;AO Frequency;AO Amplitude;AO Phase;EO Frequency;EO Power;Rotation Amplitude;Rotation Frequency;Rotation Phase"
+	Make/O/N=12 DDSTrigTTL									=	{-1,-1,-1,-1,-1,-1,TTL_09 | TTL_17,-1,-1,-1,-1,-1}
+	
 	Make/O/T/N=3 DDSNames                      				   	=	{"State Detection","Flourescence Detection", "Doppler Cooling","Microwave","Raman 1","Raman 2"}
 	Make/O/T/N=4 DDSScans									=	{"Duration","Frequency","Amplitude","Phase"}
 	Make/O/T/N=3 EONames									=	{"Optical Pumping", "Cooling", "Repump"}
